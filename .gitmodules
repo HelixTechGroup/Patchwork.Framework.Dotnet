@@ -1,0 +1,4 @@
+[submodule "third-party/shin"]
+	path = third-party/shin
+	url = git@github.com:HelixTechGroup/Shin.Framework.Dotnet.git
+	branch = develop

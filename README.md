@@ -17,7 +17,7 @@
             <a href="https://github.com/%USER%/%ProjectName%/releases">
            <img src="https://img.shields.io/github/v/release/%USER%/%ProjectName%"></a>
       <a href="#">
-	      <img src="https://img.shields.io/github/release-date/%USER%/%ProjectName%?label=last release date"></a>
+          <img src="https://img.shields.io/github/release-date/%USER%/%ProjectName%?label=last release date"></a>
 </p>
 
  * [Build Status](#build-status)

@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework", "src\Patchwork.Framework\Patchwork.Framework.shproj", "{DFF5F575-ACE9-41CE-89A9-E82D0DC8CA6C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{CFE53FE4-AD85-4797-B4F8-6795A77CF798}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E0F2A5F-45F7-4023-BF7A-143D0031B90E}"
+	ProjectSection(SolutionItems) = preProject
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CODESTYLE.md = CODESTYLE.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		src\GlobalSuppressions.cs = src\GlobalSuppressions.cs
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		src\SharedAssemblyInfo.cs = src\SharedAssemblyInfo.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{66DC2B86-09D8-4E15-AF02-809D440E3DF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpec", "NuSpec", "{6785DC12-A054-4A50-B7DE-7A74E2D60C4E}"
+	ProjectSection(SolutionItems) = preProject
+		nuspecs\generate-nuget.ps1 = nuspecs\generate-nuget.ps1
+		nuspecs\projects.json = nuspecs\projects.json
+		nuspecs\Shield.Framework.Core.nuspec = nuspecs\Shield.Framework.Core.nuspec
+		nuspecs\Shield.Framework.IoC.Ninject.nuspec = nuspecs\Shield.Framework.IoC.Ninject.nuspec
+		nuspecs\Shield.Framework.Platform.MonoGame.Windows.nuspec = nuspecs\Shield.Framework.Platform.MonoGame.Windows.nuspec
+		nuspecs\Shield.Framework.Platform.Windows.nuspec = nuspecs\Shield.Framework.Platform.Windows.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetStandard", "NetStandard", "{5ABBAF25-AAA8-48DA-8CB9-560208E43F7F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.NetStandard", "src\Netstandard\Patchwork.Framework.NetStandard\Patchwork.Framework.NetStandard.csproj", "{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{AED9F4B2-5880-4135-BB4E-E79F37FF755A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shin.Framework", "third-party\shin\src\Shin.Framework\Shin.Framework.shproj", "{F7EF21B1-EE13-4B24-99B6-CB79BBCB71CE}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Patchwork.Framework\Patchwork.Framework.projitems*{dff5f575-ace9-41ce-89a9-e82d0dc8ca6c}*SharedItemsImports = 13
+		third-party\shin\src\Shin.Framework\Shin.Framework.projitems*{f7ef21b1-ee13-4b24-99b6-cb79bbcb71ce}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F} = {5ABBAF25-AAA8-48DA-8CB9-560208E43F7F}
+		{F7EF21B1-EE13-4B24-99B6-CB79BBCB71CE} = {AED9F4B2-5880-4135-BB4E-E79F37FF755A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}
+	EndGlobalSection
+EndGlobal

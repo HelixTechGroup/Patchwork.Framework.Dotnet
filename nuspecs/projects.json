@@ -1,0 +1,33 @@
+{
+		"core": "../src/Shield.Framework.Core/bin/Debug/netstandard2.0/Shield.Framework.Core.dll",
+		"projects": [
+				{
+						"name": "Shield.Framework.Core",
+						"nuspec": "Shield.Framework.Core.nuspec",
+						"files": {
+								"debug": "../src/Shield.Framework.Core/bin/Debug/netstandard2.0/Shield.Framework.Core.dll"
+						}
+				},
+				{
+						"name": "Shield.Framework.IoC.Ninject",
+						"nuspec": "Shield.Framework.IoC.Ninject.nuspec",
+						"files": {
+								"debug": "../src/IoC/Shield.Framework.IoC.Ninject/bin/Debug/netstandard2.0/Shield.Framework.IoC.dll"
+						}
+				},
+				//{
+				//    "name": "Shield.Framework.Platform.Windows",
+				//    "nuspec": "Shield.Framework.Platform.Windows.nuspec",
+				//    "files": {
+				//        "debug": "../src/Platform/Shield.Framework.Platform.Windows/bin/Debug/Shield.Framework.Platform.dll"
+				//    }
+				//},
+				{
+						"name": "Shield.Framework.Platform.MonoGame.Windows",
+						"nuspec": "Shield.Framework.Platform.MonoGame.Windows.nuspec",
+						"files": {
+								"debug": "../src/Platform/MonoGame/Shield.Framework.Platform.MonoGame.Windows/bin/Debug/Shield.Framework.Platform.MonoGame.dll"
+						}
+				}
+		]
+}
