@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>6e5462b8-0293-4944-8229-df5d4fdf1183</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\DesktopWindowMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeDesktopWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeDesktopWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativePopupWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeDesktopWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowDecorations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeDesktopWindowDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowActivationPolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowSizeLimits.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowTransparency.cs" />
+  </ItemGroup>
+</Project>

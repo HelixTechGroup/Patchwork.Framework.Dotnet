@@ -14,8 +14,10 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
 
-  <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
+  </ItemGroup>
 
-  <Import Project="..\..\..\third-party\shin\src\Shin.Framework\Shin.Framework.projitems" Label="Shared" />
+  <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
 
 </Project>
