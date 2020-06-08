@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageTargetFallback>$(PackageTargetFallback);portable-win+net45+wp8+win81+wpa8</PackageTargetFallback>
     <RootNamespace>Patchwork.Framework</RootNamespace>
-    <AssemblyName>Patchwork.Framework.Platform</AssemblyName>
+    <AssemblyName>Patchwork.Framework</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

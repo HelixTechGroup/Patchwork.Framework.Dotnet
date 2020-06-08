@@ -18,16 +18,17 @@ namespace WindowsApp
 
         private static void Main(string[] args)
         {
-            //var log = new Logger();
-            //log.Initialize();
+            var log = new Logger();
+            log.Initialize();
             //log.AddLogProvider(new ConsoleLogger());
 
             //WindowsDesktopApplication.CreateConsole();
 
             //var env = new ApplicationEnvironment();
             //env.DetectPlatform();
-            PlatformManager.Initialize();
-            PlatformManager.ProccessMessage += OnMessage;
+            PlatformManager.Create();
+            PlatformManager.Initialize(log);
+            PlatformManager.ProcessMessage += OnMessage;
             //var pump = new PlatformMessagePump(log, PlatformManager.CurrentPlatform.Application);
             //pump.Initialize(cts.Token);
             PlatformManager.Application.CreateWindow().Show();

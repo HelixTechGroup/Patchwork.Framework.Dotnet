@@ -5,9 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
+using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework;
 using Shin.Framework.Extensions;
 using Shin.Framework.Logging.Loggers;
@@ -19,21 +21,17 @@ namespace Patchwork.Framework
 {
     public class PlatformManager
     {
-        public static event EventHandler<IPlatformMessage> ProccessMessage;
+        public static event EventHandler<IPlatformMessage> ProcessMessage;
 
         #region Members
         //private static PlatformManager m_platform;
         //private static CancellationTokenSource m_tokenSource;
         //private static  CancellationToken m_token;
+        //private static IoCContainer m_container;
         #endregion
 
         #region Properties
         public static INativeApplication Application { get; private set; }
-
-        //public static PlatformManager CurrentPlatform
-        //{
-        //    get { return m_platform ??= new PlatformManager(); }
-        //}
 
         public static INativeThreadDispatcher Dispatcher { get; private set; }
 
@@ -50,19 +48,24 @@ namespace Patchwork.Framework
         //    Initialize(new CancellationToken());
         //}
 
-        public static void Initialize()
+        public static void Initialize(ILogger logger)
         {
-            Logger = new Logger();
+            Application.CreateConsole();
+            Logger = logger;
             Logger.Initialize();
-
-            //m_token = token;
-            //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);
-            CreatePlatform();            
-            Application.CreateConsole();            
+            //m_container.CreateChildContainer();            
             Logger.AddLogProvider(new ConsoleLogger());
             Environment.DetectPlatform();
             Application.Initialize();
             MessagePump.Initialize();
+            ProcessMessage += OnProcessMessage;
+        }
+
+        public static void Initialize()
+        {
+            Initialize(new Logger());
+            //m_token = token;
+            //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);                                  
         }
 
         public static void Dispose()
@@ -71,6 +74,7 @@ namespace Patchwork.Framework
             Application.Dispose();
             Logger.Dispose();
             Application.CloseConsole();
+            ProcessMessage.Dispose();
         }
 
         public static void Run(CancellationToken token)
@@ -78,11 +82,11 @@ namespace Patchwork.Framework
             Logger.LogDebug("Pumping Messages.");
             while (!token.IsCancellationRequested)
                 while (MessagePump.Poll(out var e, token))
-                    ProccessMessage.Raise(MessagePump, e);
+                    /*Task.Run(() => */ProcessMessage.Raise(MessagePump, e)/*, token)*/;
             Logger.LogDebug("Exit Pumping Messages.");
         }
 
-        private static void CreatePlatform()
+        public static void Create()
         {
             var os = GetOsType();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
