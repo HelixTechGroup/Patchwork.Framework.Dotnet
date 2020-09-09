@@ -9,5 +9,17 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ActivityEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActivityEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\AndroidOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PatchworkLaunchActivity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PatchworkApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PatchworkActivity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActivityStatusTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PatchworkViewTreeObserverListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PatchworkViewListener.cs" />
   </ItemGroup>
 </Project>

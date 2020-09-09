@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Netcore\Patchwork.Framework.Linux.NetCore\Patchwork.Framework.Linux.NetCore.csproj" />
+    <ProjectReference Include="..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
+  </ItemGroup>
+
+</Project>

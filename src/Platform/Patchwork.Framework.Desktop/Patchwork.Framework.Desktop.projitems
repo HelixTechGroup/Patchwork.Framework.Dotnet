@@ -9,16 +9,21 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Messaging\DesktopWindowMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeDesktopWindowRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeDesktopWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativePopupWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeDesktopWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowDecorations.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeDesktopWindowDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowActivationPolicy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowSizeLimits.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeWindowTransparency.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformManager.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativePopupWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeApplication.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowDecorations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowDefinition.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowActivationPolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowSizeLimits.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowTransparency.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.Desktop.cs" />
   </ItemGroup>
 </Project>

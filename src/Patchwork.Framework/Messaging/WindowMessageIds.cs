@@ -19,10 +19,14 @@ namespace Patchwork.Framework.Messaging
         Resized,
         //SDL_WINDOWEVENT_SIZE_CHANGED,
         //The window size has changed, either as a result of an API call or through the system or user changing the window size. */
+        Minimizing,
         Minimized,
+        Maximizing,
         Maximized,
         Restored,
+        Focusing,
         Focused,
+        Unfocusing,
         Unfocused,
         //SDL_WINDOWEVENT_ENTER,
         //Window has gained mouse focus
@@ -41,6 +45,12 @@ namespace Patchwork.Framework.Messaging
         Activated,
         Deactivating,
         Deactivated,
+        Enabled,
+        Disabled,
+        ModeChanging,
+        ModeChanged,
+        StateChanging,
+        StateChanged,
         AttentionDrawn
     }
 }

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>2a7c3663-0cb2-45dd-a52d-55ff3a6ab949</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Patchwork.Framework.Rendering</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformRenderingAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapterConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Patchwork.Framework</RootNamespace>
+    <AssemblyName>Patchwork.Framework</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
+  </ItemGroup>
+  <Import Project="..\..\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems" Label="Shared" />
+  <Import Project="..\..\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems" Label="Shared" />
+  <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
+  <Import Project="..\..\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems" Label="Shared" />
+
+</Project>

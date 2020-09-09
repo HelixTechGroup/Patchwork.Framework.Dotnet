@@ -1,12 +1,15 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using Shin.Framework;
 using Shin.Framework.ComponentModel;
+#endregion
 
 namespace Patchwork.Framework.Platform.Window
 {
-    public interface INativeWindow : INativeObject, IInitialize, IDispose
+    public partial interface INativeWindow : INativeObject, IInitialize, IDispose, IEquatable<INativeWindow>
     {
+        #region Events
         event EventHandler Closing;
         event EventHandler Closed;
         event EventHandler Created;
@@ -15,30 +18,51 @@ namespace Patchwork.Framework.Platform.Window
         event EventHandler Activated;
         event EventHandler Deactivating;
         event EventHandler Deactivated;
+        event EventHandler FocusGained;
+        event EventHandler FocusLost;
+        event EventHandler Enabled;
+        event EventHandler Disabled;
+        event EventHandler<PropertyChangingEventArgs<bool>> FocusChanging;
+        event EventHandler<PropertyChangedEventArgs<bool>> FocusChanged;
+        event EventHandler<PropertyChangingEventArgs<Size>> SizeChanging;
+        event EventHandler<PropertyChangedEventArgs<Size>> SizeChanged;
+        event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
+        event EventHandler<PropertyChangedEventArgs<Point>> PositionChanged;
         event EventHandler<PropertyChangedEventArgs<string>> TitleChanged;
-
-        #region Properties
-        NativeWindowType Type { get; }
-        string Title { get; set; }
-        bool IsMainApplicationWindow { get; }
-        bool IsActive { get; }
-        bool IsVisible { get; }
-        Size ClientSize { get; }
-        Rectangle ClientArea { get; }
-        Size MaxClientSize { get; }
-        INativeObject Parent { get; }
-        INativeWindowRenderer Renderer { get; }
-        INativeInput Input { get; }
         #endregion
 
-        void Show();
-        void Hide();
-        void Create();
+        #region Properties
+        Rectangle ClientArea { get; }
+        Size ClientSize { get; }
+        bool IsActive { get; }
+        bool IsEnabled { get; }
+        bool IsFocused { get; }
+        bool IsMainApplicationWindow { get; }
+        bool IsResizable { get; set; }
+        bool IsVisible { get; }
+        Size MaxClientSize { get; }
+        INativeObject Parent { get; }
+        Point Position { get; }
+        Size Size { get; }
+        string Title { get; set; }
+        #endregion
+
+        #region Methods
+        void Initialize(NativeWindowDefinition definition);
+
+        void Create(bool initialize = true);
+
         void Destroy();
-        void Activate();
-        void Deactivate();
-        bool IsPointInWindow(Point point);
+
         Point PointToClient(Point point);
+
         Point PointToScreen(Point point);
+
+        void SyncDataCache(bool force = false);
+
+        void InvalidateDataCache();
+
+        IWindowDataCache GetDataCache();
+        #endregion
     }
 }

@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Environment\OperatingSystemVersionDetection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\WindowsOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Kernel32\DesiredAccess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\HResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Kernel32\Month.cs" />
@@ -144,11 +145,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\User32\WindowViewRegionFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsDesktopApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsDesktopThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsDesktopWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsDesktopWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsProcessHook.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsWindow.WindowProc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Threading\WindowsPlatformUiDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WindowsRegistry.cs" />

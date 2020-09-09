@@ -20,4 +20,6 @@
 
   <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
 
+  <Import Project="..\..\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems" Label="Shared" />
+
 </Project>

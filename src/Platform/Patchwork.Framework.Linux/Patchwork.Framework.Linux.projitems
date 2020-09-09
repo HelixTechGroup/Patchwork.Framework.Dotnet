@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>c6806c4e-c4e9-4736-ac25-300cd08b244c</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\LinuxOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\LinuxApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\LinuxThreadDispatcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Interop\" />
+  </ItemGroup>
+</Project>

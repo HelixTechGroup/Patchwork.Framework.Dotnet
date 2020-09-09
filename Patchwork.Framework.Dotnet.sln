@@ -38,9 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shin.Framework.NetStandard", "third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj", "{1E0876C0-41E8-4BD0-B8E1-4C2259978549}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{C20D1D25-590B-4308-97B9-AFE774CA2300}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{A5E7BD3C-A80D-48AE-B0C8-8A9C377551EB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderer", "Renderer", "{C20D1D25-590B-4308-97B9-AFE774CA2300}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Android", "src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.shproj", "{5CD3F1A7-43D7-4FB2-BEC0-81FF1EE8704B}"
 EndProject
@@ -52,28 +50,60 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Mobile"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Windows", "src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.shproj", "{E4609D0B-3A70-4AE1-9462-042A72263376}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Android.NetStandard", "src\Netstandard\Platform\Patchwork.Framework.Android.NetStandard\Patchwork.Framework.Android.NetStandard.csproj", "{BC277B81-898F-43D3-BDF6-089697CAF57E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Windows.NetStandard", "src\Netstandard\Platform\Patchwork.Framework.Windows.NetStandard\Patchwork.Framework.Windows.NetStandard.csproj", "{659FFA04-D773-41E6-907A-E12FCBEB82F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Windows.NetCore", "src\Netcore\Patchwork.Framework.Windows.NetCore\Patchwork.Framework.Windows.NetCore.csproj", "{659FFA04-D773-41E6-907A-E12FCBEB82F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B013D504-A2C9-4216-A4A1-EB7BC9588F3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsApp", "samples\WindowsApp\WindowsApp.csproj", "{29B1323F-0025-4179-93FE-17324907B56E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin", "Xamarin", "{6A736ACF-1D8F-4114-AF8A-775F8DB712D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patchwork.Framework.Android.Xamarin", "src\Xamarin\Patchwork.Framework.Android.Xamarin\Patchwork.Framework.Android.Xamarin.csproj", "{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{899F423F-E433-48CD-ADD7-BE7111060D01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidApp", "samples\AndroidApp\AndroidApp.csproj", "{DB453995-65F3-4E33-B135-17E7DE2E4CC0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{DF9F35D5-782A-4517-9EED-56DC59ABC127}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinuxApp", "samples\LinuxApp\LinuxApp.csproj", "{1BA8AE9D-ECA1-4594-95F3-4595553DC569}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Linux", "src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.shproj", "{C6806C4E-C4E9-4736-AC25-300CD08B244C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Linux.NetCore", "src\Netcore\Patchwork.Framework.Linux.NetCore\Patchwork.Framework.Linux.NetCore.csproj", "{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OperatingSystem", "OperatingSystem", "{4D64F963-5E27-4E1A-93D3-8725EA168F83}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetCore", "NetCore", "{300DD736-6641-4130-86BC-62D40E84FD0F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Rendering", "src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.shproj", "{2A7C3663-0CB2-45DD-A52D-55FF3A6AB949}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Rendering.Windows.NetCore", "src\Netcore\Patchwork.Framework.Rendering.Windows.NetCore\Patchwork.Framework.Rendering.Windows.NetCore.csproj", "{6D80380C-F1BE-4811-BE85-3253FC573D10}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{1b5d1859-9372-45dd-a5e9-830b392418d2}*SharedItemsImports = 13
 		third-party\shin\src\Shin.Framework\Shin.Framework.projitems*{1e0876c0-41e8-4bd0-b8e1-4c2259978549}*SharedItemsImports = 5
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{2a7c3663-0cb2-45dd-a52d-55ff3a6ab949}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Mobile\Patchwork.Framework.Mobile.projitems*{2fef6f21-fca7-4282-8fed-cea9b0261a83}*SharedItemsImports = 13
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
+		src\Patchwork.Framework\Patchwork.Framework.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{5cd3f1a7-43d7-4fb2-bec0-81ff1ee8704b}*SharedItemsImports = 13
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{6d80380c-f1be-4811-be85-3253fc573d10}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{6e5462b8-0293-4944-8229-df5d4fdf1183}*SharedItemsImports = 13
-		src\Patchwork.Framework\Patchwork.Framework.projitems*{bc277b81-898f-43d3-bdf6-089697caf57e}*SharedItemsImports = 5
-		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{bc277b81-898f-43d3-bdf6-089697caf57e}*SharedItemsImports = 5
-		src\Platform\Patchwork.Framework.Mobile\Patchwork.Framework.Mobile.projitems*{bc277b81-898f-43d3-bdf6-089697caf57e}*SharedItemsImports = 5
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
+		src\Patchwork.Framework\Patchwork.Framework.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
+		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
+		src\Platform\Patchwork.Framework.Mobile\Patchwork.Framework.Mobile.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
+		src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems*{c6806c4e-c4e9-4736-ac25-300cd08b244c}*SharedItemsImports = 13
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{dff5f575-ace9-41ce-89a9-e82d0dc8ca6c}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{e4609d0b-3a70-4ae1-9462-042a72263376}*SharedItemsImports = 13
 	EndGlobalSection
@@ -90,10 +120,6 @@ Global
 		{1E0876C0-41E8-4BD0-B8E1-4C2259978549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E0876C0-41E8-4BD0-B8E1-4C2259978549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E0876C0-41E8-4BD0-B8E1-4C2259978549}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC277B81-898F-43D3-BDF6-089697CAF57E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC277B81-898F-43D3-BDF6-089697CAF57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC277B81-898F-43D3-BDF6-089697CAF57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC277B81-898F-43D3-BDF6-089697CAF57E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -102,23 +128,56 @@ Global
 		{29B1323F-0025-4179-93FE-17324907B56E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29B1323F-0025-4179-93FE-17324907B56E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29B1323F-0025-4179-93FE-17324907B56E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1BA8AE9D-ECA1-4594-95F3-4595553DC569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA8AE9D-ECA1-4594-95F3-4595553DC569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA8AE9D-ECA1-4594-95F3-4595553DC569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA8AE9D-ECA1-4594-95F3-4595553DC569}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D80380C-F1BE-4811-BE85-3253FC573D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D80380C-F1BE-4811-BE85-3253FC573D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D80380C-F1BE-4811-BE85-3253FC573D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D80380C-F1BE-4811-BE85-3253FC573D10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{DFF5F575-ACE9-41CE-89A9-E82D0DC8CA6C} = {899F423F-E433-48CD-ADD7-BE7111060D01}
+		{CFE53FE4-AD85-4797-B4F8-6795A77CF798} = {899F423F-E433-48CD-ADD7-BE7111060D01}
+		{5ABBAF25-AAA8-48DA-8CB9-560208E43F7F} = {DF9F35D5-782A-4517-9EED-56DC59ABC127}
 		{6A99AEF1-84D8-4140-87DF-71B9DEEFE43F} = {5ABBAF25-AAA8-48DA-8CB9-560208E43F7F}
 		{1E0876C0-41E8-4BD0-B8E1-4C2259978549} = {AED9F4B2-5880-4135-BB4E-E79F37FF755A}
 		{C20D1D25-590B-4308-97B9-AFE774CA2300} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
-		{A5E7BD3C-A80D-48AE-B0C8-8A9C377551EB} = {5ABBAF25-AAA8-48DA-8CB9-560208E43F7F}
-		{5CD3F1A7-43D7-4FB2-BEC0-81FF1EE8704B} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
+		{5CD3F1A7-43D7-4FB2-BEC0-81FF1EE8704B} = {4D64F963-5E27-4E1A-93D3-8725EA168F83}
 		{6E5462B8-0293-4944-8229-DF5D4FDF1183} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
 		{1B5D1859-9372-45DD-A5E9-830B392418D2} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
 		{2FEF6F21-FCA7-4282-8FED-CEA9B0261A83} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
-		{E4609D0B-3A70-4AE1-9462-042A72263376} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
-		{BC277B81-898F-43D3-BDF6-089697CAF57E} = {A5E7BD3C-A80D-48AE-B0C8-8A9C377551EB}
-		{659FFA04-D773-41E6-907A-E12FCBEB82F1} = {A5E7BD3C-A80D-48AE-B0C8-8A9C377551EB}
+		{E4609D0B-3A70-4AE1-9462-042A72263376} = {4D64F963-5E27-4E1A-93D3-8725EA168F83}
+		{659FFA04-D773-41E6-907A-E12FCBEB82F1} = {300DD736-6641-4130-86BC-62D40E84FD0F}
 		{29B1323F-0025-4179-93FE-17324907B56E} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{6A736ACF-1D8F-4114-AF8A-775F8DB712D6} = {DF9F35D5-782A-4517-9EED-56DC59ABC127}
+		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3} = {6A736ACF-1D8F-4114-AF8A-775F8DB712D6}
+		{DB453995-65F3-4E33-B135-17E7DE2E4CC0} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{1BA8AE9D-ECA1-4594-95F3-4595553DC569} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{C6806C4E-C4E9-4736-AC25-300CD08B244C} = {4D64F963-5E27-4E1A-93D3-8725EA168F83}
+		{3D5071F7-DA01-4D84-9B53-6D8A0E63F18B} = {300DD736-6641-4130-86BC-62D40E84FD0F}
+		{4D64F963-5E27-4E1A-93D3-8725EA168F83} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
+		{300DD736-6641-4130-86BC-62D40E84FD0F} = {DF9F35D5-782A-4517-9EED-56DC59ABC127}
+		{2A7C3663-0CB2-45DD-A52D-55FF3A6AB949} = {899F423F-E433-48CD-ADD7-BE7111060D01}
+		{6D80380C-F1BE-4811-BE85-3253FC573D10} = {300DD736-6641-4130-86BC-62D40E84FD0F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}

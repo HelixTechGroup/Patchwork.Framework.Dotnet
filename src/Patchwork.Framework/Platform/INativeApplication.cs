@@ -6,22 +6,20 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public interface INativeApplication : INativeObject, IInitialize, IDispose
+    public partial interface INativeApplication : INativeObject, IInitialize, IDispose
     {
         event EventHandler<INativeWindow> WindowCreated;
         event EventHandler<INativeWindow> WindowDestroyed;
 
         #region Properties
         Thread Thread { get; }
+        INativeWindow MainWindow { get; }
+        INativeWindow CurrentWindow { get; }
         IEnumerable<INativeWindow> Windows { get; }
         #endregion
 
-        INativeWindow CreateWindow();
-
         void PumpMessages(CancellationToken cancellationToken);
 
-        bool CreateConsole();
-
-        void CloseConsole();
+        INativeWindow CreateWindow();
     }
 }

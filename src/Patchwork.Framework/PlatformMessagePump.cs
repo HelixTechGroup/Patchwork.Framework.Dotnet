@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using System.Threading;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Window;
 using Shin.Framework;
 using Shin.Framework.Messaging;
 
@@ -32,7 +34,7 @@ namespace Patchwork.Framework
             if (m_tokenSource.IsCancellationRequested)
                 return;
 
-            PlatformManager.Application.PumpMessages(m_tokenSource.Token);
+            m_application.PumpMessages(m_tokenSource.Token);
         }
 
         /// <inheritdoc />
