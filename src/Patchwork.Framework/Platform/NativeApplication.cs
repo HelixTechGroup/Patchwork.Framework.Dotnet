@@ -63,13 +63,13 @@ namespace Patchwork.Framework.Platform
         protected override void InitializeResources()
         {
             base.InitializeResources();
-            PlatformManager.ProcessMessage += OnProcessMessage;            
+            Core.ProcessMessage += OnProcessMessage;            
         }
 
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            PlatformManager.ProcessMessage -= OnProcessMessage;
+            Core.ProcessMessage -= OnProcessMessage;
             base.DisposeManagedResources();
         }
 

@@ -26,19 +26,20 @@ namespace WindowsApp
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger());
 
-            PlatformManager.Startup += OnStartup;
-            PlatformManager.Shutdown += OnShutdown;
-            PlatformManager.ProcessMessage += OnMessage;
+            Core.Startup += OnStartup;
+            Core.Shutdown += OnShutdown;
+            Core.ProcessMessage += OnMessage;
 
-            PlatformManager.Create(log);
-            PlatformManager.CreateConsole();
-            PlatformManager.Initialize();
+            Core.Create(log);
+            Core.CreateConsole();
+            Core.Initialize();
 
-            PlatformManager.Application.CreateWindow().Show();
-            PlatformManager.Run(m_cts.Token);
+            Core.Application.CreateWindow().Show();
+            var ren = Core.RenderManager;
+            Core.Run(m_cts.Token);
 
-            PlatformManager.Dispose();
-            PlatformManager.CloseConsole();
+            Core.Dispose();
+            Core.CloseConsole();
         }
 
         private static void OnStartup() { }
@@ -55,13 +56,13 @@ namespace WindowsApp
 
         private static void OnMessage(IPlatformMessage message)
         {
-            PlatformManager.Logger.LogDebug("Message type: " + message.Id);
+            Core.Logger.LogDebug("Message type: " + message.Id);
             switch (message.Id)
             {
                 case MessageIds.Window:
                     var data = message.Data as WindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
-                    PlatformManager.Logger.LogDebug("--Message sub type: " + data?.MessageId);
+                    Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
                     break;
                 case MessageIds.Quit:
                     m_cts.Cancel();

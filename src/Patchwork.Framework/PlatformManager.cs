@@ -23,92 +23,72 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework
 {
-    public static partial class PlatformManager
+    public partial class PlatformManager<TManager> : Initializable, IPlatformManager<TManager> where TManager : AssemblyPlatformAttribute
     {
-        public delegate void ProcessMessageHandler(IPlatformMessage message);
+        public event ProcessMessageHandler ProcessMessage;
 
-        public static event ProcessMessageHandler ProcessMessage;
+        public event Action Startup;
 
-        public static event Func<OperatingSystemType> DetectUnixSystemType;
-
-        public static event Action Startup;
-
-        public static event Action Shutdown;
+        public event Action Shutdown;
 
         #region Members
-        //private static PlatformManager m_platform;
-        //private static CancellationTokenSource m_tokenSource;
-        //private static  CancellationToken m_token;
-        //private static IoCContainer m_container;
-        private static Task m_runTask;
+        //private PlatformManager m_platform;
+        //private CancellationTokenSource m_tokenSource;
+        //private CancellationToken m_token;
+        //private IoCContainer m_container;
+        private Task m_runTask;
         #endregion
 
         #region Properties
-        public static bool IsInitialized { get; private set; }
+        public bool IsRunning { get; private set; }
 
-        public static bool IsRunning { get; private set; }
-
-        public static INativeApplication Application { get; private set; }
-
-        public static INativeThreadDispatcher Dispatcher { get; private set; }
-
-        public static IApplicationEnvironment Environment { get; private set; }
-
-        public static PlatformMessagePump MessagePump { get; private set; }
-
-        public static ILogger Logger { get; private set; }
+        public PlatformMessagePump MessagePump { get; private set; }
         #endregion
 
         #region Methods
-        //public static void Initialize()
-        //{
-        //    Initialize(new CancellationToken());
-        //}
-
-        public static void Initialize()
-        {
-            if (IsInitialized)
+        /// <inheritdoc />
+        protected override void InitializeResources()
+        { 
+            if (m_isInitialized)
                 return;
 
-            //Application.CreateConsole();
             //m_container.CreateChildContainer();            
-            Environment.DetectPlatform();
-            Application.Initialize();
             MessagePump.Initialize();
             ProcessMessage += OnProcessMessage;
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);   
-            IsInitialized = true;                               
         }
 
-        public static void Dispose()
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
         {
-            IsInitialized = false;
             m_runTask?.ConfigureAwait(false);
             m_runTask?.Dispose();
             MessagePump.Dispose();
-            Application.Dispose();
-            Logger.Dispose();
             //Application.CloseConsole();
             //ProcessMessage.Dispose();
         }
 
-        public static void Run(CancellationToken token)
+        public void Run(CancellationToken token)
         {
-            if (!IsInitialized)
+            if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            token.Register(() => Dispatcher.Signal(NativeThreadDispatcherPriority.Send));
+            token.Register(() => Core.Dispatcher.Signal(NativeThreadDispatcherPriority.Send));
             var tasks = new ConcurrentList<Task>();
             Startup?.Invoke();
             IsRunning = true;
-            Logger.LogDebug("Pumping Messages.");
+            Core.Logger.LogDebug("Pumping Render Messages.");
             while (!token.IsCancellationRequested)
+            {
                 while (MessagePump.Poll(out var e, token))
                 {
                     var message = e;
                     tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => tasks.Remove(t)));
                 }
+
+                RunManager();
+            }
 
             var whenAll = Task.WhenAll(tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
@@ -123,12 +103,14 @@ namespace Patchwork.Framework
                 break;
             }
 
-            Logger.LogDebug("Exit Pumping Messages.");
+            Core.Logger.LogDebug("Exit Pumping Render Messages.");
             IsRunning = false;
             Shutdown?.Invoke();
         }
 
-        public static void RunAsync(CancellationToken token)
+        protected virtual void RunManager() { }
+
+        public void RunAsync(CancellationToken token)
         {
             m_runTask = new Task(() => { Run(token); });//Task.Run(() => { Run(token); });
             //.ContinueWith((t) => { Dispose(); })
@@ -136,107 +118,37 @@ namespace Patchwork.Framework
             m_runTask.Start();
         }
 
-        public static void Create()
+        public void Create()
         {
-            Create(new Logger());
-        }
-
-        public static void Create(ILogger logger)
-        {
-            Logger = logger;
-            Logger.Initialize();
-            var os = GetOsType();
+            var os = Core.Environment.OperatingSystem;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                                      .Where(a => Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute))).ToArray();
+                                      .Where(a => Attribute.IsDefined(a, typeof(TManager))).ToArray();
 
             var platform = assemblies
-                          .Where(a => Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute)))
-                          .GetAssemblyAttribute<AssemblyPlatformAttribute>()
-                          .Where(attribute => attribute.RequiredOS == os)
-                          .OrderBy(attribute => attribute.Priority).FirstOrDefault();
+                          .Where(a => Attribute.IsDefined(a, typeof(TManager)))
+                          .GetAssemblyAttribute<TManager>()
+                          .Where(attribute => attribute.RequiredOS == os.Type)
+                          .OrderBy(attribute => attribute.Priority);
 
-            if (platform == null)
+            if (platform == null || platform.IsEmpty())
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            var osInfo = platform.OperatingSystemType == null
-                             ? new OperatingSystemInformation()
-                             : Activator.CreateInstance(platform.OperatingSystemType) as IOperatingSystemInformation;
-            var runtimeInfo = platform.RuntimeType == null
-                                  ? new RuntimeInformation()
-                                  : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
+            CreateManager(platform.ToArray());
+            MessagePump = new PlatformMessagePump(Core.Logger, Core.Application);
 
-            Application = Activator.CreateInstance(platform.ApplicationType) as INativeApplication;
-            Dispatcher = Activator.CreateInstance(platform.DispatcherType) as INativeThreadDispatcher;            
-            Environment = new PlatformEnvironment(osInfo, runtimeInfo);
-            MessagePump = new PlatformMessagePump(Logger, Application);
         }
 
-        private static IOperatingSystemInformation CreateOs(IEnumerable<Assembly> assemblies)
+        private void OnProcessMessage(IPlatformMessage message) 
         {
-            var osType = assemblies
-                        .Where(a => Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute)))
-                        .SelectMany(a => a.GetTypes())
-                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOperatingSystemInformation))).IsEmpty())
-                        .OrderBy(t => t == typeof(OperatingSystemInformation)).FirstOrDefault();
-
-            if (osType == null)
-                throw new InvalidOperationException("No platform found. Are you missing assembly references?");
-
-            var os = Activator.CreateInstance(osType) as IOperatingSystemInformation;
-            if (os == null)
-                throw new InvalidOperationException("No platform found. Are you missing assembly references?");
-
-            os.DetectOperatingSystem();
-            return os;
-        }
-
-        private static IRuntimeInformation CreateRuntime(IEnumerable<Assembly> assemblies)
-        {
-            var osType = assemblies
-                        .SelectMany(a => a.GetTypes())
-                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IRuntimeInformation))).IsEmpty())
-                        .OrderBy(t => t == typeof(RuntimeInformation)).FirstOrDefault();
-
-            if (osType == null)
-                throw new InvalidOperationException("No platform found. Are you missing assembly references?");
-
-            var os = Activator.CreateInstance(osType) as IRuntimeInformation;
-            if (os == null)
-                throw new InvalidOperationException("No platform found. Are you missing assembly references?");
-
-            os.DetectRuntime();
-            return os;
-        }
-
-        private static OperatingSystemType GetOsType()
-        {
-            var id = SysEnv.OSVersion.Platform;
-            switch ((int)id)
-            {
-                case 6: // PlatformID.MacOSX:
-                    return OperatingSystemType.MacOS;
-                case 4: // PlatformID.Unix:	
-                case 128:
-                    return DetectUnixSystemType?.Invoke() ?? OperatingSystemType.Unix;
-                case 0: // PlatformID.Win32S:
-                case 1: // PlatformID.Win32Windows:
-                case 2: // PlatformID.Win32NT:
-                case 3: // PlatformID.WinCE:
-                    return OperatingSystemType.Windows;
-                default:
-                    return OperatingSystemType.Unknown;
-            }
-        }
-
-        private static void OnProcessMessage(IPlatformMessage message) 
-        {
-            Logger.LogDebug("Found Messages.");
+            Core.Logger.LogDebug("Found Messages.");
             switch (message.Id)
             {
                 case MessageIds.Quit:
                     break;
             }
         }
+
+        protected virtual void CreateManager(params TManager[] managers) { }
         #endregion
     }
 }

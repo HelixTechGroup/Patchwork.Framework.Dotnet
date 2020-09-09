@@ -40,34 +40,34 @@ namespace Patchwork.Framework.Platform
             switch (message.Id)
             {
                 case WindowsMessageIds.ACTIVATEAPP:
-                    PlatformManager.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
+                    Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
                                                                       ? WindowMessageIds.Activating
                                                                       : WindowMessageIds.Deactivating,
                                                                   this);
                     break;
                 case WindowsMessageIds.KILLFOCUS:
-                    PlatformManager.MessagePump.PushWindowUnfocusedMessage(this);
+                    Core.MessagePump.PushWindowUnfocusedMessage(this);
                     break;
                 case WindowsMessageIds.SETFOCUS:
-                    PlatformManager.MessagePump.PushWindowFocusedMessage(this);
+                    Core.MessagePump.PushWindowFocusedMessage(this);
                     break;
                 case WindowsMessageIds.SHOWWINDOW:
-                    if (message.WParam != IntPtr.Zero)
-                        PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Shown, this);
-                    else
-                        PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Hidden, this);
+                    Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
+                                                                      ? WindowMessageIds.Shown
+                                                                      : WindowMessageIds.Hidden,
+                                                                  this);
                     break;
                 case WindowsMessageIds.SIZE:
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
                     break;
                 case WindowsMessageIds.SIZING:
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Resizing, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Resizing, this);
                     break;
                 case WindowsMessageIds.MOVE:
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
                     break;
                 case WindowsMessageIds.MOVING:
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Moving, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Moving, this);
                     break;
                 case WindowsMessageIds.WINDOWPOSCHANGING:
                     //PlatformManager.MessagePump.Push(new DesktopWindowMessage(WindowMessageIds.Resized, this));
@@ -77,18 +77,18 @@ namespace Patchwork.Framework.Platform
                     break;
                 case WindowsMessageIds.CLOSE:
                     //DestroyWindow(m_handle.Pointer);
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Closed, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Closed, this);
                     break;
                 case WindowsMessageIds.CREATE:
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Created, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Created, this);
                     break;
                 case WindowsMessageIds.DESTROY:
                     if (m_isMainApplicationWindow)
                         PostMessage(m_parent.Handle.Pointer, WindowsMessageIds.CLOSE, IntPtr.Zero, IntPtr.Zero);
-                    PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, this);
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, this);
                     break;
                 case WindowsMessageIds.ENABLE:
-                    PlatformManager.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
+                    Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
                                                                       ? WindowMessageIds.Enabled
                                                                       : WindowMessageIds.Disabled,
                                                                   this);

@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformManager.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.Desktop.cs" />

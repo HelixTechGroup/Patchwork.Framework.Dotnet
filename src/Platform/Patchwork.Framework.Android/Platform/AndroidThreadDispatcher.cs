@@ -28,7 +28,7 @@ namespace Patchwork.Framework.Platform
 
         public AndroidThreadDispatcher()
         {
-            m_application = PlatformManager.Application as AndroidApplication;
+            m_application = Core.Application as AndroidApplication;
             m_handler = new Handler(m_application?.Context.MainLooper);
         }
 

@@ -62,7 +62,7 @@ namespace Patchwork.Framework.Platform
 
         public void Signal(NativeThreadDispatcherPriority prio)
         {
-            PostMessage(PlatformManager.Application.Handle.Pointer,
+            PostMessage(Core.Application.Handle.Pointer,
                         WindowsMessageIds.DISPATCH_WORK_ITEM,
                         new IntPtr(Constants.SignalW),
                         new IntPtr(Constants.SignalL));

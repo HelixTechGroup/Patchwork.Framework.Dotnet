@@ -28,30 +28,30 @@ namespace Patchwork.Framework
             var log = new Logger();
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger(false));
-            PlatformManager.DetectUnixSystemType += () => OperatingSystemType.Android;
-            PlatformManager.ProcessMessage += OnMessage;
-            PlatformManager.Create(log);
-            PlatformManager.Initialize();            
+            Core.DetectUnixSystemType += () => OperatingSystemType.Android;
+            Core.ProcessMessage += OnMessage;
+            Core.Create(log);
+            Core.Initialize();            
         }
 
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                PlatformManager.Dispose();
+                Core.Dispose();
 
             base.Dispose(disposing);
         }
 
         private void OnMessage(IPlatformMessage message)
         {
-            PlatformManager.Logger.LogDebug("Message type: " + message.Id);
+            Core.Logger.LogDebug("Message type: " + message.Id);
             switch (message.Id)
             {
                 case MessageIds.Window:
                     var data = message.Data as WindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
-                    PlatformManager.Logger.LogDebug("--Message sub type: " + data?.MessageId);
+                    Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
                     break;
                 case MessageIds.Quit:
                     m_cts.Cancel();

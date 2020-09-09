@@ -156,7 +156,7 @@ namespace Patchwork.Framework.Platform
 
                 if (msg.Value == WindowsMessageIds.QUIT)
                 {
-                    PlatformManager.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
                 }
 
@@ -166,7 +166,7 @@ namespace Patchwork.Framework.Platform
 
         private IntPtr WindowProc(IntPtr hWnd, WindowsMessageIds msg, IntPtr wParam, IntPtr lParam)
         {
-            var platform = PlatformManager.Dispatcher as WindowsThreadDispatcher;
+            var platform = Core.Dispatcher as WindowsThreadDispatcher;
             switch (msg)
             {
                 case WindowsMessageIds.DISPATCH_WORK_ITEM:

@@ -55,11 +55,11 @@ namespace Patchwork.Framework.Platform
             /// <inheritdoc />
             public void OnWindowFocusChanged(bool hasFocus)
             {
-                PlatformManager.MessagePump.PushWindowFocusChangingMessage(m_window, !hasFocus, hasFocus);
+                Core.MessagePump.PushWindowFocusChangingMessage(m_window, !hasFocus, hasFocus);
                 if (hasFocus)
-                    PlatformManager.MessagePump.PushWindowFocusedMessage(m_window, hasFocus);
+                    Core.MessagePump.PushWindowFocusedMessage(m_window, hasFocus);
                 else
-                    PlatformManager.MessagePump.PushWindowUnfocusedMessage(m_window, hasFocus);
+                    Core.MessagePump.PushWindowUnfocusedMessage(m_window, hasFocus);
 
                 m_window.InvalidateDataCache();
             }

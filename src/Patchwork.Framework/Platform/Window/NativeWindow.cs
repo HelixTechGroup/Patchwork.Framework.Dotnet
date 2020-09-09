@@ -43,7 +43,7 @@ namespace Patchwork.Framework.Platform.Window
         protected bool m_isCreated;
         protected bool m_isMainApplicationWindow;
         protected readonly INativeObject m_parent;
-        protected INativeWindowRenderer m_renderer;
+        //protected INativeWindowRenderer m_renderer;
         #endregion
 
         #region Properties
@@ -123,11 +123,6 @@ namespace Patchwork.Framework.Platform.Window
         public Point Position
         {
             get { return m_cache.Position; }
-        }
-
-        public INativeWindowRenderer Renderer
-        {
-            get { return m_renderer; }
         }
 
         /// <inheritdoc />
@@ -287,7 +282,7 @@ namespace Patchwork.Framework.Platform.Window
         protected override void DisposeUnmanagedResources()
         {
             base.DisposeUnmanagedResources();
-            PlatformManager.ProcessMessage -= OnProcessMessage;
+            Core.ProcessMessage -= OnProcessMessage;
             DisposeUnmanagedResourcesShared();
         }
 
@@ -296,7 +291,7 @@ namespace Patchwork.Framework.Platform.Window
         {
             base.InitializeResources();
             InitializeResourcesShared();
-            PlatformManager.ProcessMessage += OnProcessMessage;
+            Core.ProcessMessage += OnProcessMessage;
             SyncDataCache(true);
         }
 

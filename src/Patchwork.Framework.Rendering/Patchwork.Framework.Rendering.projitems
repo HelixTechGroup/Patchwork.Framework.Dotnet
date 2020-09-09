@@ -9,6 +9,8 @@
     <Import_RootNamespace>Patchwork.Framework.Rendering</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformRenderingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapterConfiguration.cs" />

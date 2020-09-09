@@ -6,6 +6,7 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Window;
 
@@ -40,51 +41,51 @@ namespace Patchwork.Framework
         {
             m_view = Activator.CreateInstance(typeof(TView), this) as TView;
             SetContentView(m_view);
-            m_window = PlatformManager.Application.CurrentWindow;
+            m_window = Core.Application.CurrentWindow;
             Title = m_window.Title;
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Created, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Created, m_window);
         }
 
         /// <inheritdoc />
         protected override void OnStart()
         {
             base.OnStart();
-            m_window = PlatformManager.Application.CurrentWindow;
+            m_window = Core.Application.CurrentWindow;
             m_window.Initialize();            
         }
 
         /// <inheritdoc />
         protected override void OnPause()
         {
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Deactivated, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Deactivated, m_window);
             base.OnPause();
         }
 
         /// <inheritdoc />
         protected override void OnResume()
         {
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Activating, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Activating, m_window);
             base.OnResume();
         }
 
         /// <inheritdoc />
         protected override void OnPostResume()
         {
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Activated, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Activated, m_window);
             base.OnPostResume();
         }
 
         /// <inheritdoc />
         protected override void OnStop()
         {
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Closed, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Closed, m_window);
             base.OnStop();
         }
 
         /// <inheritdoc />
         protected override void OnDestroy()
         {
-            PlatformManager.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, m_window);
+            Core.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, m_window);
             base.OnDestroy();
         }
 

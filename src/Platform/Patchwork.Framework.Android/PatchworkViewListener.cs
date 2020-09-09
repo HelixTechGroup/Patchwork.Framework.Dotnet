@@ -49,8 +49,8 @@ namespace Patchwork.Framework.Platform
                     changed = true;
                     var newSize = new Size(v.Width, v.Height);
                     var oldSize = new Size(oldWidth, oldHeight);
-                    PlatformManager.MessagePump.PushWindowResizingMessage(m_window, oldSize, newSize);
-                    PlatformManager.MessagePump.PushWindowResizedMessage(m_window, newSize, newSize, oldSize);
+                    Core.MessagePump.PushWindowResizingMessage(m_window, oldSize, newSize);
+                    Core.MessagePump.PushWindowResizedMessage(m_window, newSize, newSize, oldSize);
                 }
 
                 if (left != oldLeft || top != oldTop)
@@ -58,8 +58,8 @@ namespace Patchwork.Framework.Platform
                     changed = true;
                     var newPos = new Point(left, top);
                     var oldPos = new Point(oldLeft, oldTop);
-                    PlatformManager.MessagePump.PushWindowMovingMessage(m_window, oldPos, newPos);
-                    PlatformManager.MessagePump.PushWindowMovedMessage(m_window, newPos, newPos, oldPos);
+                    Core.MessagePump.PushWindowMovingMessage(m_window, oldPos, newPos);
+                    Core.MessagePump.PushWindowMovedMessage(m_window, newPos, newPos, oldPos);
                 }
 
                 if (changed)

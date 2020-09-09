@@ -15,3 +15,9 @@ using Patchwork.Framework.Platform;
                             typeof(WindowsApplication), 
                             typeof(WindowsThreadDispatcher), 
                             typeof(WindowsOperatingSystemInformation))]
+[assembly: AssemblyPlatformRendering(OperatingSystemType.Windows,
+                            1,
+                            "Windows",
+                            typeof(WindowsApplication),
+                            typeof(WindowsThreadDispatcher),
+                            typeof(WindowsOperatingSystemInformation))]

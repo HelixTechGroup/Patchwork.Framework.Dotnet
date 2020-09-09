@@ -20,9 +20,9 @@ namespace Patchwork.Framework
         {
             base.OnCreate(savedInstanceState);
             var token = (Application.Context as PatchworkApplication)?.Token.Token ?? CancellationToken.None;
-            var win = PlatformManager.Application.CreateWindow();
+            var win = Core.Application.CreateWindow();
             Title = win.Title;
-            PlatformManager.RunAsync(token);
+            Core.RunAsync(token);
             Finish();
         }
 
@@ -30,7 +30,7 @@ namespace Patchwork.Framework
         public override void OnBackPressed()
         {
             base.OnBackPressed();
-            PlatformManager.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+            Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
 
             //(Application.Context as PatchworkApplication)?.Token.Cancel();
         }

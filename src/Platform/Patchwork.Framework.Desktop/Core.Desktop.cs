@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Patchwork.Framework
 {
-    public static partial class PlatformManager
+    public static partial class Core
     {
         public static bool CreateConsole()
         {

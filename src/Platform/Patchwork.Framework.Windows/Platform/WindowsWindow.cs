@@ -31,7 +31,7 @@ namespace Patchwork.Framework.Platform
         protected override void InitializeResources()
         {
             base.InitializeResources();
-            m_renderer.Initialize();
+            //m_renderer.Initialize();
         }
 
         /// <inheritdoc />
@@ -226,7 +226,7 @@ namespace Patchwork.Framework.Platform
             m_handle = new NativeHandle(hwnd, "");
             /// = windowWidth;
             //m_height = windowHeight;
-            m_renderer = new WindowsDesktopWindowRenderer(this, null);            
+            //m_renderer = new WindowsDesktopWindowRenderer(this, null);            
             //m_input = new NativeInput(this);
         }
 
@@ -295,7 +295,8 @@ namespace Patchwork.Framework.Platform
         {
             var x = position.X;
             var y = position.Y;
-            if (m_renderer.SupportedDecorations.HasFlag(NativeWindowDecorations.Border))
+            //m_renderer.SupportedDecorations.HasFlag(NativeWindowDecorations.Border)
+            if (true)
             {
                 var windowStyle = (WindowStyles)GetWindowLongPtr(m_handle.Pointer, WindowLongFlags.GWL_STYLE);
                 var windowExStyle = (WindowExStyles)GetWindowLongPtr(m_handle.Pointer, WindowLongFlags.GWL_EXSTYLE);
@@ -493,7 +494,7 @@ namespace Patchwork.Framework.Platform
         protected override void DisposeManagedResources()
         {
             base.DisposeManagedResources();
-            m_renderer.Dispose();
+            //m_renderer.Dispose();
         }
 
         /// <inheritdoc />

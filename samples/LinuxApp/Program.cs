@@ -17,25 +17,30 @@ namespace LinuxApp
             var log = new Logger();
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger());
-            PlatformManager.Create(log);
-            PlatformManager.Initialize();
-            PlatformManager.ProcessMessage += OnMessage;
-            PlatformManager.Application.CreateWindow().Show();
-            PlatformManager.Run(m_cts.Token);
+            Core.Create(log);
+            Core.Initialize();
+            Core.Shutdown += OnShutdown;
+            Core.ProcessMessage += OnMessage;
+            Core.Application.CreateWindow().Show();
+            Core.Run(m_cts.Token);
+            Core.Dispose();
+        }
+
+        private static void OnShutdown()
+        {
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
-            PlatformManager.Dispose();
         }
 
         private static void OnMessage(IPlatformMessage message)
         {
-            PlatformManager.Logger.LogDebug("Message type: " + message.Id);
+            Core.Logger.LogDebug("Message type: " + message.Id);
             switch (message.Id)
             {
                 case MessageIds.Window:
                     var data = message.Data as WindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
-                    PlatformManager.Logger.LogDebug("--Message sub type: " + data.MessageId);
+                    Core.Logger.LogDebug("--Message sub type: " + data.MessageId);
                     break;
                 case MessageIds.Quit:
                     m_cts.Cancel();

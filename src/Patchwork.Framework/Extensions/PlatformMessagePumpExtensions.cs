@@ -35,7 +35,6 @@ namespace Patchwork.Framework.Extensions
 
         public static void PushWindowResizingMessage(this PlatformMessagePump pump,
                                                    INativeWindow window,
-                                                   Size currentSize,
                                                    Size requestedSize)
         {
             pump.PushWindowMessage(new WindowMessageData(window).SizeChanging(requestedSize));
@@ -51,13 +50,13 @@ namespace Patchwork.Framework.Extensions
         public static void PushWindowFocusingMessage(this PlatformMessagePump pump,
                                                      INativeWindow window)
         {
-            pump.PushWindowMessage(new WindowMessageData(window).FocusChanging(false));
+            pump.PushWindowMessage(new WindowMessageData(window).FocusChanging(true));
         }
 
         public static void PushWindowFocusedMessage(this PlatformMessagePump pump,
                                                     INativeWindow window)
         {
-            pump.PushWindowMessage(new WindowMessageData(window).FocusChanged(false));
+            pump.PushWindowMessage(new WindowMessageData(window).FocusChanged(true));
         }
 
         public static void PushWindowFocusChangingMessage(this PlatformMessagePump pump,
