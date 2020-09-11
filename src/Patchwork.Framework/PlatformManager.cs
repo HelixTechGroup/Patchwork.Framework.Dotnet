@@ -36,11 +36,13 @@ namespace Patchwork.Framework
         //private CancellationTokenSource m_tokenSource;
         //private CancellationToken m_token;
         //private IoCContainer m_container;
-        private Task m_runTask;
+        protected Task m_runTask;
+        protected bool m_isRunning;
+        protected IList<Task> m_tasks;
         #endregion
 
         #region Properties
-        public bool IsRunning { get; private set; }
+        public bool IsRunning { get { return m_isRunning; } }
 
         public PlatformMessagePump MessagePump { get; private set; }
         #endregion
@@ -52,9 +54,11 @@ namespace Patchwork.Framework
             if (m_isInitialized)
                 return;
 
+            m_tasks = new ConcurrentList<Task>();
             //m_container.CreateChildContainer();            
             MessagePump.Initialize();
             ProcessMessage += OnProcessMessage;
+            Startup?.Invoke();
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);   
         }
@@ -62,6 +66,8 @@ namespace Patchwork.Framework
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
+            Wait();
+            Shutdown?.Invoke();
             m_runTask?.ConfigureAwait(false);
             m_runTask?.Dispose();
             MessagePump.Dispose();
@@ -69,43 +75,80 @@ namespace Patchwork.Framework
             //ProcessMessage.Dispose();
         }
 
-        public void Run(CancellationToken token)
+        public void Pump(CancellationToken token)
         {
             if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            token.Register(() => Core.Dispatcher.Signal(NativeThreadDispatcherPriority.Send));
-            var tasks = new ConcurrentList<Task>();
-            Startup?.Invoke();
-            IsRunning = true;
-            Core.Logger.LogDebug("Pumping Render Messages.");
-            while (!token.IsCancellationRequested)
-            {
-                while (MessagePump.Poll(out var e, token))
-                {
-                    var message = e;
-                    tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => tasks.Remove(t)));
-                }
+            if (m_isRunning)
+                Throw.Exception<InvalidOperationException>();
 
-                RunManager();
+            m_isRunning = true;
+            //Core.Logger.LogDebug("Pumping Manager Messages.");
+            if (token.IsCancellationRequested)
+                return;
+
+            while (MessagePump.Poll(out var e, token))
+            {
+                var message = e;
+                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
             }
 
-            var whenAll = Task.WhenAll(tasks);
+            RunManager();
+
+            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+            m_isRunning = false;
+        }
+
+        public void Wait()
+        {
+            if (!m_isInitialized)
+                Throw.Exception<InvalidOperationException>();
+
+            WaitManager();
+            var whenAll = Task.WhenAll(m_tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
 
-            for (; ; )
+            for (;;)
             {
                 while (!whenAll.IsCompleted)
                 {
                     Console.Write(".");
                     Thread.Sleep(500);
                 }
+
                 break;
             }
 
-            Core.Logger.LogDebug("Exit Pumping Render Messages.");
-            IsRunning = false;
-            Shutdown?.Invoke();
+            m_tasks.Clear();
+        }
+
+        protected virtual void WaitManager() { }
+
+        public void Run(CancellationToken token)
+        {
+            if (!m_isInitialized)
+                Throw.Exception<InvalidOperationException>();
+
+            if (m_isRunning)
+                Throw.Exception<InvalidOperationException>();
+
+            m_isRunning = true;
+            //Core.Logger.LogDebug("Pumping Manager Messages.");
+            while (!token.IsCancellationRequested)
+            {
+                while (MessagePump.Poll(out var e, token))
+                {
+                    var message = e;
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
+                }
+
+                RunManager();
+            }
+
+            Wait();
+            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+            m_isRunning = false;
         }
 
         protected virtual void RunManager() { }
@@ -138,7 +181,7 @@ namespace Patchwork.Framework
 
         }
 
-        private void OnProcessMessage(IPlatformMessage message) 
+        protected virtual void OnProcessMessage(IPlatformMessage message) 
         {
             Core.Logger.LogDebug("Found Messages.");
             switch (message.Id)

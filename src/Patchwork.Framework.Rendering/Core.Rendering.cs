@@ -26,7 +26,7 @@ namespace Patchwork.Framework
     public static partial class Core
     {
         #region Properties
-        public static RenderManager RenderManager { get; private set; }
+        public static RenderManager RenderManager { get { return (RenderManager)m_managers[typeof(RenderManager)].Value; } }
         #endregion
 
         #region Methods
@@ -34,35 +34,34 @@ namespace Patchwork.Framework
         {
             if (IsInitialized)
                 return;
-
-            RenderManager.Initialize();
-            ProcessMessage += OnProcessRenderMessage;
         }
 
         static partial void DisposeManagedResourcesShared()
         {
-            RenderManager.Dispose();
+            m_managers.Remove(typeof(RenderManager), out var manager);
+            manager?.Value.Dispose();
         }
 
         static partial void CreateResourcesShared()
         {
-            RenderManager = new RenderManager();
-            RenderManager.Create();
+            var manager = new RenderManager();
+            m_managers[typeof(RenderManager)] = new Lazy<IPlatformManager>(manager);
         }
 
-        static partial void RunResourcesShared(CancellationToken token)
+        static partial void PreRunResourcesShared(CancellationToken token)
         {
-            RenderManager.Run(token);
+            if (token.IsCancellationRequested)
+                return;
+
+            return;
         }
 
-        private static void OnProcessRenderMessage(IPlatformMessage message) 
+        static partial void PostRunResourcesShared(CancellationToken token)
         {
-            Logger.LogDebug("Found Messages.");
-            switch (message.Id)
-            {
-                case MessageIds.Quit:
-                    break;
-            }
+            if (token.IsCancellationRequested)
+                return;
+
+            return;
         }
         #endregion
     }

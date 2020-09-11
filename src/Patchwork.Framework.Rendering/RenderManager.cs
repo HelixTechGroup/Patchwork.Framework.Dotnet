@@ -30,7 +30,7 @@ namespace Patchwork.Framework
             if (m_isInitialized)
                 return;
 
-            ProcessMessage += OnProcessMessage;
+            base.InitializeResources();
         }
 
         /// <inheritdoc />
@@ -57,14 +57,16 @@ namespace Patchwork.Framework
             }
         }
 
-        private void OnProcessMessage(IPlatformMessage message) 
+        protected override void OnProcessMessage(IPlatformMessage message) 
         {
-            Core.Logger.LogDebug("Found Messages.");
+            Core.Logger.LogDebug("Found Render Messages.");
             switch (message.Id)
             {
                 case MessageIds.Quit:
                     break;
             }
+
+            base.OnProcessMessage(message);
         }
     }
 }

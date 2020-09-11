@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,6 +40,8 @@ namespace Patchwork.Framework
         //private static  CancellationToken m_token;
         //private static IoCContainer m_container;
         private static Task m_runTask;
+        private static IList<Task> m_tasks;
+        private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
         #endregion
 
         #region Properties
@@ -68,6 +71,7 @@ namespace Patchwork.Framework
             if (IsInitialized)
                 return;
 
+            m_tasks = new ConcurrentList<Task>();
             //Application.CreateConsole();
             //m_container.CreateChildContainer();            
             Application.Initialize();
@@ -75,7 +79,10 @@ namespace Patchwork.Framework
             ProcessMessage += OnProcessMessage;
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);  
-            InitializeResourcesShared(); 
+            InitializeResourcesShared();
+            foreach (var manager in m_managers.Values)
+                manager.Value.Initialize();
+
             IsInitialized = true;                               
         }
 
@@ -90,14 +97,20 @@ namespace Patchwork.Framework
             IsInitialized = false;
             m_runTask?.ConfigureAwait(false);
             m_runTask?.Dispose();
+
             DisposeUnmanagedResourcesShared();
             MessagePump.Dispose();
             Application.Dispose();
             DisposeManagedResourcesShared();
+            foreach (var manager in m_managers.Values)
+                manager.Value.Dispose();
+
             Logger.Dispose();
         }
 
-        static partial void RunResourcesShared(CancellationToken token);
+        static partial void PreRunResourcesShared(CancellationToken token);
+
+        static partial void PostRunResourcesShared(CancellationToken token);
 
         public static void Run(CancellationToken token)
         {
@@ -105,7 +118,6 @@ namespace Patchwork.Framework
                 Throw.Exception<InvalidOperationException>();
 
             token.Register(() => Dispatcher.Signal(NativeThreadDispatcherPriority.Send));
-            var tasks = new ConcurrentList<Task>();
             Startup?.Invoke();
             IsRunning = true;
             Logger.LogDebug("Pumping Messages.");
@@ -114,13 +126,19 @@ namespace Patchwork.Framework
                 while (MessagePump.Poll(out var e, token))
                 {
                     var message = e;
-                    tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => tasks.Remove(t)));
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
                 }
 
-                RunResourcesShared(token);
+                PreRunResourcesShared(token);
+                foreach (var manager in m_managers.Values)
+                    manager.Value.Pump(token);
+                PostRunResourcesShared(token);
             }
 
-            var whenAll = Task.WhenAll(tasks);
+            foreach (var manager in m_managers.Values)
+                manager.Value.Wait();
+
+            var whenAll = Task.WhenAll(m_tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
 
             for (; ; )
@@ -134,6 +152,7 @@ namespace Patchwork.Framework
             }
 
             Logger.LogDebug("Exit Pumping Messages.");
+            m_tasks.Clear();
             IsRunning = false;
             Shutdown?.Invoke();
         }
@@ -155,6 +174,7 @@ namespace Patchwork.Framework
         {
             Logger = logger;
             Logger.Initialize();
+            m_managers = new ConcurrentDictionary<Type, Lazy<IPlatformManager>>();
             var os = GetOsType();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
                                       .Where(a => Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute))).ToArray();
@@ -182,6 +202,8 @@ namespace Patchwork.Framework
 
             Environment.DetectPlatform();
             CreateResourcesShared();
+            foreach (var manager in m_managers.Values)
+                manager.Value.Create();
         }
 
         static partial void CreateResourcesShared();

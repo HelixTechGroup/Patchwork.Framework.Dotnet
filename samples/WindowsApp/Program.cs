@@ -38,6 +38,7 @@ namespace WindowsApp
             var ren = Core.RenderManager;
             Core.Run(m_cts.Token);
 
+            
             Core.Dispose();
             Core.CloseConsole();
         }
