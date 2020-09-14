@@ -6,17 +6,18 @@
     <SharedGUID>2a7c3663-0cb2-45dd-a52d-55ff3a6ab949</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Patchwork.Framework.Rendering</Import_RootNamespace>
+    <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\IRenderMessageData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformRenderingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapterConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Platform\" />
   </ItemGroup>
 </Project>

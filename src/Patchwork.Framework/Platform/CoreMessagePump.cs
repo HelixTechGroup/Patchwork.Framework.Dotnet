@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Patchwork.Framework.Messaging;
@@ -14,18 +15,23 @@ using Shin.Framework.Messaging;
 
 namespace Patchwork.Framework
 {
-    public class PlatformMessagePump : MessagePump<IPlatformMessage>, IPlatformMessagePump
+    public class CoreMessagePump : PlatformMessagePump
     {
-        protected bool m_isRunning;
+        private readonly INativeApplication m_application;
 
-        public PlatformMessagePump(ILogger logger) : base(logger) { }
-
-        public bool IsRunning { get => m_isRunning; set => m_isRunning = value; }
+        public CoreMessagePump(ILogger logger, INativeApplication application) : base(logger)
+        {
+            m_application = application;
+        }
 
         /// <inheritdoc />
         public override void Pump(CancellationToken ctx)
         {
-            AddCancellationToken(ctx);
+            if (m_tokenSource.IsCancellationRequested)
+                return;
+
+            base.Pump(ctx);
+            m_application.PumpMessages(m_tokenSource.Token);
         }
 
         /// <inheritdoc />

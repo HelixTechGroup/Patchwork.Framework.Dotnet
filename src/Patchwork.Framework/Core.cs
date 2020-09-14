@@ -2,23 +2,17 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
-using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
-using Shin.Framework.Logging.Loggers;
 using Shin.Framework.Logging.Native;
-using RuntimeInformation = Patchwork.Framework.Environment.RuntimeInformation;
 using SysEnv = System.Environment;
 #endregion
 
@@ -26,38 +20,39 @@ namespace Patchwork.Framework
 {
     public static partial class Core
     {
-        public static event ProcessMessageHandler ProcessMessage;
-
+        #region Events
         public static event Func<OperatingSystemType> DetectUnixSystemType;
-
-        public static event Action Startup;
+        public static event ProcessMessageHandler ProcessMessage;
 
         public static event Action Shutdown;
 
+        public static event Action Startup;
+        #endregion
+
         #region Members
+        private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
+
         //private static PlatformManager m_platform;
         //private static CancellationTokenSource m_tokenSource;
         //private static  CancellationToken m_token;
         //private static IoCContainer m_container;
         private static Task m_runTask;
         private static IList<Task> m_tasks;
-        private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
         #endregion
 
         #region Properties
-        public static bool IsInitialized { get; private set; }
-
-        public static bool IsRunning { get; private set; }
-
         public static INativeApplication Application { get; private set; }
 
         public static INativeThreadDispatcher Dispatcher { get; private set; }
 
         public static IApplicationEnvironment Environment { get; private set; }
+        public static bool IsInitialized { get; private set; }
 
-        public static PlatformMessagePump MessagePump { get; private set; }
+        public static bool IsRunning { get; private set; }
 
         public static ILogger Logger { get; private set; }
+
+        public static CoreMessagePump MessagePump { get; private set; }
         #endregion
 
         #region Methods
@@ -83,14 +78,8 @@ namespace Patchwork.Framework
             foreach (var manager in m_managers.Values)
                 manager.Value.Initialize();
 
-            IsInitialized = true;                               
+            IsInitialized = true;
         }
-
-        static partial void DisposeManagedResourcesShared();
-
-        static partial void DisposeUnmanagedResourcesShared();
-
-        static partial void InitializeResourcesShared();
 
         public static void Dispose()
         {
@@ -108,10 +97,6 @@ namespace Patchwork.Framework
             Logger.Dispose();
         }
 
-        static partial void PreRunResourcesShared(CancellationToken token);
-
-        static partial void PostRunResourcesShared(CancellationToken token);
-
         public static void Run(CancellationToken token)
         {
             if (!IsInitialized)
@@ -126,7 +111,7 @@ namespace Patchwork.Framework
                 while (MessagePump.Poll(out var e, token))
                 {
                     var message = e;
-                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
                 }
 
                 PreRunResourcesShared(token);
@@ -141,13 +126,14 @@ namespace Patchwork.Framework
             var whenAll = Task.WhenAll(m_tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
 
-            for (; ; )
+            for (;;)
             {
                 while (!whenAll.IsCompleted)
                 {
                     Console.Write(".");
                     Thread.Sleep(500);
                 }
+
                 break;
             }
 
@@ -159,7 +145,7 @@ namespace Patchwork.Framework
 
         public static void RunAsync(CancellationToken token)
         {
-            m_runTask = new Task(() => { Run(token); });//Task.Run(() => { Run(token); });
+            m_runTask = new Task(() => { Run(token); }); //Task.Run(() => { Run(token); });
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
@@ -170,7 +156,12 @@ namespace Patchwork.Framework
             Create(new Logger());
         }
 
-        public static void Create(ILogger logger)
+        public static void Create(params IPlatformManager[] managers)
+        {
+            Create(new Logger(), managers);
+        }
+
+        public static void Create(ILogger logger, params IPlatformManager[] managers)
         {
             Logger = logger;
             Logger.Initialize();
@@ -196,22 +187,54 @@ namespace Patchwork.Framework
                                   : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
 
             Application = Activator.CreateInstance(platform.ApplicationType) as INativeApplication;
-            Dispatcher = Activator.CreateInstance(platform.DispatcherType) as INativeThreadDispatcher;            
+            Dispatcher = Activator.CreateInstance(platform.DispatcherType) as INativeThreadDispatcher;
             Environment = new PlatformEnvironment(osInfo, runtimeInfo);
-            MessagePump = new PlatformMessagePump(Logger, Application);
+            MessagePump = new CoreMessagePump(Logger, Application);
 
             Environment.DetectPlatform();
             CreateResourcesShared();
-            foreach (var manager in m_managers.Values)
-                manager.Value.Create();
+            foreach (var manager in managers)
+            {
+                m_managers[manager.GetType()] = new Lazy<IPlatformManager>(manager);
+                manager.Create();
+            }
         }
+
+        public static void AddManager<TManager>() where TManager : IPlatformManager, new()
+        {
+            var instance = new TManager();
+            m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
+
+            instance.Create();
+            if (IsInitialized)
+                instance.Initialize();
+        }
+
+        public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager, new()
+        {
+            m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
+
+            instance.Create();
+            if (IsInitialized && !instance.IsInitialized)
+                instance.Initialize();
+        }
+
+        static partial void DisposeManagedResourcesShared();
+
+        static partial void DisposeUnmanagedResourcesShared();
+
+        static partial void InitializeResourcesShared();
+
+        static partial void PreRunResourcesShared(CancellationToken token);
+
+        static partial void PostRunResourcesShared(CancellationToken token);
 
         static partial void CreateResourcesShared();
 
         private static IOperatingSystemInformation CreateOs(IEnumerable<Assembly> assemblies)
         {
             var osType = assemblies
-                        .Where(a => Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute)))
+                        .Where(a => Attribute.IsDefined(a, typeof(PlatformAttribute)))
                         .SelectMany(a => a.GetTypes())
                         .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOperatingSystemInformation))).IsEmpty())
                         .OrderBy(t => t == typeof(OperatingSystemInformation)).FirstOrDefault();
@@ -265,7 +288,7 @@ namespace Patchwork.Framework
             }
         }
 
-        private static void OnProcessMessage(IPlatformMessage message) 
+        private static void OnProcessMessage(IPlatformMessage message)
         {
             Logger.LogDebug("Found Messages.");
             switch (message.Id)

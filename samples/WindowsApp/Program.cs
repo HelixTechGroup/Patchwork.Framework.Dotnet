@@ -34,11 +34,11 @@ namespace WindowsApp
             Core.CreateConsole();
             Core.Initialize();
 
+            //Core.AddManager<RenderManager>();
+
             Core.Application.CreateWindow().Show();
-            var ren = Core.RenderManager;
             Core.Run(m_cts.Token);
 
-            
             Core.Dispose();
             Core.CloseConsole();
         }
@@ -47,10 +47,10 @@ namespace WindowsApp
 
         private static void OnShutdown()
         {
-            Console.WriteLine("Press any key to exit.");
+            Core.Logger.LogNone("Press any key to exit.");
             while (!Console.KeyAvailable)
             {
-                Console.Write(".");
+                Core.Logger.LogNone(".");
                 Thread.Sleep(250);
             }
         }

@@ -9,18 +9,15 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WindowMessageDataExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDataCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IPlatformMessagePump.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IMessageData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Messaging\IWindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyChangedData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyChangingData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\ApplicationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\IApplicationEnvironment.cs" />
@@ -36,6 +33,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformMessagePump.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\CoreMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeThreadDispatcherPriority.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.cs" />
@@ -44,16 +43,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeScreen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeHandle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformManager.cs" />
   </ItemGroup>
 </Project>

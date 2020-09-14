@@ -23,7 +23,7 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework
 {
-    public partial class PlatformManager<TManager> : Initializable, IPlatformManager<TManager> where TManager : AssemblyPlatformAttribute
+    public partial class PlatformManager<TManager> : Initializable, IPlatformManager<TManager> where TManager : PlatformAttribute
     {
         public event ProcessMessageHandler ProcessMessage;
 
@@ -44,7 +44,7 @@ namespace Patchwork.Framework
         #region Properties
         public bool IsRunning { get { return m_isRunning; } }
 
-        public PlatformMessagePump MessagePump { get; private set; }
+        public IPlatformMessagePump MessagePump { get; private set; }
         #endregion
 
         #region Methods
@@ -177,13 +177,13 @@ namespace Patchwork.Framework
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
             CreateManager(platform.ToArray());
-            MessagePump = new PlatformMessagePump(Core.Logger, Core.Application);
+            MessagePump = new PlatformMessagePump(Core.Logger);
 
         }
 
         protected virtual void OnProcessMessage(IPlatformMessage message) 
         {
-            Core.Logger.LogDebug("Found Messages.");
+            //Core.Logger.LogDebug("Found Messages.");
             switch (message.Id)
             {
                 case MessageIds.Quit:

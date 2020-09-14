@@ -9,9 +9,6 @@ using Patchwork.Framework.Platform;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyVersion("0.0.0.1")]
 [assembly: AssemblyFileVersion("0.0.0.1")]
-[assembly: AssemblyPlatformRendering(OperatingSystemType.Windows, 
+[assembly: AssemblyRendering(OperatingSystemType.Windows, 
                             1, 
-                            "Windows", 
-                            typeof(WindowsApplication), 
-                            typeof(WindowsThreadDispatcher), 
-                            typeof(WindowsOperatingSystemInformation))]
+                            "Windows")]

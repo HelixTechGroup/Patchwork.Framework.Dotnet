@@ -23,19 +23,28 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework
 {
-    public partial class RenderManager : PlatformManager<AssemblyPlatformRenderingAttribute>
+    public partial class RenderManager : PlatformManager<AssemblyRenderingAttribute>
     {
+        protected IList<INativeRenderDevice> m_devices;
+
         protected override void InitializeResources()
-        { 
+        {
+            base.InitializeResources();
+
             if (m_isInitialized)
                 return;
 
-            base.InitializeResources();
+            foreach (var device in m_devices)
+                device.Initialize();
         }
 
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
+            foreach (var device in m_devices)
+                device.Dispose();
+
+            base.DisposeManagedResources();
         }
 
         /// <inheritdoc />
@@ -45,24 +54,27 @@ namespace Patchwork.Framework
         }
 
         /// <inheritdoc />
-        protected override void CreateManager(params AssemblyPlatformRenderingAttribute[] managers)
+        protected override void CreateManager(params AssemblyRenderingAttribute[] managers)
         {
             base.CreateManager(managers);
 
+            m_devices = new ConcurrentList<INativeRenderDevice>();
             foreach (var m in managers)
             {
-                var runtimeInfo = m.RuntimeType == null
-                                      ? new RuntimeInformation()
-                                      : Activator.CreateInstance(m.RuntimeType) as IRuntimeInformation;
+                if (m.RenderDeviceType == null)
+                    continue;
+
+                if (m_devices.All(d => d.GetType() != m.RenderDeviceType))
+                    m_devices.Add(Activator.CreateInstance(m.RenderDeviceType) as INativeRenderDevice);
             }
         }
 
         protected override void OnProcessMessage(IPlatformMessage message) 
         {
-            Core.Logger.LogDebug("Found Render Messages.");
             switch (message.Id)
             {
-                case MessageIds.Quit:
+                case MessageIds.Rendering:
+                    Core.Logger.LogDebug("Found Rendering Messages.");
                     break;
             }
 

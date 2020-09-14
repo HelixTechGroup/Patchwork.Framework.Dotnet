@@ -8,7 +8,7 @@ namespace Patchwork.Framework
 {
     public delegate void ProcessMessageHandler(IPlatformMessage message);
 
-    public interface IPlatformManager<TAssembly> : IPlatformManager where TAssembly : AssemblyPlatformAttribute { }
+    public interface IPlatformManager<TAssembly> : IPlatformManager where TAssembly : PlatformAttribute { }
 
     public interface IPlatformManager : IInitialize, IDispose
     {
@@ -16,7 +16,7 @@ namespace Patchwork.Framework
         event Action Startup;
         event Action Shutdown;
         bool IsRunning { get; }
-        PlatformMessagePump MessagePump { get; }
+        IPlatformMessagePump MessagePump { get; }
 
         void Pump(CancellationToken token);
 

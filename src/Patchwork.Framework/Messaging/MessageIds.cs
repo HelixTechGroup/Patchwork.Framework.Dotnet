@@ -10,6 +10,7 @@ namespace Patchwork.Framework.Messaging
         Display,
         System,
         Window,
+        Rendering,
         Keyboard,
         Mouse,
         Joystick,

@@ -10,7 +10,6 @@ namespace Patchwork.Framework.Platform
         event EventHandler<Rectangle> Paint;
         event EventHandler Painted;
 
-        INativeRenderAdapter Adapter { get; }
         INativeScreen Screen { get; }
         Size VirutalSize { get; }
         float AspectRatio { get; }

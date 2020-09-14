@@ -13,10 +13,7 @@ namespace Patchwork.Framework.Platform
     public abstract partial class NativeApplication : Initializable, INativeApplication
     {
         protected INativeHandle m_handle;
-        protected readonly IList<INativeWindow> m_windows;
         protected readonly Thread m_thread;
-        protected INativeWindow m_mainWindow;
-        protected INativeWindow m_currentWindow;
 
         public INativeHandle Handle
         {
@@ -28,36 +25,14 @@ namespace Patchwork.Framework.Platform
             get { return m_thread; }
         }
 
-        /// <inheritdoc />
-        public INativeWindow MainWindow
-        {
-            get { return m_mainWindow; }
-        }
-
-        /// <inheritdoc />
-        public INativeWindow CurrentWindow
-        {
-            get { return m_mainWindow; }
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<INativeWindow> Windows
-        {
-            get { return m_windows; }
-        }
-
-        /// <inheritdoc />
-        public event EventHandler<INativeWindow> WindowCreated;
-
-        /// <inheritdoc />
-        public event EventHandler<INativeWindow> WindowDestroyed;
-
         protected NativeApplication()
         {
-            m_windows = new ConcurrentList<INativeWindow>();
             m_thread = Thread.CurrentThread;
             WireUpApplicationEvents();
+            ConstructionShared();
         }
+
+        partial void ConstructionShared();
 
         /// <inheritdoc />
         protected override void InitializeResources()
@@ -66,6 +41,8 @@ namespace Patchwork.Framework.Platform
             Core.ProcessMessage += OnProcessMessage;            
         }
 
+        partial void InitializeResourcesShared();
+
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
@@ -73,16 +50,7 @@ namespace Patchwork.Framework.Platform
             base.DisposeManagedResources();
         }
 
-        /// <inheritdoc />
-        public INativeWindow CreateWindow()
-        {
-            Throw.If(!m_isInitialized).InvalidOperationException();
-            var win = PlatformCreateWindow();
-
-            return win;
-        }
-
-        protected abstract INativeWindow PlatformCreateWindow();
+        partial void DisposeManagedResourcesShared();
 
         public virtual void PumpMessages(CancellationToken cancellationToken)
         {
@@ -90,30 +58,15 @@ namespace Patchwork.Framework.Platform
                 return;
 
             PlatformPumpMessages(cancellationToken);
-
-            foreach (var window in m_windows)
-                    window.SyncDataCache();
+            PumpMessagesShared(cancellationToken);
         }
+
+        partial void PumpMessagesShared(CancellationToken cancellationToken);
 
         protected abstract void PlatformPumpMessages(CancellationToken cancellationToken);
 
-        protected virtual void OnWindowCreated(object sender, INativeWindow window)
-        {
-            m_windows.Add(window);
-
-            if (window.IsMainApplicationWindow && m_mainWindow is null)
-                m_mainWindow = window;
-        }
-
-        protected virtual void OnWindowDestroyed(object sender, INativeWindow window)
-        {
-            m_windows.Remove(window);
-        }
-
         private void WireUpApplicationEvents()
         {
-            WindowCreated += OnWindowCreated;
-            WindowDestroyed += OnWindowDestroyed;
         }
 
         protected virtual void OnProcessMessage(IPlatformMessage message)
@@ -126,18 +79,6 @@ namespace Patchwork.Framework.Platform
                 case MessageIds.Quit:
                     break;
                 case MessageIds.Window:
-                    var data = message.Data as WindowMessageData;
-                    switch (data?.MessageId)
-                    {
-                        case WindowMessageIds.None:
-                            break;
-                        case WindowMessageIds.Created:
-                            WindowCreated.Raise(this, data.Window);
-                            break;
-                        case WindowMessageIds.Destroyed:
-                            WindowDestroyed.Raise(this, data.Window);
-                            break;
-                    }
                     break;
             }
         }
