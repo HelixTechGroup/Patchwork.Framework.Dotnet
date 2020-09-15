@@ -10,7 +10,7 @@ namespace Patchwork.Framework.Messaging
     {
         DateTime TimeStamp { get; }
 
-        IMessageData Data { get; }
+        IMessageData RawData { get; }
     }
 
     public interface IPlatformMessage<TMessageData> : IPlatformMessage where TMessageData : IMessageData

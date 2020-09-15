@@ -127,10 +127,5 @@ namespace Patchwork.Framework.Platform.Window
         #endregion
 
         //bool ManualDPI;
-
-        public static NativeWindowDefinition Default
-        {
-            get { return new NativeWindowDefinition(); }
-        }
     }
 }

@@ -129,23 +129,23 @@ namespace Patchwork.Framework.Platform
             base.InitializeResources();
         }
 
-        protected override INativeWindow PlatformCreateWindow()
-        {
-            var def = new NativeWindowDefinition
-                      {
-                          AcceptsInput = true,
-                          ActivationPolicy = NativeWindowActivationPolicy.FirstShown,
-                          DesiredSize = new Size(800, 600),
-                          IsRegularWindow = true,
-                          Title = "test",
-                          SupportedDecorations = NativeWindowDecorations.All,
-                          Type = NativeWindowType.Normal,
-                          IsMainApplicationWindow = true
-                      };
-            var win = new WindowsWindow(this, def);
-            win.Create();
-            return win;
-        }
+        //protected override INativeWindow PlatformCreateWindow()
+        //{
+        //    var def = new NativeWindowDefinition
+        //              {
+        //                  AcceptsInput = true,
+        //                  ActivationPolicy = NativeWindowActivationPolicy.FirstShown,
+        //                  DesiredSize = new Size(800, 600),
+        //                  IsRegularWindow = true,
+        //                  Title = "test",
+        //                  SupportedDecorations = NativeWindowDecorations.All,
+        //                  Type = NativeWindowType.Normal,
+        //                  IsMainApplicationWindow = true
+        //              };
+        //    var win = new WindowsWindow(this, def);
+        //    win.Create();
+        //    return win;
+        //}
 
         protected override void PlatformPumpMessages(CancellationToken cancellationToken)
         {

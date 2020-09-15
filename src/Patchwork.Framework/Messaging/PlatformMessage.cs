@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Patchwork.Framework.Messaging
 {
-    public struct PlatformMessage : IPlatformMessage
+    public struct PlatformMessage : IPlatformMessage<IMessageData>
     {
         private MessageIds m_id;
         private DateTime m_timeStamp;
@@ -23,6 +23,12 @@ namespace Patchwork.Framework.Messaging
         }
 
         /// <inheritdoc />
+        public IMessageData RawData
+        {
+            get { return m_data as IMessageData; }
+        }
+
+        /// <inheritdoc />
         public IMessageData Data
         {
             get { return m_data; }
@@ -36,44 +42,41 @@ namespace Patchwork.Framework.Messaging
         }
     }
 
-    //public struct PlatformMessage<TMessageData> : IPlatformMessage<TMessageData> where TMessageData : IMessageData
-    //{
-    //    private readonly MessageIds m_id;
+    public struct PlatformMessage<TMessageData> : IPlatformMessage<TMessageData> where TMessageData : IMessageData
+    {
+        private MessageIds m_id;
+        private DateTime m_timeStamp;
+        private TMessageData m_data;
 
-    //    /// <inheritdoc />
-    //    private readonly DateTime m_timeStamp;
+        /// <inheritdoc />
+        public MessageIds Id
+        {
+            get { return m_id; }
+        }
 
-    //    private TMessageData m_data;
+        /// <inheritdoc />
+        public DateTime TimeStamp
+        {
+            get { return m_timeStamp; }
+        }
 
-    //    /// <inheritdoc />
-    //    public MessageIds Id
-    //    {
-    //        get { return m_id; }
-    //    }
+        /// <inheritdoc />
+        public IMessageData RawData
+        {
+            get { return m_data as IMessageData; }
+        }
 
-    //    public PlatformMessage(MessageIds id, TMessageData data)
-    //    {
-    //        m_id = id;
-    //        m_data = data;
-    //        m_timeStamp = DateTime.Now.ToUniversalTime();
-    //    }
+        /// <inheritdoc />
+        public TMessageData Data
+        {
+            get { return m_data; }
+        }
 
-    //    /// <inheritdoc />
-    //    public DateTime TimeStamp
-    //    {
-    //        get { return m_timeStamp; }
-    //    }
-
-    //    /// <inheritdoc />
-    //    IMessageData IPlatformMessage.Data
-    //    {
-    //        get { return Data; }
-    //    }
-
-    //    /// <inheritdoc />
-    //    public TMessageData Data
-    //    {
-    //        get { return m_data; }
-    //    }
-    //}
+        public PlatformMessage(MessageIds id, TMessageData data = default(TMessageData))
+        {
+            m_id = id;
+            m_data = data;
+            m_timeStamp = DateTime.Now.ToUniversalTime();
+        }
+    }
 }

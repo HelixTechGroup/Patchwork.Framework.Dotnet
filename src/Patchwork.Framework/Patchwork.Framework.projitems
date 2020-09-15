@@ -9,6 +9,7 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\AttributeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WindowMessageDataExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDataCache.cs" />

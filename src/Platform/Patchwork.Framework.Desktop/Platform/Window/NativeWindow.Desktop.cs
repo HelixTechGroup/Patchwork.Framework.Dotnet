@@ -334,7 +334,7 @@ namespace Patchwork.Framework.Platform.Window
             switch (message.Id)
             {
                 case MessageIds.Window:
-                    var data = message.Data as WindowMessageData;
+                    var data = message.RawData as WindowMessageData;
                     if (!Equals(this, data?.Window)) 
                         return;
 

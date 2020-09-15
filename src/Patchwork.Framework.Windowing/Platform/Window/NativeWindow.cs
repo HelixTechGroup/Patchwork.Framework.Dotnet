@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using Patchwork.Framework.Messaging;
 using Shin.Framework;
@@ -282,7 +283,7 @@ namespace Patchwork.Framework.Platform.Window
         protected override void DisposeUnmanagedResources()
         {
             base.DisposeUnmanagedResources();
-            Core.ProcessMessage -= OnProcessMessage;
+            Core.Window.ProcessMessage += OnProcessMessage;
             DisposeUnmanagedResourcesShared();
         }
 
@@ -384,7 +385,7 @@ namespace Patchwork.Framework.Platform.Window
                 case MessageIds.Quit:
                     break;
                 case MessageIds.Window:
-                    var data = (WindowMessageData)message.Data;
+                    var data = (WindowMessageData)message.RawData;
                     if (!Equals(this, data.Window))
                         return;
 

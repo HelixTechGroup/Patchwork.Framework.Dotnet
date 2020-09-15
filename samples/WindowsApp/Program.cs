@@ -34,9 +34,7 @@ namespace WindowsApp
             Core.CreateConsole();
             Core.Initialize();
 
-            //Core.AddManager<RenderManager>();
-
-            Core.Application.CreateWindow().Show();
+            Core.Window.CreateWindow().Show();
             Core.Run(m_cts.Token);
 
             Core.Dispose();
@@ -61,7 +59,7 @@ namespace WindowsApp
             switch (message.Id)
             {
                 case MessageIds.Window:
-                    var data = message.Data as WindowMessageData;
+                    var data = message.RawData as WindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
                     Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
                     break;

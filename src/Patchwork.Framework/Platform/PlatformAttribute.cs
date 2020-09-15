@@ -12,15 +12,18 @@ namespace Patchwork.Framework.Platform
         public string Name { get; private set; }
         public int Priority { get; private set; }
         public OperatingSystemType RequiredOS { get; private set; }
+        public Type ManagerType { get; private set; }
         #endregion
 
         public PlatformAttribute(OperatingSystemType requiredOperatingSystem,
                                          int priority,
-                                         string name)
+                                         string name,
+                                         Type managerType = null)
         {
             Name = name;
             RequiredOS = requiredOperatingSystem;
             Priority = priority;
+            ManagerType = managerType;
         }
     }
 }

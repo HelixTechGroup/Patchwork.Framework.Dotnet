@@ -9,12 +9,15 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core.Windowing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IWindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyWindowingAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplicationWindowing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowManager..cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.cs" />

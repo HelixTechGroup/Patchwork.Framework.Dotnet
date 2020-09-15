@@ -23,7 +23,7 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework
 {
-    public partial class RenderManager : PlatformManager<AssemblyRenderingAttribute>
+    public abstract class RenderManager : PlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IWindowMessageData>>
     {
         protected IList<INativeRenderDevice> m_devices;
 
@@ -56,8 +56,6 @@ namespace Patchwork.Framework
         /// <inheritdoc />
         protected override void CreateManager(params AssemblyRenderingAttribute[] managers)
         {
-            base.CreateManager(managers);
-
             m_devices = new ConcurrentList<INativeRenderDevice>();
             foreach (var m in managers)
             {
@@ -69,16 +67,13 @@ namespace Patchwork.Framework
             }
         }
 
-        protected override void OnProcessMessage(IPlatformMessage message) 
+        protected override void OnProcessMessage(IPlatformMessage<IWindowMessageData> message)
         {
-            switch (message.Id)
+            var data = message.Data;
+            switch (data.MessageId)
             {
-                case MessageIds.Rendering:
-                    Core.Logger.LogDebug("Found Rendering Messages.");
-                    break;
+                
             }
-
-            base.OnProcessMessage(message);
         }
     }
 }

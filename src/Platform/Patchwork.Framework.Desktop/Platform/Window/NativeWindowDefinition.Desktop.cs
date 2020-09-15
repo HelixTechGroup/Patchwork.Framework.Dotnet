@@ -48,6 +48,24 @@ namespace Patchwork.Framework.Platform.Window
             get { return m_initialMode; }
             set { m_initialMode = value; }
         }
+
+        public static NativeWindowDefinition Default
+        {
+            get
+            {
+                return new NativeWindowDefinition
+                          {
+                              AcceptsInput = true,
+                              ActivationPolicy = NativeWindowActivationPolicy.FirstShown,
+                              DesiredSize = new Size(800, 600),
+                              IsRegularWindow = true,
+                              Title = "test",
+                              SupportedDecorations = NativeWindowDecorations.All,
+                              Type = NativeWindowType.Normal,
+                              IsMainApplicationWindow = true
+                          };
+            }
+        }
         #endregion
     }
 }

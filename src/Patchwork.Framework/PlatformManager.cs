@@ -17,15 +17,18 @@ using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
 using Shin.Framework.Logging.Loggers;
 using Shin.Framework.Logging.Native;
+using Shin.Framework.Messaging;
 using RuntimeInformation = Patchwork.Framework.Environment.RuntimeInformation;
 using SysEnv = System.Environment;
 #endregion
 
 namespace Patchwork.Framework
 {
-    public partial class PlatformManager<TManager> : Initializable, IPlatformManager<TManager> where TManager : PlatformAttribute
+    public abstract class PlatformManager<TAssembly, TMessage> : Initializable, IPlatformManager<TAssembly, TMessage> 
+        where TAssembly : PlatformAttribute
+        where TMessage : IPlatformMessage
     {
-        public event ProcessMessageHandler ProcessMessage;
+        public event ProcessMessageHandler<TMessage> ProcessMessage;
 
         public event Action Startup;
 
@@ -39,25 +42,36 @@ namespace Patchwork.Framework
         protected Task m_runTask;
         protected bool m_isRunning;
         protected IList<Task> m_tasks;
+        protected IPlatformMessagePump m_pump;
+        protected static IPlatformManager<TAssembly, TMessage> m_instnace;
         #endregion
 
         #region Properties
+        public static IPlatformManager<TAssembly, TMessage> Instance
+        {
+            get { return m_instnace; }
+        }
+
         public bool IsRunning { get { return m_isRunning; } }
 
-        public IPlatformMessagePump MessagePump { get; private set; }
+        public IPlatformMessagePump MessagePump { get { return m_pump; } }
         #endregion
 
         #region Methods
         /// <inheritdoc />
         protected override void InitializeResources()
         { 
+            base.InitializeResources();
+
             if (m_isInitialized)
                 return;
 
             m_tasks = new ConcurrentList<Task>();
-            //m_container.CreateChildContainer();            
-            MessagePump.Initialize();
+            //m_container.CreateChildContainer();  
+            m_pump = new PlatformMessagePump<TMessage>(Core.Logger);  
+            m_pump.Initialize();
             ProcessMessage += OnProcessMessage;
+            Core.ProcessMessage += OnProcessCoreMessage;
             Startup?.Invoke();
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);   
@@ -67,12 +81,15 @@ namespace Patchwork.Framework
         protected override void DisposeManagedResources()
         {
             Wait();
+            ProcessMessage -= OnProcessMessage;
+            Core.ProcessMessage -= OnProcessCoreMessage;
             Shutdown?.Invoke();
             m_runTask?.ConfigureAwait(false);
             m_runTask?.Dispose();
-            MessagePump.Dispose();
+            m_pump.Dispose();
             //Application.CloseConsole();
             //ProcessMessage.Dispose();
+            base.DisposeManagedResources();
         }
 
         public void Pump(CancellationToken token)
@@ -88,9 +105,9 @@ namespace Patchwork.Framework
             if (token.IsCancellationRequested)
                 return;
 
-            while (MessagePump.Poll(out var e, token))
+            while (m_pump.Poll(out var e, token))
             {
-                var message = e;
+                var message = (TMessage)e;
                 m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
             }
 
@@ -137,9 +154,9 @@ namespace Patchwork.Framework
             //Core.Logger.LogDebug("Pumping Manager Messages.");
             while (!token.IsCancellationRequested)
             {
-                while (MessagePump.Poll(out var e, token))
+                while (m_pump.Poll(out var e, token))
                 {
-                    var message = e;
+                    var message = (TMessage)e;
                     m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith((t) => m_tasks.Remove(t)));
                 }
 
@@ -161,15 +178,16 @@ namespace Patchwork.Framework
             m_runTask.Start();
         }
 
+        /// <inheritdoc />
         public void Create()
         {
             var os = Core.Environment.OperatingSystem;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                                      .Where(a => Attribute.IsDefined(a, typeof(TManager))).ToArray();
+                                      .Where(a => Attribute.IsDefined(a, typeof(TAssembly))).ToArray();
 
             var platform = assemblies
-                          .Where(a => Attribute.IsDefined(a, typeof(TManager)))
-                          .GetAssemblyAttribute<TManager>()
+                          .Where(a => Attribute.IsDefined(a, typeof(TAssembly)))
+                          .GetAssemblyAttribute<TAssembly>()
                           .Where(attribute => attribute.RequiredOS == os.Type)
                           .OrderBy(attribute => attribute.Priority);
 
@@ -177,11 +195,9 @@ namespace Patchwork.Framework
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
             CreateManager(platform.ToArray());
-            MessagePump = new PlatformMessagePump(Core.Logger);
-
         }
 
-        protected virtual void OnProcessMessage(IPlatformMessage message) 
+        protected virtual void OnProcessMessage(TMessage message) 
         {
             //Core.Logger.LogDebug("Found Messages.");
             switch (message.Id)
@@ -191,7 +207,72 @@ namespace Patchwork.Framework
             }
         }
 
-        protected virtual void CreateManager(params TManager[] managers) { }
-        #endregion
+        protected virtual void OnProcessCoreMessage(IPlatformMessage message)
+        {
+            if (!m_isInitialized)
+                return;
+
+            switch (message.Id)
+            {
+                case MessageIds.Quit:
+                    m_pump.Push(message);
+                    break;
+            }
+        }
+
+        protected abstract void CreateManager(params TAssembly[] managers);
+
+        public static void Executar(string namespaceClass, string metodo, List<Parameter> parametros = null)
+        {
+            Type type = Type.GetType(namespaceClass);
+            MethodInfo methodInfo = type.GetMethod(metodo);
+            Object objectToInvoke;
+            if (type.IsAbstract && type.IsSealed)
+            {
+                objectToInvoke = type;
+            }
+            else
+            {
+                objectToInvoke = Activator.CreateInstance(type);
+            }
+
+            ParameterInfo[] parametersFromMethod = methodInfo.GetParameters();
+
+
+
+            if (parametros != null || (methodInfo != null && parametersFromMethod != null && parametersFromMethod.Length > 0))
+            {
+                List<object> myParams = new List<object>();
+                foreach (ParameterInfo parameterFound in parametersFromMethod)
+                {
+                    Parameter parametroEspecificado = parametros.Where(p => p.name == parameterFound.Name).FirstOrDefault();
+                    if (parametroEspecificado != null)
+                    {
+                        myParams.Add(parametroEspecificado.value);
+                    }
+                    else
+                    {
+                        myParams.Add(null);
+                    }
+
+                }
+
+                methodInfo.Invoke(objectToInvoke, myParams.ToArray());
+
+            }
+            else
+            {
+                methodInfo.Invoke(objectToInvoke, null);
+            }
+        }
+
+        public class Parameter
+        {
+            public string type { get; set; }
+            public string name { get; set; }
+            public object value { get; set; }
+
+        }
     }
+        #endregion
 }
