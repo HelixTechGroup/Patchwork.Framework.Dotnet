@@ -15,11 +15,11 @@ using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed partial class WindowsWindow : NativeWindow, IWindowsProcess, IEquatable<WindowsWindow>
-    {        
+    public sealed partial class WinWindow : NativeWindow, IWindowsProcess, IEquatable<WinWindow>
+    {
         private readonly string m_windowClass;
 
-        public WindowsWindow(INativeObject parent, NativeWindowDefinition definition) : base(parent, definition)
+        public WinWindow(INativeObject parent, NativeWindowDefinition definition) : base(parent, definition)
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
             m_wndProc = WindowProc;
@@ -57,7 +57,7 @@ namespace Patchwork.Framework.Platform
             //                            GetSystemMetrics(SystemMetrics.SM_CXMAXTRACK),
             //                            GetSystemMetrics(SystemMetrics.SM_CYMAXTRACK))
             //                 - r.BorderThickness) / (float)r.DpiScaling);
- 
+
             return new Size(
                             GetSystemMetrics(SystemMetrics.SM_CXMAXTRACK),
                             GetSystemMetrics(SystemMetrics.SM_CYMAXTRACK));
@@ -99,7 +99,7 @@ namespace Patchwork.Framework.Platform
         {
 
             var size = GetWindowTextLength(m_handle.Pointer);
-            if (size <= 0) 
+            if (size <= 0)
                 return string.Empty;
             var len = size + 1;
             var sb = new StringBuilder(len);
@@ -118,7 +118,8 @@ namespace Patchwork.Framework.Platform
             if (m_isFirstTimeVisible)
             {
                 m_isFirstTimeVisible = false;
-                switch (m_initialState) {
+                switch (m_initialState)
+                {
                     case NativeWindowState.Minimized:
                         showWindowCommand = shouldActivate ? ShowWindowCommands.SW_MINIMIZE : ShowWindowCommands.SW_SHOWMINNOACTIVE;
                         break;
@@ -174,10 +175,10 @@ namespace Patchwork.Framework.Platform
 
                 // Adjust according to window styles
                 AdjustWindowRectEx(
-                                   ref rect,
-                                   style,
-                                   false,
-                                   styleEx);
+                                    ref rect,
+                                    style,
+                                    false,
+                                    styleEx);
 
                 windowWidth = rect.Right - rect.Left;
                 windowHeight = rect.Bottom - rect.Top;
@@ -188,33 +189,33 @@ namespace Patchwork.Framework.Platform
             var hInstance = GetModuleHandle(null);
 
             var wndClassEx = new WindowClassEx
-                             {
-                                 Size = (uint)Marshal.SizeOf<WindowClassEx>(),
-                                 Styles = WindowClassStyles.CS_OWNDC | WindowClassStyles.CS_HREDRAW |
-                                          WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
-                                 WindowProc = m_wndProc,
-                                 InstanceHandle = hInstance,
-                                 ClassName = m_windowClass,
-                                 BackgroundBrushHandle = (IntPtr)SystemColor.COLOR_WINDOW
-                             };
+            {
+                Size = (uint)Marshal.SizeOf<WindowClassEx>(),
+                Styles = WindowClassStyles.CS_OWNDC | WindowClassStyles.CS_HREDRAW |
+                                            WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
+                WindowProc = m_wndProc,
+                InstanceHandle = hInstance,
+                ClassName = m_windowClass,
+                BackgroundBrushHandle = (IntPtr)SystemColor.COLOR_WINDOW
+            };
 
             var atom = RegisterClassEx(ref wndClassEx);
             if (atom == 0)
                 throw new Win32Exception();
 
             var hwnd = CreateWindowEx(
-                                      styleEx,
-                                      m_windowClass,
-                                      m_cache.Title,
-                                      style,
-                                      x,
-                                      y,
-                                      windowWidth,
-                                      windowHeight,
-                                      m_parent?.Handle.Pointer ?? IntPtr.Zero,
-                                      IntPtr.Zero,
-                                      hInstance,
-                                      IntPtr.Zero);
+                                        styleEx,
+                                        m_windowClass,
+                                        m_cache.Title,
+                                        style,
+                                        x,
+                                        y,
+                                        windowWidth,
+                                        windowHeight,
+                                        m_parent?.Handle.Pointer ?? IntPtr.Zero,
+                                        IntPtr.Zero,
+                                        hInstance,
+                                        IntPtr.Zero);
 
             if (hwnd == IntPtr.Zero)
             {
@@ -265,7 +266,7 @@ namespace Patchwork.Framework.Platform
         {
             return IsWindowVisible(m_handle.Pointer);
         }
-        #endregion        
+        #endregion
 
         /// <inheritdoc />
         protected override Point PlatformGetPosition()
@@ -311,19 +312,19 @@ namespace Patchwork.Framework.Platform
             }
 
             SetWindowPos(
-                         m_handle.Pointer,
-                         HwndZOrder.HWND_TOP,
-                         x,
-                         y,
-                         0,
-                         0,
-                         WindowPositionFlags.SWP_NOSIZE | WindowPositionFlags.SWP_NOACTIVATE | WindowPositionFlags.SWP_NOZORDER);
+                            m_handle.Pointer,
+                            HwndZOrder.HWND_TOP,
+                            x,
+                            y,
+                            0,
+                            0,
+                            WindowPositionFlags.SWP_NOSIZE | WindowPositionFlags.SWP_NOACTIVATE | WindowPositionFlags.SWP_NOZORDER);
         }
 
         /// <inheritdoc />
         protected override void PlatformSetWindowSize(Size size)
         {
-            
+
         }
 
         /// <inheritdoc />
@@ -372,12 +373,12 @@ namespace Patchwork.Framework.Platform
         {
             var monitor = MonitorFromWindow(m_handle.Pointer, MonitorFlag.MONITOR_DEFAULTTONEAREST);
 
-            if (monitor == IntPtr.Zero) 
+            if (monitor == IntPtr.Zero)
                 return;
             var monitorInfo = new MonitorInfo() { Size = (uint)Marshal.SizeOf<MonitorInfo>() };
             GetMonitorInfo(monitor, ref monitorInfo);
 
-            if (!GetMonitorInfo(monitor, ref monitorInfo)) 
+            if (!GetMonitorInfo(monitor, ref monitorInfo))
                 return;
 
             var x = monitorInfo.WorkRect.Left;
@@ -468,7 +469,7 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         protected override INativeWindow PlatformCreateChildWindow(NativeWindowDefinition definition)
         {
-            return new WindowsWindow(this, definition);
+            return new WinWindow(this, definition);
         }
 
         /// <inheritdoc />
@@ -485,7 +486,7 @@ namespace Patchwork.Framework.Platform
 
         /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
-        {            
+        {
             base.DisposeUnmanagedResources();
             UnregisterClass(m_windowClass, m_parent.Handle.Pointer);
         }
@@ -498,7 +499,7 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        public bool Equals(WindowsWindow other)
+        public bool Equals(WinWindow other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -510,8 +511,8 @@ namespace Patchwork.Framework.Platform
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(WindowsWindow)) return false;
-            return Equals((WindowsWindow)obj);
+            if (obj.GetType() != typeof(WinWindow)) return false;
+            return Equals((WinWindow)obj);
         }
 
         /// <inheritdoc />
@@ -524,12 +525,12 @@ namespace Patchwork.Framework.Platform
             return hashCode.ToHashCode();
         }
 
-        public static bool operator ==(WindowsWindow left, WindowsWindow right)
+        public static bool operator ==(WinWindow left, WinWindow right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(WindowsWindow left, WindowsWindow right)
+        public static bool operator !=(WinWindow left, WinWindow right)
         {
             return !Equals(left, right);
         }

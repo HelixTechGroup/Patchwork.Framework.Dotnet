@@ -23,7 +23,7 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework
 {
-    public abstract class RenderManager : PlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IWindowMessageData>>
+    public abstract class PlatformRenderManager : PlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IWindowMessageData>>
     {
         protected IList<INativeRenderDevice> m_devices;
 

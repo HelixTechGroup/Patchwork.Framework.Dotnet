@@ -10,18 +10,15 @@ namespace Patchwork.Framework.Platform
     {
         public Type RenderDeviceType { get; }
 
-        public Type RenderAdapterType { get; }
-
         /// <inheritdoc />
         public AssemblyRenderingAttribute(OperatingSystemType requiredOperatingSystem, 
                                           int priority, 
                                           string name,
-                                          Type renderDevice = null,
-                                          Type renderAdapater = null) 
-            : base(requiredOperatingSystem, priority, name)
+                                          Type managerType = null,
+                                          Type renderDevice = null) 
+            : base(requiredOperatingSystem, priority, name, managerType)
         {
             RenderDeviceType = renderDevice;
-            RenderAdapterType = renderAdapater;
         }
     }
 }

@@ -4,15 +4,15 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public partial interface INativeWindowRenderer : IInitialize, IDispose
+    public partial interface INativeRenderer : IInitialize, IDispose
     {
         event EventHandler Painting;
         event EventHandler<Rectangle> Paint;
         event EventHandler Painted;
 
         INativeScreen Screen { get; }
+        Size Size { get; }
         Size VirutalSize { get; }
-        float AspectRatio { get; }
 
         bool Invalidate();
         bool Validate();

@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Core.Windows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\OperatingSystemVersionDetection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\WindowsOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\WinOperatingSystemInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Kernel32\DesiredAccess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\HResult.cs" />
@@ -146,13 +146,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\User32\WindowViewRegionFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsDesktopWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsProcessHook.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsWindow.WindowProc.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsWindowManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.WindowProc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindowManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Threading\WindowsPlatformUiDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WindowsRegistry.cs" />

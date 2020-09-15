@@ -14,10 +14,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RenderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformRenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformRenderingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapterConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderer.cs" />
   </ItemGroup>
 </Project>

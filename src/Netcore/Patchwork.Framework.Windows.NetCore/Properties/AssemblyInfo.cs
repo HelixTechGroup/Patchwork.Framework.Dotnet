@@ -12,12 +12,12 @@ using Patchwork.Framework.Platform;
 [assembly: AssemblyPlatform(OperatingSystemType.Windows, 
                             1, 
                             "Windows", 
-                            typeof(WindowsApplication), 
-                            typeof(WindowsThreadDispatcher), 
-                            typeof(WindowsOperatingSystemInformation))]
+                            typeof(WinApplication), 
+                            typeof(WinThreadDispatcher), 
+                            typeof(WinOperatingSystemInformation))]
 [assembly: AssemblyWindowing(OperatingSystemType.Windows,
                              1,
-                             "Windows", typeof(WindowsWindowManager))]
+                             "Windows", typeof(WinWindowManager))]
 [assembly: AssemblyRendering(OperatingSystemType.Windows,
                             1,
                             "Windows")]

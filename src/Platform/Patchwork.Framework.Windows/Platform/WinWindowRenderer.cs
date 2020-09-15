@@ -9,7 +9,7 @@ using static Patchwork.Framework.Platform.Interop.User32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public class WindowsDesktopWindowRenderer : WindowsProcessHook, INativeWindowRenderer
+    public class WinWindowRenderer : WindowsProcessHook, INativeWindowRenderer
     {
         #region Events
         /// <inheritdoc />
@@ -32,6 +32,7 @@ namespace Patchwork.Framework.Platform
         private NativeWindowDecorations m_supportedDecorations;
         private int m_titlebarSize;
         private double m_opacity;
+        private Size m_size;
         #endregion
 
         #region Properties
@@ -48,6 +49,12 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
+        public Size Size
+        {
+            get { return m_size; }
+        }
+
+        /// <inheritdoc />
         public Size VirutalSize
         {
             get { return m_virutalSize; }
@@ -60,7 +67,7 @@ namespace Patchwork.Framework.Platform
         }
         #endregion
 
-        public WindowsDesktopWindowRenderer(IWindowsProcess window, INativeRenderAdapter renderAdapter) : base(window, WindowHookType.WH_GETMESSAGE)
+        public WinWindowRenderer(IWindowsProcess window, INativeRenderAdapter renderAdapter) : base(window, WindowHookType.WH_GETMESSAGE)
         {
             m_adapter = renderAdapter;
         }

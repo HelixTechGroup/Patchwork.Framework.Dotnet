@@ -17,7 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyWindowingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplicationWindowing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowManager..cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\PlatformWindowManager..cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.cs" />

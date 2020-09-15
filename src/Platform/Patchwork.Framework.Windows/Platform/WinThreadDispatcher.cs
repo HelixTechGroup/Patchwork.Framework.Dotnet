@@ -9,7 +9,7 @@ using static Patchwork.Framework.Platform.Interop.User32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public class WindowsThreadDispatcher : INativeThreadDispatcher
+    public sealed class WinThreadDispatcher : INativeThreadDispatcher
     {
         #region Events
         public event Action<NativeThreadDispatcherPriority?> Signaled;
@@ -33,7 +33,7 @@ namespace Patchwork.Framework.Platform
         }
         #endregion
 
-        public WindowsThreadDispatcher()
+        public WinThreadDispatcher()
         {
         }
 
@@ -74,4 +74,5 @@ namespace Patchwork.Framework.Platform
         }
         #endregion
     }
+
 }

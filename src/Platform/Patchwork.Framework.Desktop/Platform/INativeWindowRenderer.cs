@@ -4,7 +4,7 @@ using Shin.Framework.ComponentModel;
 
 namespace Patchwork.Framework.Platform
 {
-    public partial interface INativeWindowRenderer
+    public partial interface INativeWindowRenderer : INativeRenderer
     {
         event EventHandler<PropertyChangingEventArgs<NativeWindowTransparency>> TransparencySupportChanging;
         event EventHandler<PropertyChangedEventArgs<NativeWindowTransparency>> TransparencySupportChanged;
@@ -24,6 +24,7 @@ namespace Patchwork.Framework.Platform
         //Thickness BorderThickness { get; }
         int TitlebarSize { get; }
         double Opacity { get; set; }
+        float AspectRatio { get; }
 
         void EnableWindowSystemDecorations();
         void DisableWindowSystemDecorations();

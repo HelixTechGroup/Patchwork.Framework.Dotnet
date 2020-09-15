@@ -7,14 +7,14 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed class WindowsWindowManager : WindowManager
+    public sealed class WinWindowManager : PlatformWindowManager
     {
         /// <inheritdoc />
         protected override INativeWindow PlatformCreateWindow(NativeWindowDefinition definition)
         {
             Throw.If(!Core.Application.IsInitialized).InvalidOperationException();
 
-            var win = new WindowsWindow(Core.Application, definition);
+            var win = new WinWindow(Core.Application, definition);
             win.Create();
             return win;
         }

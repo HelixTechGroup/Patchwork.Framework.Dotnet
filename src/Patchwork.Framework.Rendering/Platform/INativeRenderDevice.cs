@@ -8,10 +8,11 @@ namespace Patchwork.Framework.Platform
     public interface INativeRenderDevice : IInitialize, IDispose
     {
         #region Methods
+        TAdapter GetAdapter<TAdapter>() where TAdapter : INativeRenderAdapter;
+        TRenderer GetRenderer<TRenderer>() where TRenderer : INativeRenderer;
         #endregion
     }
 
-    public interface INativeRenderDevice<TAdapter, TRenderer> : INativeRenderAdapter
-        where TAdapter : INativeRenderAdapter
-        where TRenderer : INativeWindowRenderer { }
+    public interface INativeRenderDevice<TAdapter> : INativeRenderAdapter
+        where TAdapter : INativeRenderAdapter { }
 }

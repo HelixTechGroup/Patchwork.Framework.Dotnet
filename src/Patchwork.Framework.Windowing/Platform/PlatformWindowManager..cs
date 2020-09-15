@@ -10,7 +10,7 @@ using Shin.Framework.Extensions;
 
 namespace Patchwork.Framework.Platform
 {
-    public abstract class WindowManager : 
+    public abstract class PlatformWindowManager : 
         PlatformManager<AssemblyWindowingAttribute, IPlatformMessage<IWindowMessageData>>,
         IWindowManager
     {

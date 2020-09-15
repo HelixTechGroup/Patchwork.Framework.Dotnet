@@ -9,7 +9,7 @@ using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed partial class WindowsWindow
+    public sealed partial class WinWindow
     {
         private readonly WindowProc m_wndProc;
 
@@ -22,13 +22,13 @@ namespace Patchwork.Framework.Platform
         private IntPtr WindowProc(IntPtr hwnd, WindowsMessageIds msg, IntPtr wParam, IntPtr lParam)
         {
             var wMsg = new WindowsMessage
-                       {
-                           Id = msg,
-                           WParam = wParam,
-                           LParam = lParam,
-                           Result = IntPtr.Zero,
-                           Hwnd = hwnd
-                       };
+            {
+                Id = msg,
+                WParam = wParam,
+                LParam = lParam,
+                Result = IntPtr.Zero,
+                Hwnd = hwnd
+            };
 
             return OnMessage(wMsg);
         }
@@ -41,9 +41,9 @@ namespace Patchwork.Framework.Platform
             {
                 case WindowsMessageIds.ACTIVATEAPP:
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
-                                                                      ? WindowMessageIds.Activating
-                                                                      : WindowMessageIds.Deactivating,
-                                                                  this);
+                                                                        ? WindowMessageIds.Activating
+                                                                        : WindowMessageIds.Deactivating,
+                                                                    this);
                     break;
                 case WindowsMessageIds.KILLFOCUS:
                     Core.MessagePump.PushWindowUnfocusedMessage(this);
@@ -53,9 +53,9 @@ namespace Patchwork.Framework.Platform
                     break;
                 case WindowsMessageIds.SHOWWINDOW:
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
-                                                                      ? WindowMessageIds.Shown
-                                                                      : WindowMessageIds.Hidden,
-                                                                  this);
+                                                                        ? WindowMessageIds.Shown
+                                                                        : WindowMessageIds.Hidden,
+                                                                    this);
                     break;
                 case WindowsMessageIds.SIZE:
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
@@ -89,9 +89,9 @@ namespace Patchwork.Framework.Platform
                     break;
                 case WindowsMessageIds.ENABLE:
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
-                                                                      ? WindowMessageIds.Enabled
-                                                                      : WindowMessageIds.Disabled,
-                                                                  this);
+                                                                        ? WindowMessageIds.Enabled
+                                                                        : WindowMessageIds.Disabled,
+                                                                    this);
                     break;
                 case WindowsMessageIds.QUIT:
                     break;

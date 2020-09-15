@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativePopupWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeApplication.Desktop.cs" />
