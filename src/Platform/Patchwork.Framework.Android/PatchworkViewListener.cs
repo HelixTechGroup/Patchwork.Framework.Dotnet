@@ -24,10 +24,10 @@ namespace Patchwork.Framework.Platform
         {
             #region Members
             private readonly View m_view;
-            private readonly INativeWindow m_window;
+            private readonly INWindow m_window;
             #endregion
 
-            public PatchworkViewListener(INativeWindow window, View view)
+            public PatchworkViewListener(INWindow window, View view)
             {
                 m_view = view;
                 m_window = window;

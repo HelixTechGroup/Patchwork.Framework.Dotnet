@@ -9,4 +9,4 @@ using Patchwork.Framework.Platform;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-//[assembly: AssemblyPlatform(OperatingSystemType.Windows, 1, "Windows", typeof(WindowsNativeApplication), typeof(WindowsNativeThreadDispatcher))]
+//[assembly: AssemblyPlatform(OperatingSystemType.Windows, 1, "Windows", typeof(WindowsNApplication), typeof(WindowsNThreadDispatcher))]

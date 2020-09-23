@@ -9,15 +9,27 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IRenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderDevice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformRenderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INRenderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INRenderFence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NRenderAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Manager\NRenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformRenderingAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderAdapterConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INRenderAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INRenderAdapterConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\ResourceCreatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\ResourceDestroyedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\IRenderCommandList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Rendering\" />
   </ItemGroup>
 </Project>

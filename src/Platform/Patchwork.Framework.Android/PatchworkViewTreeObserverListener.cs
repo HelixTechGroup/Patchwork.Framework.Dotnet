@@ -23,9 +23,9 @@ namespace Patchwork.Framework.Platform
                                                ViewTreeObserver.IOnPreDrawListener
         {
             private readonly View m_view;
-            private readonly INativeWindow m_window;
+            private readonly INWindow m_window;
 
-            public PatchworkViewTreeObserverListener(INativeWindow window, View view)
+            public PatchworkViewTreeObserverListener(INWindow window, View view)
             {
                 m_view = view;
                 m_window = window;

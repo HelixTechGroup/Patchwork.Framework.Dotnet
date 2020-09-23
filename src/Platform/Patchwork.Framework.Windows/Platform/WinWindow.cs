@@ -15,11 +15,11 @@ using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed partial class WinWindow : NativeWindow, IWindowsProcess, IEquatable<WinWindow>
+    public sealed partial class WinWindow : NWindow, IWindowsProcess, IEquatable<WinWindow>
     {
         private readonly string m_windowClass;
 
-        public WinWindow(INativeObject parent, NativeWindowDefinition definition) : base(parent, definition)
+        public WinWindow(INObject parent, NWindowDefinition definition) : base(parent, definition)
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
             m_wndProc = WindowProc;
@@ -46,13 +46,13 @@ namespace Patchwork.Framework.Platform
         {
             GetClientRect(m_handle.Pointer, out var rect);
             return new Size(rect.Right, rect.Bottom);
-            //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INativeDesktopWindowRenderer)m_renderer).DpiScaling);
+            //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INDesktopWindowRenderer)m_renderer).DpiScaling);
         }
 
         /// <inheritdoc />
         protected override Size PlatformGetMaxClientSize()
         {
-            //var r = m_renderer as INativeDesktopRenderer;
+            //var r = m_renderer as INDesktopRenderer;
             //return Size.Round((new Size(
             //                            GetSystemMetrics(SystemMetrics.SM_CXMAXTRACK),
             //                            GetSystemMetrics(SystemMetrics.SM_CYMAXTRACK))
@@ -112,7 +112,7 @@ namespace Patchwork.Framework.Platform
         {
             var shouldActivate = false;
             if (m_cache.Definition.AcceptsInput)
-                shouldActivate = m_cache.Definition.ActivationPolicy == NativeWindowActivationPolicy.Always || m_isFirstTimeVisible && m_cache.Definition.ActivationPolicy == NativeWindowActivationPolicy.FirstShown;
+                shouldActivate = m_cache.Definition.ActivationPolicy == NWindowActivationPolicy.Always || m_isFirstTimeVisible && m_cache.Definition.ActivationPolicy == NWindowActivationPolicy.FirstShown;
 
             var showWindowCommand = shouldActivate ? ShowWindowCommands.SW_SHOW : ShowWindowCommands.SW_SHOWNOACTIVATE;
             if (m_isFirstTimeVisible)
@@ -120,10 +120,10 @@ namespace Patchwork.Framework.Platform
                 m_isFirstTimeVisible = false;
                 switch (m_initialState)
                 {
-                    case NativeWindowState.Minimized:
+                    case NWindowState.Minimized:
                         showWindowCommand = shouldActivate ? ShowWindowCommands.SW_MINIMIZE : ShowWindowCommands.SW_SHOWMINNOACTIVE;
                         break;
-                    case NativeWindowState.Maximized:
+                    case NWindowState.Maximized:
                         showWindowCommand = shouldActivate ? ShowWindowCommands.SW_SHOWMAXIMIZED : ShowWindowCommands.SW_MAXIMIZE;
                         break;
                 }
@@ -158,7 +158,7 @@ namespace Patchwork.Framework.Platform
                 y = (screenHeight - m_cache.Size.Height) / 2;
             }
 
-            if (m_cache.Definition.SupportedDecorations.HasFlag(NativeWindowDecorations.CloseButton))
+            if (m_cache.Definition.SupportedDecorations.HasFlag(NWindowDecorations.CloseButton))
                 style = WindowStyles.WS_OVERLAPPEDWINDOW;
             else
                 style = WindowStyles.WS_POPUP | WindowStyles.WS_BORDER | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU;
@@ -224,11 +224,11 @@ namespace Patchwork.Framework.Platform
                 throw new Win32Exception((int)error);
             }
 
-            m_handle = new NativeHandle(hwnd, "");
+            m_handle = new NHandle(hwnd, "");
             /// = windowWidth;
             //m_height = windowHeight;
             //m_renderer = new WindowsDesktopWindowRenderer(this, null);            
-            //m_input = new NativeInput(this);
+            //m_input = new NInput(this);
         }
 
         /// <inheritdoc />
@@ -280,7 +280,7 @@ namespace Patchwork.Framework.Platform
         {
             GetWindowRect(m_handle.Pointer, out var rect);
             return new Size(rect.Right, rect.Bottom);
-            //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INativeDesktopWindowRenderer)m_renderer).DpiScaling);
+            //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INDesktopWindowRenderer)m_renderer).DpiScaling);
         }
 
         /// <inheritdoc />
@@ -296,7 +296,7 @@ namespace Patchwork.Framework.Platform
         {
             var x = position.X;
             var y = position.Y;
-            //m_renderer.SupportedDecorations.HasFlag(NativeWindowDecorations.Border)
+            //m_renderer.SupportedDecorations.HasFlag(NWindowDecorations.Border)
             if (true)
             {
                 var windowStyle = (WindowStyles)GetWindowLongPtr(m_handle.Pointer, WindowLongFlags.GWL_STYLE);
@@ -390,17 +390,17 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        protected override NativeWindowState PlatformGetState()
+        protected override NWindowState PlatformGetState()
         {
             GetWindowPlacement(m_handle.Pointer, out var placement);
             switch (placement.ShowCmd)
             {
                 case ShowWindowCommands.SW_MAXIMIZE:
-                    return NativeWindowState.Maximized;
+                    return NWindowState.Maximized;
                 case ShowWindowCommands.SW_MINIMIZE:
-                    return NativeWindowState.Minimized;
+                    return NWindowState.Minimized;
                 default:
-                    return NativeWindowState.Normal;
+                    return NWindowState.Normal;
             }
         }
 
@@ -467,21 +467,21 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        protected override INativeWindow PlatformCreateChildWindow(NativeWindowDefinition definition)
+        protected override INWindow PlatformCreateChildWindow(NWindowDefinition definition)
         {
             return new WinWindow(this, definition);
         }
 
         /// <inheritdoc />
-        protected override INativePopupWindow PlatformCreatePopupWindow(NativeWindowDefinition definition)
+        protected override INPopupWindow PlatformCreatePopupWindow(NWindowDefinition definition)
         {
             return null;
         }
 
         /// <inheritdoc />
-        protected override NativeWindowMode PlatformGetMode()
+        protected override NWindowMode PlatformGetMode()
         {
-            return NativeWindowMode.Windowed;
+            return NWindowMode.Windowed;
         }
 
         /// <inheritdoc />

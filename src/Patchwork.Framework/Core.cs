@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -10,12 +9,13 @@ using System.Threading.Tasks;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
+using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
+using Shin.Framework.IoC.DependencyInjection;
 using Shin.Framework.Logging.Native;
 using SysEnv = System.Environment;
-using TypeExtensions = Shin.Framework.Extensions.TypeExtensions;
 #endregion
 
 namespace Patchwork.Framework
@@ -34,37 +34,38 @@ namespace Patchwork.Framework
         #endregion
 
         #region Members
-        private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
-
         //private static PlatformManager m_platform;
         //private static CancellationTokenSource m_tokenSource;
         //private static  CancellationToken m_token;
-        //private static IoCContainer m_container;
+        //private static IContainer m_container;
+        //private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
         private static Task m_runTask;
         private static IList<Task> m_tasks;
         #endregion
 
         #region Properties
-        public static INativeApplication Application { get; private set; }
+        public static INApplication Application { get; private set; }
 
-        public static INativeThreadDispatcher Dispatcher { get; private set; }
+        public static INThreadDispatcher Dispatcher { get; private set; }
 
-        public static IApplicationEnvironment Environment { get; private set; }
+        public static IPlatformEnvironment Environment { get; private set; }
+
+        public static IContainer IoCContainer { get; private set; }
+
+        public static bool IsCreated { get; private set; }
+
         public static bool IsInitialized { get; private set; }
 
         public static bool IsRunning { get; private set; }
 
         public static ILogger Logger { get; private set; }
 
-        public static CoreMessagePump MessagePump { get; private set; }
-
         public static IEnumerable<IPlatformManager> Managers
         {
-            get
-            {
-                return m_managers.Values.Where(lazy => lazy.IsValueCreated).Select(lazy => lazy.Value);
-            }
+            get { return IoCContainer.ResolveAll<IPlatformManager>(); }
         }
+
+        public static CoreMessagePump MessagePump { get; private set; }
         #endregion
 
         #region Methods
@@ -75,10 +76,11 @@ namespace Patchwork.Framework
 
         public static void Initialize()
         {
-            if (IsInitialized)
+            if (!IsCreated || IsInitialized)
                 return;
 
             m_tasks = new ConcurrentList<Task>();
+
             //Application.CreateConsole();
             //m_container.CreateChildContainer();            
             Application.Initialize();
@@ -87,8 +89,9 @@ namespace Patchwork.Framework
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);  
             InitializeResourcesShared();
-            foreach (var manager in m_managers.Values)
-                manager.Value.Initialize();
+            var mans = IoCContainer.ResolveAll<IPlatformManager>();
+            foreach (var m in mans)
+                m.Initialize();
 
             IsInitialized = true;
         }
@@ -96,6 +99,7 @@ namespace Patchwork.Framework
         public static void Dispose()
         {
             IsInitialized = false;
+            IsCreated = false;
             m_runTask?.ConfigureAwait(false);
             m_runTask?.Dispose();
 
@@ -103,21 +107,23 @@ namespace Patchwork.Framework
             MessagePump.Dispose();
             Application.Dispose();
             DisposeManagedResourcesShared();
-            foreach (var manager in m_managers.Values)
-                manager.Value.Dispose();
+            //foreach (var m in m_container.ResolveAll<IPlatformManager>())
+            //    m.Create();
 
             Logger.Dispose();
+            IoCContainer.Dispose();
         }
 
         public static void Run(CancellationToken token)
         {
-            if (!IsInitialized)
+            if (!IsCreated || !IsInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            token.Register(() => Dispatcher.Signal(NativeThreadDispatcherPriority.Send));
+            token.Register(() => Dispatcher.Signal(NThreadDispatcherPriority.Send));
             Startup?.Invoke();
             IsRunning = true;
             Logger.LogDebug("Pumping Messages.");
+            var mans = IoCContainer.ResolveAll<IPlatformManager>();
             while (!token.IsCancellationRequested)
             {
                 while (MessagePump.Poll(out var e, token))
@@ -127,13 +133,13 @@ namespace Patchwork.Framework
                 }
 
                 PreRunResourcesShared(token);
-                foreach (var manager in m_managers.Values)
-                    manager.Value.Pump(token);
+                foreach (var m in mans)
+                    m.Pump(token);
                 PostRunResourcesShared(token);
             }
 
-            foreach (var manager in m_managers.Values)
-                manager.Value.Wait();
+            foreach (var m in IoCContainer.ResolveAll<IPlatformManager>())
+                m.Wait();
 
             var whenAll = Task.WhenAll(m_tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
@@ -165,19 +171,30 @@ namespace Patchwork.Framework
 
         public static void Create()
         {
-            Create(new Logger());
+            Create(new Logger(), new IoCContainer());
         }
 
-        public static void Create(params IPlatformManager[] managers)
+        public static void Create(ILogger logger)
         {
-            Create(new Logger(), managers);
+            Create(logger, new IoCContainer());
         }
 
-        public static void Create(ILogger logger, params IPlatformManager[] managers)
+        public static void Create(IContainer iocContainer)
+        {
+            Create(new Logger(), iocContainer);
+        }
+
+        public static void Create(IContainer iocContainer, params IPlatformManager[] managers)
+        {
+            Create(new Logger(), iocContainer, managers);
+        }
+
+        public static void Create(ILogger logger, IContainer iocContainer, params IPlatformManager[] managers)
         {
             Logger = logger;
             Logger.Initialize();
-            m_managers = new ConcurrentDictionary<Type, Lazy<IPlatformManager>>();
+            IoCContainer = iocContainer;
+            IoCContainer.Register(logger);
             var tmpManagers = managers.ToList();
             var os = GetOsType();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -192,89 +209,134 @@ namespace Patchwork.Framework
             if (platform == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            var osInfo = platform.OperatingSystemType == null
-                             ? new OperatingSystemInformation()
-                             : Activator.CreateInstance(platform.OperatingSystemType) as IOperatingSystemInformation;
-            var runtimeInfo = platform.RuntimeType == null
-                                  ? new RuntimeInformation()
-                                  : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
+            IoCContainer.Register<IOperatingSystemInformation>(platform.OperatingSystemType);
+            IoCContainer.Register<IRuntimeInformation>(platform.RuntimeType);
 
-            Application = Activator.CreateInstance(platform.ApplicationType) as INativeApplication;
-            Dispatcher = Activator.CreateInstance(platform.DispatcherType) as INativeThreadDispatcher;
-            Environment = new PlatformEnvironment(osInfo, runtimeInfo);
-            MessagePump = new CoreMessagePump(Logger, Application);
+            //var osInfo = platform.OperatingSystemType == null
+            //                 ? new OperatingSystemInformation()
+            //                 :  as IOperatingSystemInformation;
+            //var runtimeInfo = platform.RuntimeType == null
+            //                      ? new RuntimeInformation()
+            //                      : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
+            IoCContainer.Register<INApplication>(platform.ApplicationType);
+            IoCContainer.Register<PlatformEnvironment>();
+            IoCContainer.Register<CoreMessagePump>();
+
+            //Activator.CreateInstance(platform.ApplicationType) 
+            // Activator.CreateInstance(platform.DispatcherType)
+            // new PlatformEnvironment(osInfo, runtimeInfo);
+            // new CoreMessagePump(Logger, Application);
+            Application = IoCContainer.Resolve(platform.ApplicationType) as INApplication;
+            Dispatcher = IoCContainer.Resolve(platform.DispatcherType) as INThreadDispatcher;
+            Environment = IoCContainer.Resolve<PlatformEnvironment>();
+            MessagePump = IoCContainer.Resolve<CoreMessagePump>();
 
             Environment.DetectPlatform();
             CreateResourcesShared();
             //Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute))
-            var tmp  = GetAssemblyAttributes<PlatformAttribute>(os).Where(a => a.ManagerType != null);
-            tmpManagers.AddRange(tmp.Select(m => Activator.CreateInstance(m.ManagerType) as IPlatformManager));
+            var tmp = GetAssemblyAttributes<PlatformAttribute>(os).Where(a => a.ManagerType != null);
+            //var tmp2 = tmp.Select(m => m.ManagerType);
+            var t = new Task(() =>
+                             {
+                                 foreach (var a in tmp)
+                                     IoCContainer.Register(a.ManagerType);
+                                 //var i = a.ManagerType.GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
+                                 //m_managers[i[0]] = new Lazy<IPlatformManager>(m_container.Resolve(a.ManagerType) as IPlatformManager);
+                             });
+            t.Start();
 
-            foreach (var manager in tmpManagers)
-            {
-                var aType = typeof(IPlatformManager);
-                var types = manager.GetType().GetInterfaces().
-                                    Where(t => 
-                                              (aType.IsAssignableFrom(t) && t.IsInterface && !t.IsGenericType && t != aType)).ToList();
-                //if (!types.Any(t1 => t1.ContainsInterface<IPlatformManager>()))
-                //    continue;
+            var t1 = new Task(() =>
+                              {
+                                  foreach (var m in tmpManagers)
+                                      IoCContainer.Register(m.GetType(), m);
+                                  //var i = m.GetType().GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
+                                  //m_managers[i[0]] = new Lazy<IPlatformManager>(m);
+                              });
+            t1.Start();
 
-                //var t2 = types.Select(t1 => t1.ContainsInterface<IPlatformManager>());
-                foreach (var t in types)
-                {
-                    m_managers[t] = new Lazy<IPlatformManager>(manager);
-                        manager.Create();
+            Task.WaitAll(t, t1);
 
-                        //var i = t.ContainsInterface<IPlatformManager>();
-                    //if (i)
-                    //{
-                    //    m_managers[t] = new Lazy<IPlatformManager>(manager);
-                    //    manager.Create();
-                    //    break;
-                    //}
+            foreach (var m in IoCContainer.ResolveAll<IPlatformManager>())
+                m.Create();
+            //foreach (var manager in tmpManagers)
+            //{
+            //    var aType = typeof(IPlatformManager);
+            //    var types = manager.GetType().GetInterfaces().
+            //                        Where(t => 
+            //                                  (aType.IsAssignableFrom(t) && t.IsInterface && !t.IsGenericType && t != aType)).ToList();
+            //    //if (!types.Any(t1 => t1.ContainsInterface<IPlatformManager>()))
+            //    //    continue;
 
-                    //foreach (var type in t.GetInterfaces())
-                    //{
-                    //    //if (type.ContainsInterface<IPlatformManager>())
-                    //    //{
-                    //    //    m_managers[type] = new Lazy<IPlatformManager>(manager);
-                    //    //    manager.Create();
-                    //    //}
+            //    //var t2 = types.Select(t1 => t1.ContainsInterface<IPlatformManager>());
+            //    foreach (var t in types)
+            //    {
+            //        m_container.Register(t, manager);
+            //        m_managers[t] = new Lazy<IPlatformManager>(manager);
+            //            manager.Create();
 
-                    //    var i = t.ContainsInterface<IPlatformManager>();
-                    //    if (i)
-                    //    {
-                    //        m_managers[t] = new Lazy<IPlatformManager>(manager);
-                    //        manager.Create();
-                    //        break;
-                    //    }
+            //            //var i = t.ContainsInterface<IPlatformManager>();
+            //        //if (i)
+            //        //{
+            //        //    m_managers[t] = new Lazy<IPlatformManager>(manager);
+            //        //    manager.Create();
+            //        //    break;
+            //        //}
 
-                    //    foreach (var type in t.GetInterfaces())
-                    //    {
-                    //        if (type.ContainsInterface<IPlatformManager>())
-                    //        {
-                    //            m_managers[type] = new Lazy<IPlatformManager>(manager);
-                    //            manager.Create();
-                    //        }
-                    //    }
-                    //}
-                }
-            }
+            //        //foreach (var type in t.GetInterfaces())
+            //        //{
+            //        //    //if (type.ContainsInterface<IPlatformManager>())
+            //        //    //{
+            //        //    //    m_managers[type] = new Lazy<IPlatformManager>(manager);
+            //        //    //    manager.Create();
+            //        //    //}
+
+            //        //    var i = t.ContainsInterface<IPlatformManager>();
+            //        //    if (i)
+            //        //    {
+            //        //        m_managers[t] = new Lazy<IPlatformManager>(manager);
+            //        //        manager.Create();
+            //        //        break;
+            //        //    }
+
+            //        //    foreach (var type in t.GetInterfaces())
+            //        //    {
+            //        //        if (type.ContainsInterface<IPlatformManager>())
+            //        //        {
+            //        //            m_managers[type] = new Lazy<IPlatformManager>(manager);
+            //        //            manager.Create();
+            //        //        }
+            //        //    }
+            //        //}
+            //    }
+            //}
+            IsCreated = true;
+            IsInitialized = false;
+        }
+
+        public static void AddManager<TManager>() where TManager : IPlatformManager, new()
+        {
+            var instance = IoCContainer.Resolve<TManager>();
+            AddManager(instance);
+        }
+
+        public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager
+        {
+            IoCContainer.Register(instance);
+            //m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
+
+            if (!instance.IsCreated)
+                instance.Create();
+            if (IsInitialized && !instance.IsInitialized)
+                instance.Initialize();
         }
 
         private static bool TestInterface<TInterface>(Type t)
         {
-            if (t.ContainsInterface<TInterface>())
-            {
-                return true;
-            }
+            if (t.ContainsInterface<TInterface>()) return true;
 
             foreach (var type in t.GetInterfaces())
             {
-                if (type.ContainsInterface<TInterface>())
-                {
-                    return true;
-                }
+                if (type.ContainsInterface<TInterface>()) return true;
 
                 if (TestInterface<TInterface>(type))
                     return true;
@@ -284,35 +346,16 @@ namespace Patchwork.Framework
         }
 
         private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OperatingSystemType osType)
-        where TAttribute : PlatformAttribute
+            where TAttribute : PlatformAttribute
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
                                       .Where(a => Attribute.IsDefined(a, typeof(TAttribute))).ToArray();
 
             return assemblies
-                          .Where(a => Attribute.IsDefined(a, typeof(TAttribute)))
-                          .GetAssemblyAttribute<TAttribute>()
-                          .Where(attribute => attribute.RequiredOS == osType)
-                          .OrderBy(attribute => attribute.Priority);
-        }
-
-        public static void AddManager<TManager>() where TManager : IPlatformManager, new()
-        {
-            var instance = new TManager();
-            m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
-
-            instance.Create();
-            if (IsInitialized)
-                instance.Initialize();
-        }
-
-        public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager
-        {
-            m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
-
-            instance.Create();
-            if (IsInitialized && !instance.IsInitialized)
-                instance.Initialize();
+                  .Where(a => Attribute.IsDefined(a, typeof(TAttribute)))
+                  .GetAssemblyAttribute<TAttribute>()
+                  .Where(attribute => attribute.RequiredOS == osType)
+                  .OrderBy(attribute => attribute.Priority);
         }
 
         static partial void DisposeManagedResourcesShared();
@@ -394,5 +437,7 @@ namespace Patchwork.Framework
             }
         }
         #endregion
+
+
     }
 }

@@ -12,15 +12,15 @@ namespace Patchwork.Framework.Messaging
     public partial class WindowMessageData : IWindowMessageData
     {
         protected WindowMessageIds m_messageId;
-        protected readonly INativeWindow m_window;
+        protected readonly INWindow m_window;
 
-        public WindowMessageData(INativeWindow window)
+        public WindowMessageData(INWindow window)
         {
             Throw.If(window == null).InvalidOperationException();
             m_window = window;
         }
 
-        public WindowMessageData(WindowMessageIds messageId, INativeWindow window) : this(window)
+        public WindowMessageData(WindowMessageIds messageId, INWindow window) : this(window)
         {
             m_messageId = messageId;
             PositionChangedData = new PropertyChangedData<Point>(Point.Empty, Point.Empty, Point.Empty);
@@ -89,7 +89,7 @@ namespace Patchwork.Framework.Messaging
             get { return m_messageId; }
         }
 
-        public INativeWindow Window
+        public INWindow Window
         {
             get { return m_window; }
         }

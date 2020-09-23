@@ -2,7 +2,7 @@
 
 namespace Patchwork.Framework.Platform
 {
-    public interface IWindowsProcess : INativeObject
+    public interface IWindowsProcess : INObject
     {
         WindowProc Process { get; }
     }

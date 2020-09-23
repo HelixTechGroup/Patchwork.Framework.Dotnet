@@ -23,6 +23,6 @@ namespace Patchwork.Framework.Platform.Window
         bool PreviouslyEnabled { get; }
         bool IsFocused { get; set; }
         bool PreviouslyFocused { get; }
-        NativeWindowDefinition Definition { get; set; }
+        NWindowDefinition Definition { get; set; }
     }
 }

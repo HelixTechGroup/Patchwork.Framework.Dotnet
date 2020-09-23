@@ -1,4 +1,4 @@
-﻿namespace Patchwork.Framework.Platform.Window
+﻿namespace Patchwork.Framework
 {
     public interface IDataCache
     {

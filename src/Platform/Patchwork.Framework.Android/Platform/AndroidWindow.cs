@@ -17,7 +17,7 @@ using Size = System.Drawing.Size;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed partial class AndroidWindow : NativeWindow, IEquatable<AndroidWindow>
+    public sealed partial class AndroidWindow : NWindow, IEquatable<AndroidWindow>
     {
         #region Members
         protected Activity m_activity;
@@ -25,7 +25,7 @@ namespace Patchwork.Framework.Platform
         protected PatchworkViewTreeObserverListener m_viewTreeObserver;
         #endregion
 
-        public AndroidWindow(INativeObject parent, NativeWindowDefinition definition) : base(parent, definition) { }
+        public AndroidWindow(INObject parent, NWindowDefinition definition) : base(parent, definition) { }
 
         #region Methods
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace Patchwork.Framework.Platform
             m_activity = (m_parent as AndroidApplication)?.CurrentActivity;
             m_viewTreeObserver = new PatchworkViewTreeObserverListener(this, m_activity?.Window.DecorView);
             m_viewListener = new PatchworkViewListener(this, m_activity?.Window.DecorView);
-            m_handle = new NativeHandle(m_activity?.Handle ?? IntPtr.Zero, "");
+            m_handle = new NHandle(m_activity?.Handle ?? IntPtr.Zero, "");
             base.InitializeResources();
         }
 
@@ -66,7 +66,7 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />        
         protected override void PlatformCreate()
         {
-            var parent = m_parent as INativeApplication;
+            var parent = m_parent as INApplication;
             var intent = new Intent(Application.Context, Class.FromType(typeof(PatchworkActivity)));
             intent.AddFlags(ActivityFlags.ClearTop | ActivityFlags.NewTask);
             Application.Context.StartActivity(intent);

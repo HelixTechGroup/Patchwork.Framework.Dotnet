@@ -6,13 +6,13 @@ using Android.OS;
 
 namespace Patchwork.Framework.Platform
 {
-    public class AndroidThreadDispatcher : INativeThreadDispatcher
+    public class AndroidThreadDispatcher : INThreadDispatcher
     {
         private readonly AndroidApplication m_application;
         private Handler m_handler;
 
         /// <inheritdoc />
-        public event Action<NativeThreadDispatcherPriority?> Signaled;
+        public event Action<NThreadDispatcherPriority?> Signaled;
 
         #region Properties
         public bool CurrentThreadIsLoopThread
@@ -33,13 +33,13 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        public IDisposable StartTimer(NativeThreadDispatcherPriority priority, TimeSpan interval, Action tick)
+        public IDisposable StartTimer(NThreadDispatcherPriority priority, TimeSpan interval, Action tick)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void Signal(NativeThreadDispatcherPriority priority)
+        public void Signal(NThreadDispatcherPriority priority)
         {
             m_handler.Post(() => Signaled?.Invoke(null));
         }

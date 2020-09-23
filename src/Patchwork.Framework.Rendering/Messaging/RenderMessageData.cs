@@ -12,15 +12,15 @@ namespace Patchwork.Framework.Messaging
     public partial class RenderMessageData : IRenderMessageData
     {
         protected RenderMessageIds m_messageId;
-        protected readonly INativeWindowRenderer m_render;
+        protected readonly INWindowRenderer m_render;
 
-        public RenderMessageData(INativeWindowRenderer renderer)
+        public RenderMessageData(INWindowRenderer renderer)
         {
             Throw.If(renderer == null).InvalidOperationException();
             m_render = renderer;
         }
 
-        public RenderMessageData(RenderMessageIds messageId, INativeWindowRenderer renderer) : this(renderer)
+        public RenderMessageData(RenderMessageIds messageId, INWindowRenderer renderer) : this(renderer)
         {
             m_messageId = messageId;
             PositionChangedData = new PropertyChangedData<Point>(Point.Empty, Point.Empty, Point.Empty);
@@ -89,7 +89,7 @@ namespace Patchwork.Framework.Messaging
             get { return m_messageId; }
         }
 
-        public INativeWindowRenderer Render
+        public INWindowRenderer Render
         {
             get { return m_render; }
         }

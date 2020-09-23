@@ -15,7 +15,7 @@ using Shin.Framework.Collections.Concurrent;
 
 namespace Patchwork.Framework.Platform
 {
-    public class AndroidApplication : NativeApplication
+    public class AndroidApplication : NApplication
     {
         private static ActivityStatusTracker m_tracker;
 
@@ -38,22 +38,22 @@ namespace Patchwork.Framework.Platform
         protected override void InitializeResources()
         {
             var app = (Context as Application);
-            m_handle = new NativeHandle(app?.Handle ?? IntPtr.Zero, "");
+            m_handle = new NHandle(app?.Handle ?? IntPtr.Zero, "");
             m_tracker = new ActivityStatusTracker();
             app?.RegisterActivityLifecycleCallbacks(m_tracker);
             m_tracker.WaitForActivityAsync().ConfigureAwait(false);
             base.InitializeResources();
         }
 
-        protected override INativeWindow PlatformCreateWindow()
+        protected override INWindow PlatformCreateWindow()
         {
-            var def = new NativeWindowDefinition()
+            var def = new NWindowDefinition()
                       {
                           AcceptsInput = true,
                           DesiredSize = new Size(800, 600),
                           IsRegularWindow = true,
                           Title = "test",
-                          Type = NativeWindowType.Normal,
+                          Type = NWindowType.Normal,
                           IsMainApplicationWindow = true
                       };
             var win = new AndroidWindow(this, def);

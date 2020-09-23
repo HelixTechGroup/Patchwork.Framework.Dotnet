@@ -1,24 +1,21 @@
-﻿using System;
-using System.Diagnostics;
+﻿#region Usings
+using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Patchwork.Framework;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform;
-using Patchwork.Framework.Platform.Interop.User32;
-using Patchwork.Framework.Platform.Window;
-using Shin.Framework;
 using Shin.Framework.Logging.Loggers;
 using Shin.Framework.Logging.Native;
-using Shin.Framework.Messaging;
+#endregion
 
 namespace WindowsApp
 {
     internal class Program
     {
-        #region Methods
+        #region Members
         private static readonly CancellationTokenSource m_cts = new CancellationTokenSource();
+        #endregion
 
+        #region Methods
         [MTAThread]
         private static void Main(string[] args)
         {
@@ -89,7 +86,6 @@ namespace WindowsApp
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
         }
         #endregion
     }

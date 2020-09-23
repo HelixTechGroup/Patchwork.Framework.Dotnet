@@ -21,6 +21,12 @@ namespace Patchwork.Framework.Platform
                                  Type runtimeType = null) 
         : base(requiredOperatingSystem, priority, name)
         {
+            if (operatingSystemType == null)
+                operatingSystemType = typeof(OperatingSystemInformation);
+
+            if (runtimeType == null)
+                runtimeType = typeof(RuntimeInformation);
+
             ApplicationType = applicationType;
             DispatcherType = dispatcherType;
             OperatingSystemType = operatingSystemType;

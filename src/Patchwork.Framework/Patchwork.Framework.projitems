@@ -9,6 +9,7 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Creatable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AttributeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WindowMessageDataExtensions.cs" />
@@ -19,9 +20,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyChangedData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyChangingData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformEnvironment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\ApplicationType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\IApplicationEnvironment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IPlatformEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\IOperatingSystemInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\IRuntimeInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\OperatingSystemInformation.cs" />
@@ -32,21 +33,27 @@
     <Compile Include="$(MSBuildThisFileDirectory)Environment\RuntimeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IPlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessagePump.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\CoreMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\PlatformAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeThreadDispatcherPriority.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeHandle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeScreen.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NThreadDispatcherPriority.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INScreen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Priority.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
   </ItemGroup>
 </Project>

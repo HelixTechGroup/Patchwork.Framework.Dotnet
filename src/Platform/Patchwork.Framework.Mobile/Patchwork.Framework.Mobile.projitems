@@ -9,9 +9,9 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplication.Mobile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.Mobile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INWindow.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindow.Mobile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.Mobile.cs" />
   </ItemGroup>
   <ItemGroup>

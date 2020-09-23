@@ -11,7 +11,7 @@ namespace Patchwork.Framework.Platform.Window
     [StructLayout(LayoutKind.Sequential)]
     internal partial struct WindowStateDataCache : IWindowDataCache
     {
-        private NativeWindowDefinition m_definition;
+        private NWindowDefinition m_definition;
         private Size m_clientSize;
         private Size m_previousClientSize;
         private Size m_size;
@@ -130,7 +130,7 @@ namespace Patchwork.Framework.Platform.Window
             get { return m_previousFocus; }
         }
 
-        public NativeWindowDefinition Definition
+        public NWindowDefinition Definition
         {
             get { return m_definition; }
             set { m_definition = value; SetDefinitionData(); }

@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework", "src\Patchwork.Framework\Patchwork.Framework.shproj", "{DFF5F575-ACE9-41CE-89A9-E82D0DC8CA6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{CFE53FE4-AD85-4797-B4F8-6795A77CF798}"
+	ProjectSection(SolutionItems) = preProject
+		src\Patchwork.Framework\Environment\IApplicationEnvironment.cs = src\Patchwork.Framework\Environment\IApplicationEnvironment.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E0F2A5F-45F7-4023-BF7A-143D0031B90E}"
 	ProjectSection(SolutionItems) = preProject

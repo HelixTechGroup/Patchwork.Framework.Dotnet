@@ -147,17 +147,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinThreadDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsProcessHook.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.WindowProc.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindowManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Manager\WindowsWindowManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Threading\WindowsPlatformUiDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WindowsRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\IO\" />
   </ItemGroup>
 </Project>

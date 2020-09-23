@@ -8,12 +8,12 @@ namespace Patchwork.Framework.Messaging
 {
     public partial class WindowMessageData
     {
-        public PropertyChangingData<NativeWindowState> StateChangingData { get; set; }
+        public PropertyChangingData<NWindowState> StateChangingData { get; set; }
 
-        public PropertyChangedData<NativeWindowState> StateChangedData { get; set; }
+        public PropertyChangedData<NWindowState> StateChangedData { get; set; }
 
-        public PropertyChangingData<NativeWindowMode> ModeChangingData { get; set; }
+        public PropertyChangingData<NWindowMode> ModeChangingData { get; set; }
 
-        public PropertyChangedData<NativeWindowMode> ModeChangedData { get; set; }
+        public PropertyChangedData<NWindowMode> ModeChangedData { get; set; }
     }
 }

@@ -18,7 +18,7 @@ using FileAttributes = Patchwork.Framework.Platform.Interop.Kernel32.FileAttribu
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed class WinApplication : NativeApplication, IWindowsProcess
+    public sealed class WinApplication : NApplication, IWindowsProcess
         {
             #region Members
             private static SafeFileHandle m_stdIn;
@@ -129,17 +129,17 @@ namespace Patchwork.Framework.Platform
                 base.InitializeResources();
             }
 
-            //protected override INativeWindow PlatformCreateWindow()
+            //protected override INWindow PlatformCreateWindow()
             //{
-            //    var def = new NativeWindowDefinition
+            //    var def = new NWindowDefinition
             //              {
             //                  AcceptsInput = true,
-            //                  ActivationPolicy = NativeWindowActivationPolicy.FirstShown,
+            //                  ActivationPolicy = NWindowActivationPolicy.FirstShown,
             //                  DesiredSize = new Size(800, 600),
             //                  IsRegularWindow = true,
             //                  Title = "test",
-            //                  SupportedDecorations = NativeWindowDecorations.All,
-            //                  Type = NativeWindowType.Normal,
+            //                  SupportedDecorations = NWindowDecorations.All,
+            //                  Type = NWindowType.Normal,
             //                  IsMainApplicationWindow = true
             //              };
             //    var win = new WindowsWindow(this, def);
@@ -224,7 +224,7 @@ namespace Patchwork.Framework.Platform
                     throw new Win32Exception((int)error);
                 }
 
-                m_handle = new NativeHandle(hwnd, "");
+                m_handle = new NHandle(hwnd, "");
             }
 
             private bool HasMessages(out Message msg)

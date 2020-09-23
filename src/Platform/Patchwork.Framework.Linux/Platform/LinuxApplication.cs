@@ -7,23 +7,23 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public class LinuxApplication : Initializable, INativeApplication
+    public class LinuxApplication : Initializable, INApplication
     {
-        private INativeHandle m_handle;
+        private INHandle m_handle;
         private Thread m_thread;
-        private IEnumerable<INativeWindow> m_windows;
+        private IEnumerable<INWindow> m_windows;
 
         /// <inheritdoc />
-        public INativeHandle Handle
+        public INHandle Handle
         {
             get { return m_handle; }
         }
 
         /// <inheritdoc />
-        public event EventHandler<INativeWindow> WindowCreated;
+        public event EventHandler<INWindow> WindowCreated;
 
         /// <inheritdoc />
-        public event EventHandler<INativeWindow> WindowDestroyed;
+        public event EventHandler<INWindow> WindowDestroyed;
 
         /// <inheritdoc />
         public Thread Thread
@@ -32,13 +32,13 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        public IEnumerable<INativeWindow> Windows
+        public IEnumerable<INWindow> Windows
         {
             get { return m_windows; }
         }
 
         /// <inheritdoc />
-        public INativeWindow CreateWindow()
+        public INWindow CreateWindow()
         {
             throw new NotImplementedException();
         }

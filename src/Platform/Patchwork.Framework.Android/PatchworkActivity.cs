@@ -15,7 +15,7 @@ namespace Patchwork.Framework
     public abstract class PatchworkActivity<TView> : Activity where TView : View
     {
         protected TView m_view;
-        protected INativeWindow m_window;
+        protected INWindow m_window;
 
         public TView View { get { return m_view; } }
 

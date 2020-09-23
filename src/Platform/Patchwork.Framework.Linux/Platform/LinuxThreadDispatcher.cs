@@ -5,13 +5,13 @@ using System.Threading;
 
 namespace Patchwork.Framework.Platform
 {
-    public class LinuxThreadDispatcher : INativeThreadDispatcher
+    public class LinuxThreadDispatcher : INThreadDispatcher
     {
         private bool m_currentThreadIsLoopThread;
         private Thread m_thread;
 
         /// <inheritdoc />
-        public event Action<NativeThreadDispatcherPriority?> Signaled;
+        public event Action<NThreadDispatcherPriority?> Signaled;
 
         /// <inheritdoc />
         public bool CurrentThreadIsLoopThread
@@ -26,13 +26,13 @@ namespace Patchwork.Framework.Platform
         }
 
         /// <inheritdoc />
-        public IDisposable StartTimer(NativeThreadDispatcherPriority priority, TimeSpan interval, Action tick)
+        public IDisposable StartTimer(NThreadDispatcherPriority priority, TimeSpan interval, Action tick)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void Signal(NativeThreadDispatcherPriority priority)
+        public void Signal(NThreadDispatcherPriority priority)
         {
             throw new NotImplementedException();
         }

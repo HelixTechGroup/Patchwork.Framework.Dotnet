@@ -21,7 +21,7 @@ namespace Patchwork.Framework.Messaging
         IRenderMessageData FocusChanged(bool requestedFocus);
 
         RenderMessageIds MessageId { get; }
-        INativeWindowRenderer Render { get; }
+        INWindowRenderer Render { get; }
         PropertyChangingData<Point> PositionChangingData { get; set; }
         PropertyChangedData<Point> PositionChangedData { get; set; }
         PropertyChangingData<Size> SizeChangingData { get; set; }

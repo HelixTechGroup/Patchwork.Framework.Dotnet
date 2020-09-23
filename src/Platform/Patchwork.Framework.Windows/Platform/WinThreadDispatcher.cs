@@ -9,15 +9,15 @@ using static Patchwork.Framework.Platform.Interop.User32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public sealed class WinThreadDispatcher : INativeThreadDispatcher
+    public sealed class WinThreadDispatcher : INThreadDispatcher
     {
         #region Events
-        public event Action<NativeThreadDispatcherPriority?> Signaled;
+        public event Action<NThreadDispatcherPriority?> Signaled;
         #endregion
 
         #region Members
         private readonly ConcurrentList<Delegate> m_delegates = new ConcurrentList<Delegate>();
-        private readonly INativeApplication m_application;
+        private readonly INApplication m_application;
         private bool m_quitSend;
         #endregion
 
@@ -38,7 +38,7 @@ namespace Patchwork.Framework.Platform
         }
 
         #region Methods
-        public IDisposable StartTimer(NativeThreadDispatcherPriority priority, TimeSpan interval, Action callback)
+        public IDisposable StartTimer(NThreadDispatcherPriority priority, TimeSpan interval, Action callback)
         {
             //UnmanagedMethods.TimerProc timerDelegate =
             //    (hWnd, uMsg, nIDEvent, dwTime) => callback();
@@ -60,7 +60,7 @@ namespace Patchwork.Framework.Platform
             throw new NotImplementedException();
         }
 
-        public void Signal(NativeThreadDispatcherPriority prio)
+        public void Signal(NThreadDispatcherPriority prio)
         {
             PostMessage(Core.Application.Handle.Pointer,
                         WindowsMessageIds.DISPATCH_WORK_ITEM,

@@ -15,15 +15,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyWindowingAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INativeApplicationWindowing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\PlatformWindowManager..cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INativeWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IPlatformWindowManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformWindowManager..cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NativeWindowType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,8 @@ using Patchwork.Framework.Platform;
                             typeof(WinOperatingSystemInformation))]
 [assembly: AssemblyWindowing(OperatingSystemType.Windows,
                              1,
-                             "Windows", typeof(WinWindowManager))]
+                             "Windows", 
+                             typeof(WindowsWindowManager))]
 [assembly: AssemblyRendering(OperatingSystemType.Windows,
                             1,
                             "Windows")]

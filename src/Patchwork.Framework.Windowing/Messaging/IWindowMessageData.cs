@@ -20,7 +20,7 @@ namespace Patchwork.Framework.Messaging
         IWindowMessageData FocusChanged(bool requestedFocus);
 
         WindowMessageIds MessageId { get; }
-        INativeWindow Window { get; }
+        INWindow Window { get; }
         PropertyChangingData<Point> PositionChangingData { get; set; }
         PropertyChangedData<Point> PositionChangedData { get; set; }
         PropertyChangingData<Size> SizeChangingData { get; set; }

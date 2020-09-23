@@ -9,20 +9,20 @@ namespace Patchwork.Framework.Platform.Window
 {
     internal partial struct WindowStateDataCache
         {
-            private NativeWindowState m_state;
-            private NativeWindowState m_previousState;
+            private NWindowState m_state;
+            private NWindowState m_previousState;
             private bool m_isVisibleInTaskbar;
             private bool m_isTopmostWindow;
-            private NativeWindowMode m_mode;
-            private NativeWindowMode m_previousMode;
+            private NWindowMode m_mode;
+            private NWindowMode m_previousMode;
 
-            public NativeWindowState State
+            public NWindowState State
             {
                 get { return m_state; }
                 set { m_previousState = m_state; m_state = value; }
             }
 
-            public NativeWindowState PreviousState
+            public NWindowState PreviousState
             {
                 get { return m_previousState; }
             }
@@ -39,7 +39,7 @@ namespace Patchwork.Framework.Platform.Window
                 set { m_isTopmostWindow = value; }
             }
 
-            public NativeWindowMode Mode
+            public NWindowMode Mode
             {
                 get { return m_mode; }
                 set
@@ -49,7 +49,7 @@ namespace Patchwork.Framework.Platform.Window
                 }
             }
 
-            public NativeWindowMode PreviousMode
+            public NWindowMode PreviousMode
             {
                 get { return m_previousMode; }
             }

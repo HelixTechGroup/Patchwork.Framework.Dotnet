@@ -7,7 +7,7 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform.Window
 {
-    public abstract partial class NativeWindow
+    public abstract partial class NWindow
     {
         protected partial struct WindowStateDataCache
         {

@@ -3,10 +3,10 @@ using Patchwork.Framework.Platform.Interop.User32;
 
 namespace Patchwork.Framework.Platform
 {
-    public class NativeInput : WindowsProcessHook, INativeInput
+    public class NInput : WindowsProcessHook, INInput
     {
         /// <inheritdoc />
-        public NativeInput(IWindowsProcess process) : base(process, WindowHookType.WH_GETMESSAGE) { }
+        public NInput(IWindowsProcess process) : base(process, WindowHookType.WH_GETMESSAGE) { }
 
         /// <inheritdoc />
         protected override IntPtr OnGetMsg(WindowsMessage message)

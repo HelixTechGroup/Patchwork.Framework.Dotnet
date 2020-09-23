@@ -10,17 +10,19 @@ namespace Patchwork.Framework
 
     public interface IPlatformManager<TAssembly, TMessage> : IPlatformManager where TAssembly : PlatformAttribute where TMessage : IPlatformMessage
     {
-        event ProcessMessageHandler<TMessage> ProcessMessage;
+        event ProcessMessageHandler ProcessMessage;
 
         static IPlatformManager<TAssembly, TMessage> Instance { get; }
     }
 
-    public interface IPlatformManager : IInitialize, IDispose
+    public interface IPlatformManager : ICreate
     {
         event Action Startup;
         event Action Shutdown;
         bool IsRunning { get; }
         IPlatformMessagePump MessagePump { get; }
+
+        MessageIds[] SupportedMessages { get; }
 
         void Pump(CancellationToken token);
 
@@ -29,7 +31,5 @@ namespace Patchwork.Framework
         void Run(CancellationToken token);
 
         void RunAsync(CancellationToken token);
-
-        void Create();
     }
 }

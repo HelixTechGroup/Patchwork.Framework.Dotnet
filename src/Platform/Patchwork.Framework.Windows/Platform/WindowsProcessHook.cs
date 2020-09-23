@@ -9,14 +9,20 @@ using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 
 namespace Patchwork.Framework.Platform
 {
-    public abstract class WindowsProcessHook : Initializable
+    public delegate IntPtr ProcessWindowsMessageHandler(WindowsMessage message);
+
+    public class WindowsProcessHook : Initializable
     {
+        public event ProcessWindowsMessageHandler ProcessMessage;
+
         protected IWindowsProcess m_process;
         protected HookProc m_hookProc;
-        protected INativeHandle m_hookHandle;
+        protected INHandle m_hookHandle;
         protected WindowHookType m_hookType;
 
-        protected WindowsProcessHook(IWindowsProcess process, WindowHookType hookType)
+        public IWindowsProcess Process { get { return m_process; } }
+
+        public WindowsProcessHook(IWindowsProcess process, WindowHookType hookType)
         {
             m_process = process;
             m_hookType = hookType;
@@ -32,7 +38,7 @@ namespace Patchwork.Framework.Platform
             var hhnd = IntPtr.Zero;
             var mhnd = IntPtr.Zero;
             //using var proc = Process.GetCurrentProcess().MainModule;
-            using var module = Process.GetCurrentProcess().MainModule;
+            using var module = System.Diagnostics.Process.GetCurrentProcess().MainModule;
             var threadId = GetWindowThreadProcessId(m_process.Handle.Pointer, IntPtr.Zero);
             //foreach (ProcessModule module in proc.Modules)
             //{
@@ -48,7 +54,7 @@ namespace Patchwork.Framework.Platform
             if (hhnd == IntPtr.Zero)
                 throw new Win32Exception();
 
-            m_hookHandle = new NativeHandle(hhnd, "");
+            m_hookHandle = new NHandle(hhnd, "");
         }
 
         private IntPtr HookProc(WindowHookCode nCode, IntPtr wParam, IntPtr lParam)
@@ -69,7 +75,8 @@ namespace Patchwork.Framework.Platform
                                     Result = msgRet.LResult,
                                     Hwnd = msgRet.Hwnd
                                 };
-                    return OnProcRet(wMsg);
+                    //return OnProcRet(wMsg);
+                    return ProcessMessage.Invoke(wMsg);
                 case WindowHookType.WH_JOURNALRECORD:
                     break;
                 case WindowHookType.WH_JOURNALPLAYBACK:
@@ -86,7 +93,8 @@ namespace Patchwork.Framework.Platform
                                Result = IntPtr.Zero,
                                Hwnd = msg.Hwnd
                            };
-                    return OnGetMsg(wMsg);
+                    //return OnGetMsg(wMsg);
+                    return ProcessMessage.Invoke(wMsg);
                 case WindowHookType.WH_CALLWNDPROC:
                     break;
                 case WindowHookType.WH_CBT:
