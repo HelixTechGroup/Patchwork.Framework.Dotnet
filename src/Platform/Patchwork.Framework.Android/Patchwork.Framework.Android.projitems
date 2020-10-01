@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ActivityEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ActivityEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\AndroidOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\AndroidOSInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkLaunchActivity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkActivity.cs" />

@@ -13,17 +13,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INWindowRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INWindow.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INPopupWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INPopupWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindow.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowDecorations.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowDefinition.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowActivationPolicy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowSizeLimits.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowTransparency.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindow.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDecorations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDefinition.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowActivationPolicy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowSizeLimits.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowTransparency.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.Desktop.cs" />
   </ItemGroup>
 </Project>

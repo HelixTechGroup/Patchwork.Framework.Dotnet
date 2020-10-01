@@ -25,7 +25,7 @@ namespace Patchwork.Framework
     public static partial class Core
     {
         #region Events
-        public static event Func<OperatingSystemType> DetectUnixSystemType;
+        public static event Func<OSType> DetectUnixSystemType;
         public static event ProcessMessageHandler ProcessMessage;
 
         public static event Action Shutdown;
@@ -65,7 +65,7 @@ namespace Patchwork.Framework
             get { return IoCContainer.ResolveAll<IPlatformManager>(); }
         }
 
-        public static CoreMessagePump MessagePump { get; private set; }
+        public static IPlatformMessagePump MessagePump { get; private set; }
         #endregion
 
         #region Methods
@@ -209,7 +209,7 @@ namespace Patchwork.Framework
             if (platform == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            IoCContainer.Register<IOperatingSystemInformation>(platform.OperatingSystemType);
+            IoCContainer.Register<IOSInformation>(platform.OperatingSystemType);
             IoCContainer.Register<IRuntimeInformation>(platform.RuntimeType);
 
             //var osInfo = platform.OperatingSystemType == null
@@ -220,7 +220,7 @@ namespace Patchwork.Framework
             //                      : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
             IoCContainer.Register<INApplication>(platform.ApplicationType);
             IoCContainer.Register<PlatformEnvironment>();
-            IoCContainer.Register<CoreMessagePump>();
+            IoCContainer.Register<MainMessagePump>();
 
             //Activator.CreateInstance(platform.ApplicationType) 
             // Activator.CreateInstance(platform.DispatcherType)
@@ -229,7 +229,7 @@ namespace Patchwork.Framework
             Application = IoCContainer.Resolve(platform.ApplicationType) as INApplication;
             Dispatcher = IoCContainer.Resolve(platform.DispatcherType) as INThreadDispatcher;
             Environment = IoCContainer.Resolve<PlatformEnvironment>();
-            MessagePump = IoCContainer.Resolve<CoreMessagePump>();
+            MessagePump = IoCContainer.Resolve<MainMessagePump>();
 
             Environment.DetectPlatform();
             CreateResourcesShared();
@@ -345,7 +345,7 @@ namespace Patchwork.Framework
             return false;
         }
 
-        private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OperatingSystemType osType)
+        private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OSType osType)
             where TAttribute : PlatformAttribute
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -370,18 +370,18 @@ namespace Patchwork.Framework
 
         static partial void CreateResourcesShared();
 
-        private static IOperatingSystemInformation CreateOs(IEnumerable<Assembly> assemblies)
+        private static IOSInformation CreateOs(IEnumerable<Assembly> assemblies)
         {
             var osType = assemblies
                         .Where(a => Attribute.IsDefined(a, typeof(PlatformAttribute)))
                         .SelectMany(a => a.GetTypes())
-                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOperatingSystemInformation))).IsEmpty())
-                        .OrderBy(t => t == typeof(OperatingSystemInformation)).FirstOrDefault();
+                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOSInformation))).IsEmpty())
+                        .OrderBy(t => t == typeof(OSInformation)).FirstOrDefault();
 
             if (osType == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            var os = Activator.CreateInstance(osType) as IOperatingSystemInformation;
+            var os = Activator.CreateInstance(osType) as IOSInformation;
             if (os == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
@@ -407,23 +407,23 @@ namespace Patchwork.Framework
             return os;
         }
 
-        private static OperatingSystemType GetOsType()
+        private static OSType GetOsType()
         {
             var id = SysEnv.OSVersion.Platform;
             switch ((int)id)
             {
                 case 6: // PlatformID.MacOSX:
-                    return OperatingSystemType.MacOS;
+                    return OSType.MacOS;
                 case 4: // PlatformID.Unix:	
                 case 128:
-                    return DetectUnixSystemType?.Invoke() ?? OperatingSystemType.Unix;
+                    return DetectUnixSystemType?.Invoke() ?? OSType.Unix;
                 case 0: // PlatformID.Win32S:
                 case 1: // PlatformID.Win32Windows:
                 case 2: // PlatformID.Win32NT:
                 case 3: // PlatformID.WinCE:
-                    return OperatingSystemType.Windows;
+                    return OSType.Windows;
                 default:
-                    return OperatingSystemType.Unknown;
+                    return OSType.Unknown;
             }
         }
 

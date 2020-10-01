@@ -28,7 +28,7 @@ namespace Patchwork.Framework
             var log = new Logger();
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger(false));
-            Core.DetectUnixSystemType += () => OperatingSystemType.Android;
+            Core.DetectUnixSystemType += () => OSType.Android;
             Core.ProcessMessage += OnMessage;
             Core.Create(log);
             Core.Initialize();            

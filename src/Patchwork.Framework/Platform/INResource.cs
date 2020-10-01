@@ -16,7 +16,7 @@ namespace Patchwork.Framework.Platform
         #region Properties
         INRenderDevice Device { get; }
         string Name { get; set; }
-        object RawResource { get; }
+        object Resource { get; }
         #endregion
     }
 }

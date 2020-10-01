@@ -9,6 +9,6 @@ namespace Patchwork.Framework
 {
     public static partial class Core
     {
-        public static INRenderManager Renderer { get { return IoCContainer.Resolve<INRenderManager>(); } }//m_container.ResolveAll<IPlatformManager>().Where(m => m.GetType().ContainsInterface<IWindowManager>()).First() as IWindowManager; } }
+        public static IPlatformRenderManager Renderer { get { return IoCContainer.Resolve<IPlatformRenderManager>(); } }//m_container.ResolveAll<IPlatformManager>().Where(m => m.GetType().ContainsInterface<IWindowManager>()).First() as IWindowManager; } }
     }
 }

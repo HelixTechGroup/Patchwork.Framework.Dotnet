@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="SkiaSharp" Version="2.80.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
@@ -24,5 +25,7 @@
   <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
   <Import Project="..\..\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems" Label="Shared" />
   <Import Project="..\..\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems" Label="Shared" />
+  <Import Project="..\..\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems" Label="Shared" />
+  <Import Project="..\..\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems" Label="Shared" />
 
 </Project>

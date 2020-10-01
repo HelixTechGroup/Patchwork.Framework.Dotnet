@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AttributeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WindowMessageDataExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICreate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDataCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformMessagePump.cs" />
@@ -23,10 +24,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\ApplicationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformEnvironment.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\IOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\IOSInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\IRuntimeInformation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\OperatingSystemInformation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\OperatingSystemType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\OSInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\OSType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformFronendType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\RuntimeInformation.cs" />
@@ -34,11 +35,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IPlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessagePump.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyPlatformAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CoreMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyPlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core.MainMessagePump.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResourceFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\PlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NThreadDispatcherPriority.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.cs" />

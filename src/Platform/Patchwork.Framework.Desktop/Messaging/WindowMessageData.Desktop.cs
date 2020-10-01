@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework.ComponentModel;
 
 namespace Patchwork.Framework.Messaging

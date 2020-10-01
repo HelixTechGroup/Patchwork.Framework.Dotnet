@@ -14,16 +14,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IWindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\AssemblyWindowingAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyWindowingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformWindowManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformWindowManager..cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\IWindowDataCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowDefinition.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindowType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDefinition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />

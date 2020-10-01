@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
@@ -25,6 +26,8 @@ namespace Patchwork.Framework.Platform
 
         event EventHandler OnDestroy;
         #endregion
+
+        IEnumerable<Type> SupportedResources { get; }
 
         #region Methods
         object Create();

@@ -10,7 +10,6 @@ using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Interop;
 using Patchwork.Framework.Platform.Interop.Kernel32;
 using Patchwork.Framework.Platform.Interop.User32;
-using Patchwork.Framework.Platform.Window;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 using FileAttributes = Patchwork.Framework.Platform.Interop.Kernel32.FileAttributes;

@@ -6,15 +6,6 @@ using Shin.Framework.Extensions;
 
 namespace Patchwork.Framework
 {
-    public interface ICreate : IInitialize, IDispose
-    {
-        event EventHandler Created;
-        event EventHandler Creating;
-        bool IsCreated { get; }
-
-        void Create();
-    }
-
     public abstract class Creatable : Initializable, ICreate
     {
         #region Events

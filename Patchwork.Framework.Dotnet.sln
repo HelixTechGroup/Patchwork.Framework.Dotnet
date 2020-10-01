@@ -83,6 +83,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Renderi
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Windowing", "src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.shproj", "{E3BB4D7B-FDA8-4F9D-B4E9-1613506F1E2E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Skia", "src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.shproj", "{F81B5C8F-475F-466C-B028-D7E248C05897}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{1b5d1859-9372-45dd-a5e9-830b392418d2}*SharedItemsImports = 13
@@ -99,6 +101,8 @@ Global
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
@@ -113,6 +117,7 @@ Global
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{dff5f575-ace9-41ce-89a9-e82d0dc8ca6c}*SharedItemsImports = 13
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{e3bb4d7b-fda8-4f9d-b4e9-1613506f1e2e}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{e4609d0b-3a70-4ae1-9462-042a72263376}*SharedItemsImports = 13
+		src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems*{f81b5c8f-475f-466c-b028-d7e248c05897}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,6 +186,7 @@ Global
 		{300DD736-6641-4130-86BC-62D40E84FD0F} = {DF9F35D5-782A-4517-9EED-56DC59ABC127}
 		{2A7C3663-0CB2-45DD-A52D-55FF3A6AB949} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 		{E3BB4D7B-FDA8-4F9D-B4E9-1613506F1E2E} = {899F423F-E433-48CD-ADD7-BE7111060D01}
+		{F81B5C8F-475F-466C-B028-D7E248C05897} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}

@@ -2,7 +2,8 @@
 using System;
 using System.Drawing;
 using Patchwork.Framework.Platform.Interop.User32;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Rendering;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework.ComponentModel;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 #endregion
@@ -13,10 +14,24 @@ namespace Patchwork.Framework.Platform
     {
         protected WindowsProcessHook m_hook;
 
-        public WinWindowRenderer(IWindowsProcess window, INRenderDevice renderDevice) : base(window, renderDevice)
+        public WinWindowRenderer(INWindow  window, INRenderDevice renderDevice) : base(window, renderDevice)
         {
-            m_hook = new WindowsProcessHook(window, WindowHookType.WH_GETMESSAGE);
+            m_hook = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_GETMESSAGE);
             m_hook.ProcessMessage += OnGetMsg;
+        }
+
+        /// <inheritdoc />
+        protected override void InitializeResources()
+        {
+            base.InitializeResources();
+
+            m_hook.Initialize();
+        }
+
+        /// <inheritdoc />
+        protected override void OnSizeChanging(object sender, PropertyChangingEventArgs<Size> e)
+        {
+            
         }
 
         #region Methods
@@ -35,13 +50,14 @@ namespace Patchwork.Framework.Platform
             return Methods.InvalidateRect(m_hook.Process.Handle.Pointer, IntPtr.Zero, shouldErase);
         }
 
-        /// <inheritdoc />
-        protected IntPtr OnGetMsg(WindowsMessage message)
+        private IntPtr OnGetMsg(WindowsMessage message)
         {
+            var res = IntPtr.Zero;
             switch (message.Id)
             {
                 case WindowsMessageIds.PAINT:
-                    return OnPaint(message);
+                    PlatformPaint();
+                    break;
                 case WindowsMessageIds.NCCALCSIZE:
                 case WindowsMessageIds.SIZE:
                 case WindowsMessageIds.MOVE:
@@ -56,29 +72,7 @@ namespace Patchwork.Framework.Platform
                     break;
             }
 
-            return IntPtr.Zero;
-        }
-
-        private IntPtr OnPaint(WindowsMessage msg)
-        {
-            if (GetUpdateRect(m_hook.Process.Handle.Pointer, out var rec, false))
-                Validate();
-
-            //if (BeginPaint(m_process.Handle.Pointer, out var ps) == IntPtr.Zero) 
-            //    return IntPtr.Zero;
-
-            //var f = m_scaling;
-            //var r = ps.PaintRect;
-            //Painting.Raise(this, null);
-            //Paint.Raise(this, new Rectangle((int)Math.Floor(r.Left / f),
-            //                                (int)Math.Floor(r.Top / f),
-            //                                (int)Math.Floor((r.Right - r.Left) / f),
-            //                                (int)Math.Floor((r.Bottom - r.Top) / f)));
-            //Painted.Raise(this, null);
-            //EndPaint(m_process.Handle.Pointer, ref ps);
-            //Validate();
-
-            return IntPtr.Zero;
+            return res;
         }
 
         protected override bool PlatformInvalidate()
@@ -86,9 +80,21 @@ namespace Patchwork.Framework.Platform
             return Invalidate(false);
         }
 
+        /// <inheritdoc />
+        protected override void PlatformPaint()
+        {
+            if (BeginPaint(m_window.Handle.Pointer, out var ps) != IntPtr.Zero) 
+                return;
+
+            if (GetUpdateRect(m_hook.Process.Handle.Pointer, out var rec, false))
+                Validate();
+            OnPaint();
+            EndPaint(m_window.Handle.Pointer, ref ps);
+        }
+
         protected override bool PlatformValidate()
         {
-            return Methods.ValidateRect(m_hook.Process.Handle.Pointer, IntPtr.Zero);
+            return ValidateRect(m_hook.Process.Handle.Pointer, IntPtr.Zero);
         }
         #endregion
     }

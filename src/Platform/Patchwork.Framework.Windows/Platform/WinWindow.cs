@@ -7,10 +7,13 @@ using System.Text;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Interop;
 using Patchwork.Framework.Platform.Interop.User32;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework.Collections.Concurrent;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
+using INWindow = Patchwork.Framework.Platform.Windowing.INWindow;
+using NWindow = Patchwork.Framework.Platform.Windowing.NWindow;
+using NWindowDefinition = Patchwork.Framework.Platform.Windowing.NWindowDefinition;
 #endregion
 
 namespace Patchwork.Framework.Platform

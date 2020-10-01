@@ -4,12 +4,14 @@ using System.Text;
 using System.Threading;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
+using NWindowDefinition = Patchwork.Framework.Platform.Windowing.NWindowDefinition;
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Manager
 {
     public abstract class PlatformWindowManager : 
         PlatformManager<AssemblyWindowingAttribute, IPlatformMessage<IWindowMessageData>>,

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Windowing;
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework
 {
     public interface IPlatformWindowManager : IPlatformManager<AssemblyWindowingAttribute, IPlatformMessage<IWindowMessageData>>
     {

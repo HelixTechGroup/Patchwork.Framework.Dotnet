@@ -9,7 +9,7 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\LinuxOperatingSystemInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\LinuxOSInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\LinuxApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\LinuxThreadDispatcher.cs" />
   </ItemGroup>

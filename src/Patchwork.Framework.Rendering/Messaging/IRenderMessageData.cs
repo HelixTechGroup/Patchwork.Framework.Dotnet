@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using Patchwork.Framework.Platform;
-using Patchwork.Framework.Platform.Window;
 
 namespace Patchwork.Framework.Messaging
 {

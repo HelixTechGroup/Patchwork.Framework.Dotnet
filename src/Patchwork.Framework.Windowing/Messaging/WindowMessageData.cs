@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using Patchwork.Framework.Platform;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.ComponentModel;
 

@@ -9,7 +9,7 @@ namespace Patchwork.Framework.Environment
     public class PlatformEnvironment : IPlatformEnvironment
     {
         #region Members
-        private readonly IOperatingSystemInformation m_operatingSystem;
+        private readonly IOSInformation m_operatingSystem;
         private readonly IRuntimeInformation m_runtime;
         private ApplicationType m_applicationType;
         private bool m_isRuntimeCodeGenerationSupported;
@@ -53,7 +53,7 @@ namespace Patchwork.Framework.Environment
         }
 
         /// <inheritdoc />
-        public IOperatingSystemInformation OperatingSystem
+        public IOSInformation OperatingSystem
         {
             get { return m_operatingSystem; }
         }
@@ -77,7 +77,7 @@ namespace Patchwork.Framework.Environment
         }
         #endregion
 
-        public PlatformEnvironment(IOperatingSystemInformation operatingSystem, IRuntimeInformation runtimeInformation)
+        public PlatformEnvironment(IOSInformation operatingSystem, IRuntimeInformation runtimeInformation)
         {
             m_operatingSystem = operatingSystem;
             m_runtime = runtimeInformation;
