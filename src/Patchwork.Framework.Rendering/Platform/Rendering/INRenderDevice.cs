@@ -1,29 +1,48 @@
 ﻿#region Usings
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net.Sockets;
+using System.Threading;
+using Hatzap.Rendering;
+using Patchwork.Framework.Messaging;
 using Shin.Framework;
 #endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
     public interface INRenderDevice : IInitialize, IDispose
     {
+        #region Events
         event EventHandler<EventArgs> DeviceLost;
         event EventHandler<EventArgs> DeviceReset;
         event EventHandler<EventArgs> DeviceResetting;
+        event ProcessMessageHandler ProcessMessage;
         event EventHandler<ResourceCreatedEventArgs> ResourceCreated;
         event EventHandler<ResourceDestroyedEventArgs> ResourceDestroyed;
+        #endregion
 
+        #region Properties
         INRenderAdapter Adapter { get; }
 
         Priority Priority { get; }
 
         IEnumerable<Type> SupportedRenderers { get; }
+        #endregion
 
         #region Methods
-        TRenderer GetRenderer<TRenderer>() where TRenderer : INRenderer;
+        TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
+
+        void Pump(CancellationToken token);
+
+        void Wait();
+
+        void Run(CancellationToken token);
+
+        void RunAsync(CancellationToken token);
+
+        bool Push(IPlatformMessage message);
+        #endregion
+
+        void SetFrameBuffer(NFrameBuffer buffer);
 
         //INRenderDeviceAdvancedSupport Advanced { get; }
 
@@ -58,7 +77,6 @@ namespace Patchwork.Framework.Platform
 
 
         //IRenderTargetBitmapImpl CreateLayer(Size size);
-        #endregion
     }
 
     public interface INImage { }

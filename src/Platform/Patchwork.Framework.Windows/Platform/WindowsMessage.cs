@@ -1,33 +1,39 @@
-﻿using System;
+﻿#region Usings
+using System;
 using Patchwork.Framework.Platform.Interop.User32;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
     public struct WindowsMessage
     {
+        #region Members
         public IntPtr Hwnd;
         public WindowsMessageIds Id;
-        public IntPtr WParam;
         public IntPtr LParam;
         public IntPtr Result;
+        public IntPtr WParam;
+        #endregion
 
         public WindowsMessage(IntPtr hwnd, uint id, IntPtr wParam, IntPtr lParam)
         {
-            this.Hwnd = hwnd;
-            this.Id = (WindowsMessageIds)id;
-            this.WParam = wParam;
-            this.LParam = lParam;
-            this.Result = IntPtr.Zero;
+            Hwnd = hwnd;
+            Id = (WindowsMessageIds)id;
+            WParam = wParam;
+            LParam = lParam;
+            Result = IntPtr.Zero;
         }
 
+        #region Methods
         public void SetResult(IntPtr result)
         {
-            this.Result = result;
+            Result = result;
         }
 
         public void SetResult(int result)
         {
-            this.SetResult(new IntPtr(result));
+            SetResult(new IntPtr(result));
         }
+        #endregion
     }
 }

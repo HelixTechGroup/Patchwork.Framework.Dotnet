@@ -1,6 +1,9 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [Flags]
     public enum TrackMouseEventFlags
     {
@@ -8,7 +11,7 @@ namespace Patchwork.Framework.Platform.Interop.User32 {
         ///     The caller wants to cancel a prior tracking request. The caller should also specify the type of tracking that it
         ///     wants to cancel. For example, to cancel hover tracking, the caller must pass the TME_CANCEL and TME_HOVER flags.
         /// </summary>
-        TME_CANCEL = unchecked ((int) 0x80000000),
+        TME_CANCEL = unchecked((int)0x80000000),
 
         /// <summary>
         ///     The caller wants hover notification. Notification is delivered as a WM_MOUSEHOVER message.

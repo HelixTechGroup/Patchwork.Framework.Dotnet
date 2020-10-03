@@ -1,6 +1,6 @@
 ﻿namespace Patchwork.Framework.Environment
 {
-    public enum OSType
+    public enum OsType
     {
         Unknown,
         Android,

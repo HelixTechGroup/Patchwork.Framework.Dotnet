@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿#region Usings
 using Shin.Framework.ComponentModel;
+#endregion
 
 namespace Patchwork.Framework.Messaging
 {
@@ -24,9 +22,11 @@ namespace Patchwork.Framework.Messaging
             m_requestedValue = requestedValue;
         }
 
+        #region Methods
         public PropertyChangingEventArgs<T> ToEventArgs()
         {
             return new PropertyChangingEventArgs<T>(m_value, m_requestedValue);
         }
+        #endregion
     }
 }

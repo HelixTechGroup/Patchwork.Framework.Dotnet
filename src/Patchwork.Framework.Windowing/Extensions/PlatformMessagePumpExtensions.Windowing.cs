@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Usings
 using System.Drawing;
-using System.Text;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Windowing;
+#endregion
 
 namespace Patchwork.Framework.Extensions
 {
-    public static class PlatformMessagePumpExtensions
+    public static partial class PlatformMessagePumpExtensions
     {
+        #region Methods
         public static void PushWindowMessage(this IPlatformMessagePump pump, WindowMessageIds messageId, INWindow window)
         {
             pump.Push(new PlatformMessage(MessageIds.Window, new WindowMessageData(messageId, window)));
@@ -20,29 +20,29 @@ namespace Patchwork.Framework.Extensions
         }
 
         public static void PushWindowMovingMessage(this IPlatformMessagePump pump,
-                                                     INWindow window,
-                                                     Point requestedPosition)
+                                                   INWindow window,
+                                                   Point requestedPosition)
         {
             pump.PushWindowMessage(new WindowMessageData(window).PositionChanging(requestedPosition));
         }
 
         public static void PushWindowMovedMessage(this IPlatformMessagePump pump,
-                                                   INWindow window,
-                                                   Point requestedPosition)
+                                                  INWindow window,
+                                                  Point requestedPosition)
         {
             pump.PushWindowMessage(new WindowMessageData(window).PositionChanged(requestedPosition));
         }
 
         public static void PushWindowResizingMessage(this IPlatformMessagePump pump,
-                                                   INWindow window,
-                                                   Size requestedSize)
+                                                     INWindow window,
+                                                     Size requestedSize)
         {
             pump.PushWindowMessage(new WindowMessageData(window).SizeChanging(requestedSize));
         }
 
         public static void PushWindowResizedMessage(this IPlatformMessagePump pump,
-                                                  INWindow window,
-                                                  Size requestedSize)
+                                                    INWindow window,
+                                                    Size requestedSize)
         {
             pump.PushWindowMessage(new WindowMessageData(window).SizeChanged(requestedSize));
         }
@@ -60,15 +60,15 @@ namespace Patchwork.Framework.Extensions
         }
 
         public static void PushWindowFocusChangingMessage(this IPlatformMessagePump pump,
-                                                     INWindow window,
-                                                     bool requestedFocus)
+                                                          INWindow window,
+                                                          bool requestedFocus)
         {
             pump.PushWindowMessage(new WindowMessageData(window).FocusChanging(requestedFocus));
         }
 
         public static void PushWindowFocusChangedMessage(this IPlatformMessagePump pump,
-                                                        INWindow window,
-                                                        bool requestedFocus)
+                                                         INWindow window,
+                                                         bool requestedFocus)
         {
             pump.PushWindowMessage(new WindowMessageData(window).FocusChanged(requestedFocus));
         }
@@ -84,5 +84,6 @@ namespace Patchwork.Framework.Extensions
         {
             pump.PushWindowMessage(new WindowMessageData(window).FocusChanged(false));
         }
+        #endregion
     }
 }

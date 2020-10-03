@@ -1,12 +1,22 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct FileTime
     {
-        public uint Low;
+        #region Members
         public uint High;
+        public uint Low;
+        #endregion
 
-        public ulong Value => ((ulong) this.High << 32) | this.Low;
+        #region Properties
+        public ulong Value
+        {
+            get { return ((ulong)High << 32) | Low; }
+        }
+        #endregion
     }
 }

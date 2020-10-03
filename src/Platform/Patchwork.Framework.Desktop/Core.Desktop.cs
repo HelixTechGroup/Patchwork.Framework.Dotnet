@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Text;
-
-namespace Patchwork.Framework
+﻿namespace Patchwork.Framework
 {
     public static partial class Core
     {
+        #region Methods
         public static bool CreateConsole()
         {
             return Application.OpenConsole();
@@ -17,5 +12,6 @@ namespace Patchwork.Framework
         {
             Application.CloseConsole();
         }
+        #endregion
     }
 }

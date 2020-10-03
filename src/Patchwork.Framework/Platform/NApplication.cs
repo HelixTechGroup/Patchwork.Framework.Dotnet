@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿#region Usings
 using System.Threading;
 using Patchwork.Framework.Messaging;
 using Shin.Framework;
-using Shin.Framework.Collections.Concurrent;
-using Shin.Framework.Extensions;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
     public abstract partial class NApplication : Initializable, INApplication
     {
-        protected INHandle m_handle;
+        #region Members
         protected readonly Thread m_thread;
+        protected INHandle m_handle;
+        #endregion
 
+        #region Properties
         public INHandle Handle
         {
             get { return m_handle; }
@@ -23,6 +23,7 @@ namespace Patchwork.Framework.Platform
         {
             get { return m_thread; }
         }
+        #endregion
 
         protected NApplication()
         {
@@ -31,26 +32,7 @@ namespace Patchwork.Framework.Platform
             ConstructionShared();
         }
 
-        partial void ConstructionShared();
-
-        /// <inheritdoc />
-        protected override void InitializeResources()
-        {
-            base.InitializeResources();
-            Core.ProcessMessage += OnProcessMessage;            
-        }
-
-        partial void InitializeResourcesShared();
-
-        /// <inheritdoc />
-        protected override void DisposeManagedResources()
-        {
-            Core.ProcessMessage -= OnProcessMessage;
-            base.DisposeManagedResources();
-        }
-
-        partial void DisposeManagedResourcesShared();
-
+        #region Methods
         public virtual void PumpMessages(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -58,14 +40,6 @@ namespace Patchwork.Framework.Platform
 
             PlatformPumpMessages(cancellationToken);
             PumpMessagesShared(cancellationToken);
-        }
-
-        partial void PumpMessagesShared(CancellationToken cancellationToken);
-
-        protected abstract void PlatformPumpMessages(CancellationToken cancellationToken);
-
-        private void WireUpApplicationEvents()
-        {
         }
 
         protected virtual void OnProcessMessage(IPlatformMessage message)
@@ -81,5 +55,32 @@ namespace Patchwork.Framework.Platform
                     break;
             }
         }
+
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            Core.ProcessMessage -= OnProcessMessage;
+            base.DisposeManagedResources();
+        }
+
+        /// <inheritdoc />
+        protected override void InitializeResources()
+        {
+            base.InitializeResources();
+            Core.ProcessMessage += OnProcessMessage;
+        }
+
+        partial void ConstructionShared();
+
+        partial void InitializeResourcesShared();
+
+        partial void DisposeManagedResourcesShared();
+
+        partial void PumpMessagesShared(CancellationToken cancellationToken);
+
+        protected abstract void PlatformPumpMessages(CancellationToken cancellationToken);
+
+        private void WireUpApplicationEvents() { }
+        #endregion
     }
 }

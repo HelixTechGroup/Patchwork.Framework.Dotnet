@@ -1,13 +1,18 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.Kernel32
 {
     public static class Methods
     {
+        #region Members
         public const string LibraryName = "kernel32";
+        #endregion
 
+        #region Methods
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern uint GetLastError();
 
@@ -44,8 +49,51 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
         [DllImport(LibraryName)]
         public static extern bool SetSystemTime(ref SystemTime lpSystemTime);
 
-        #region Console Functions
+        [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "RtlZeroMemory")]
+        public static extern void ZeroMemory(IntPtr dest, IntPtr size);
 
+        [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "RtlSecureZeroMemory")]
+        public static extern void SecureZeroMemory(IntPtr dest, IntPtr size);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern IntPtr GetModuleHandle(IntPtr modulePtr);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern bool GetModuleHandleEx(GetModuleHandleFlags dwFlags,
+                                                    string lpModuleName,
+                                                    out IntPtr phModule);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern IntPtr LoadLibrary(string fileName);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern IntPtr LoadLibraryEx(string fileName,
+                                                  IntPtr hFileReservedAlwaysZero,
+                                                  LoadLibraryFlags dwFlags);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool FreeLibrary(IntPtr hModule);
+
+        [DllImport(LibraryName, CharSet = CharSet.Ansi)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern bool SetDllDirectory(string fileName);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetDefaultDllDirectories(LibrarySearchFlags directoryFlags);
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern IntPtr AddDllDirectory(string newDirectory);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool RemoveDllDirectory(IntPtr cookieFromAddDllDirectory);
+        #endregion
+
+        #region Console Functions
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool AllocConsole();
 
@@ -71,29 +119,20 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
         public static extern uint GetConsoleTitle(StringBuilder lpConsoleTitle, uint nSize);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool SetConsoleWindowInfo(IntPtr hConsoleOutput, int bAbsolute,
-            [In] ref RectangleS lpConsoleWindow);
-
+        public static extern bool SetConsoleWindowInfo(IntPtr hConsoleOutput,
+                                                       int bAbsolute,
+                                                       [In] ref RectangleS lpConsoleWindow);
         #endregion
 
-        #region Memory Methods
-
-        [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "RtlZeroMemory")]
-        public static extern void ZeroMemory(IntPtr dest, IntPtr size);
-
-        [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "RtlSecureZeroMemory")]
-        public static extern void SecureZeroMemory(IntPtr dest, IntPtr size);
-
-        #endregion
-
-        #region Handle and Object Functions 
-
+        #region Handle and Object Functions
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool DuplicateHandle(
-            IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr hTargetProcessHandle,
+            IntPtr hSourceProcessHandle,
+            IntPtr hSourceHandle,
+            IntPtr hTargetProcessHandle,
             out IntPtr lpTargetHandle,
             uint dwDesiredAccess,
             int bInheritHandle,
@@ -104,50 +143,9 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool SetHandleInformation(IntPtr hObject, HandleInfoFlags dwMask, HandleInfoFlags dwFlags);
-
-        #endregion
-
-        #region DLL Methods
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr GetModuleHandle(IntPtr modulePtr);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool GetModuleHandleEx(GetModuleHandleFlags dwFlags, string lpModuleName,
-            out IntPtr phModule);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr LoadLibrary(string fileName);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr LoadLibraryEx(string fileName, IntPtr hFileReservedAlwaysZero,
-            LoadLibraryFlags dwFlags);
-
-        [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool FreeLibrary(IntPtr hModule);
-
-        [DllImport(LibraryName, CharSet = CharSet.Ansi)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool SetDllDirectory(string fileName);
-
-        [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool SetDefaultDllDirectories(LibrarySearchFlags directoryFlags);
-
-        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr AddDllDirectory(string newDirectory);
-
-        [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool RemoveDllDirectory(IntPtr cookieFromAddDllDirectory);
-
         #endregion
 
         #region System Information Functions
-
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern uint GetSystemDirectory(StringBuilder lpBuffer, uint uSize);
 
@@ -165,11 +163,9 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern void GetSystemInfo(out SystemInfo lpSystemInfo);
-
         #endregion
 
         #region Process and Thread Functions
-
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern uint GetCurrentProcessId();
 
@@ -184,11 +180,9 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern uint GetCurrentProcessorNumber();
-
         #endregion
 
         #region File Management Functions
-
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern FileAttributes GetFileAttributes(string lpFileName);
 
@@ -196,27 +190,27 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
         public static extern bool SetFileAttributes(string lpFileName, FileAttributes dwFileAttributes);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool GetFileAttributesEx(string lpFileName, FileAttributeInfoLevel fInfoLevelId,
-            out FileAttributeData lpFileInformation);
+        public static extern bool GetFileAttributesEx(string lpFileName,
+                                                      FileAttributeInfoLevel fInfoLevelId,
+                                                      out FileAttributeData lpFileInformation);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr CreateFile(string lpFileName,
-            uint dwDesiredAccess,
-            FileShareMode dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
+                                               uint dwDesiredAccess,
+                                               FileShareMode dwShareMode,
+                                               IntPtr lpSecurityAttributes,
+                                               FileCreationDisposition dwCreationDisposition,
+                                               FileAttributes dwFlagsAndAttributes,
+                                               IntPtr hTemplateFile);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr CreateFile(string lpFileName,
-            uint dwDesiredAccess,
-            FileShareMode dwShareMode,
-            ref SecurityAttributes lpSecurityAttributes,
-            FileCreationDisposition dwCreationDisposition,
-            uint dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
-
+                                               uint dwDesiredAccess,
+                                               FileShareMode dwShareMode,
+                                               ref SecurityAttributes lpSecurityAttributes,
+                                               FileCreationDisposition dwCreationDisposition,
+                                               uint dwFlagsAndAttributes,
+                                               IntPtr hTemplateFile);
         #endregion
     }
 }

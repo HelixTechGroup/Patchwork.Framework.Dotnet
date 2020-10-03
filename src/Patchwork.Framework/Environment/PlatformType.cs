@@ -5,6 +5,6 @@
         Unknown,
         Desktop,
         Mobile,
-        Server        
+        Server
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
 // ReSharper disable InconsistentNaming
 
@@ -110,7 +112,7 @@ namespace Patchwork.Framework.Platform.Interop.User32
         /// <summary>
         ///     The windows is a pop-up window. This style cannot be used with the WS_CHILD style.
         /// </summary>
-        WS_POPUP = unchecked ((int) 0x80000000),
+        WS_POPUP = unchecked((int)0x80000000),
 
         /// <summary>
         ///     The window is a pop-up window. The WS_CAPTION and WS_POPUPWINDOW styles must be combined to make the window menu

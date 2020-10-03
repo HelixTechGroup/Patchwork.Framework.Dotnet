@@ -1,20 +1,27 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct KeyboardInput
     {
-        public ushort VirtualKeyCode;
-        public ushort ScanCode;
-        public KeyboardInputFlags Flags;
-        public uint Time;
+        #region Members
         public IntPtr ExtraInfo;
+        public KeyboardInputFlags Flags;
+        public ushort ScanCode;
+        public uint Time;
+        public ushort VirtualKeyCode;
+        #endregion
 
+        #region Properties
         public VirtualKey Key
         {
-            get { return (VirtualKey) this.VirtualKeyCode; }
-            set { this.VirtualKeyCode = (ushort) value; }
+            get { return (VirtualKey)VirtualKeyCode; }
+            set { VirtualKeyCode = (ushort)value; }
         }
+        #endregion
     }
 }

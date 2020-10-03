@@ -1,14 +1,24 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct SecurityAttributes
     {
+        #region Members
+        public uint IsHandleInheritedValue;
         public uint Length;
         public IntPtr SecurityDescriptor;
-        public uint IsHandleInheritedValue;
+        #endregion
 
-        public bool IsHandleInherited => this.IsHandleInheritedValue > 0;
+        #region Properties
+        public bool IsHandleInherited
+        {
+            get { return IsHandleInheritedValue > 0; }
+        }
+        #endregion
     }
 }

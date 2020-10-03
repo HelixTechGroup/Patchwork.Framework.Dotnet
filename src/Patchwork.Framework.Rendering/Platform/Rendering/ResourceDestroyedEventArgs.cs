@@ -1,9 +1,12 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
     public sealed class ResourceDestroyedEventArgs : EventArgs
     {
+        #region Properties
         /// <summary>
         /// The name of the destroyed resource.
         /// </summary>
@@ -12,6 +15,7 @@ namespace Patchwork.Framework.Platform
         /// <summary>
         /// The resource manager tag of the destroyed resource.
         /// </summary>
-        public Object Tag { get; internal set; }
+        public object Tag { get; internal set; }
+        #endregion
     }
 }

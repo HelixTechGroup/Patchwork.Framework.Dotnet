@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Patchwork.Framework.Messaging
+﻿namespace Patchwork.Framework.Messaging
 {
-    public enum MessageIds : int
+    public enum MessageIds
     {
         Quit = -1,
         Display,

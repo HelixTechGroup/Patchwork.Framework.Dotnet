@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Rendering;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
@@ -12,7 +13,9 @@ using Shin.Framework.Extensions;
 
 namespace Patchwork.Framework.Manager
 {
-    public abstract class PlatformRenderManager : PlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IRenderMessageData>>, IPlatformRenderManager
+    public class PlatformRenderManager : PlatformManager<AssemblyRenderingAttribute,
+                                                    IPlatformMessage<IRenderMessageData>>,
+                                                    IPlatformRenderManager
     {
         #region Events
         public event EventHandler<INWindow> WindowCreated;
@@ -23,7 +26,17 @@ namespace Patchwork.Framework.Manager
 
         #region Members
         protected IList<INRenderDevice> m_devices;
+        protected IList<INRenderer> m_renderers;
         #endregion
+
+        protected PlatformRenderManager()
+        {
+            m_devices = new ConcurrentList<INRenderDevice>();
+            m_renderers = new ConcurrentList<INRenderer>();
+
+            WindowCreated += OnWindowCreated;
+            WindowDestroyed += OnWindowDestroyed;
+        }
 
         #region Methods
         public bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer
@@ -31,14 +44,13 @@ namespace Patchwork.Framework.Manager
             return m_devices.Any(device => device.SupportedRenderers.ContainsType<TRenderer>());
         }
 
-        public TRenderer GetRenderer<TRenderer>() where TRenderer : INRenderer
+        public TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer
         {
             Throw.If(!IsRendererSupported<TRenderer>()).InvalidOperationException();
-
             var devs = m_devices
                       .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
                       .OrderBy(d => d.Priority)
-                      .First().GetRenderer<TRenderer>();
+                      .First().GetRenderer<TRenderer>(parameters);
 
             return devs;
         }
@@ -46,12 +58,29 @@ namespace Patchwork.Framework.Manager
         protected virtual void OnWindowCreated(object sender, INWindow window)
         {
             var win = window;
+            if (!window.IsRenderable)
+                return;
 
+            foreach (var dev in m_devices)
+            {
+                var renderer = GetRenderer<INWindowRenderer>(window);
+                //renderer.Initialize(window, dev);
+                m_renderers.Add(renderer);
+            }
         }
 
         protected virtual void OnWindowDestroyed(object sender, INWindow window)
         {
             var win = window;
+            if (!window.IsRenderable)
+                return;
+
+            var renderers = m_renderers.Where(e => e.ContainsInterface(typeof(INWindowRenderer)) && (e as INWindowRenderer).Window == window);
+            foreach (var ren in renderers)
+            {
+                m_renderers.Remove(ren);
+                ren.Dispose();
+            }
         }
 
         /// <inheritdoc />
@@ -64,7 +93,7 @@ namespace Patchwork.Framework.Manager
                     continue;
 
                 if (m_devices.All(d => d.GetType() != m.RenderDeviceType))
-                    m_devices.Add(Activator.CreateInstance(m.RenderDeviceType) as INRenderDevice);
+                    m_devices.Add(Activator.CreateInstance(m.RenderDeviceType, Core.IoCContainer) as INRenderDevice);
             }
         }
 
@@ -73,6 +102,9 @@ namespace Patchwork.Framework.Manager
         {
             foreach (var device in m_devices)
                 device.Dispose();
+
+            foreach (var ren in m_renderers)
+                ren.Dispose();
 
             base.DisposeManagedResources();
         }
@@ -93,6 +125,9 @@ namespace Patchwork.Framework.Manager
         protected override void OnProcessMessage(IPlatformMessage message)
         {
             base.OnProcessMessage(message);
+
+            foreach (var device in m_devices)
+                Task.Run(() => { device.Push(message); });
 
             switch (message.Id)
             {

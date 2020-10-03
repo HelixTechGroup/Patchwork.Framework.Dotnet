@@ -1,7 +1,7 @@
 ﻿#region Usings
 #endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
     public interface INRenderCommandList : INResource
     {
@@ -9,6 +9,7 @@ namespace Patchwork.Framework.Platform
         void Begin();
 
         void End();
+        #endregion
 
 
         //void SetPipeline(Pipeline pipeline);
@@ -174,6 +175,5 @@ namespace Patchwork.Framework.Platform
 
 
         //void InsertDebugMarker(string name);
-        #endregion
     }
 }

@@ -1,10 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Explicit)]
     public struct NcCalcSizeRegionUnion
     {
-        [FieldOffset(0)] public NcCalcSizeInput Input;
-        [FieldOffset(0)] public NcCalcSizeOutput Output;
+        #region Members
+        [FieldOffset(0)]
+        public NcCalcSizeInput Input;
+
+        [FieldOffset(0)]
+        public NcCalcSizeOutput Output;
+        #endregion
     }
 }

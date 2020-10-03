@@ -1,4 +1,5 @@
-﻿namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+﻿namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     public enum DayOfWeek
     {
         Sunday = 0,

@@ -1,23 +1,25 @@
-﻿using System;
-using System.Drawing;
-using Patchwork.Framework.Platform.Rendering;
+﻿#region Usings
 using Shin.Framework;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
-    public partial interface INRenderAdapter : IInitialize, IDispose
+    public interface INRenderAdapter : IInitialize, IDispose
     {
+        #region Properties
+        INRenderAdapterConfiguration Configuration { get; }
+
+        INRenderDevice Device { get; }
         INResourceFactory ResourceFactory { get; }
 
         INScreen Screen { get; }
+        #endregion
 
-        INRenderDevice Device { get; }
-
-        INRenderAdapterConfiguration Configuration { get; }
-
+        #region Methods
         void SwapBuffers();
 
         void Flush();
+        #endregion
 
         //IRenderCommandList GetCommandList();
 

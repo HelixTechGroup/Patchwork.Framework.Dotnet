@@ -24,10 +24,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\ApplicationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformEnvironment.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\IOSInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\IOsInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\IRuntimeInformation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\OSInformation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Environment\OSType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\OsInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Environment\OsType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformFronendType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\PlatformType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\RuntimeInformation.cs" />
@@ -41,13 +41,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NThreadDispatcherPriority.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\NThreadDispatcherPriority.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INScreen.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\INThreadDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyData.cs" />
@@ -56,5 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-﻿namespace Patchwork.Framework.Platform.Interop.User32 {
+﻿namespace Patchwork.Framework.Platform.Interop.User32
+{
     public enum SystemMetrics
     {
         /// <summary>

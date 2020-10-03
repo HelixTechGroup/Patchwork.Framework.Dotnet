@@ -13,9 +13,9 @@ namespace Patchwork.Framework
             try
 
             {
-                RegistryKey key = root.OpenSubKey(path);
+                var key = root.OpenSubKey(path);
 
-                string result = (string)key.GetValue(name);
+                var result = (string)key.GetValue(name);
 
                 key.Close();
 
@@ -37,7 +37,7 @@ namespace Patchwork.Framework
             try
 
             {
-                RegistryKey key = root.OpenSubKey(path, true);
+                var key = root.OpenSubKey(path, true);
 
                 key.SetValue(name, value);
             }
@@ -73,10 +73,10 @@ namespace Patchwork.Framework
             try
 
             {
-                RegistryKey parentKey = Registry.CurrentUser.OpenSubKey(path, true);
+                var parentKey = Registry.CurrentUser.OpenSubKey(path, true);
 
 
-                RegistryKey key = parentKey.OpenSubKey(name);
+                var key = parentKey.OpenSubKey(name);
 
 
                 if (key != null) parentKey.DeleteSubKeyTree(name);

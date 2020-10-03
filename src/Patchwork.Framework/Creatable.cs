@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿#region Usings
+using System;
 using Shin.Framework;
 using Shin.Framework.Extensions;
+#endregion
 
 namespace Patchwork.Framework
 {

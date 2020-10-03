@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using Patchwork.Framework.Manager;
+﻿#region Usings
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
-using Shin.Framework.Extensions;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Manager
 {
     public sealed class WindowsWindowManager : PlatformWindowManager
     {
+        #region Methods
+        /// <inheritdoc />
+        protected override void CreateManager(params AssemblyWindowingAttribute[] managers)
+        {
+            base.CreateManager(managers);
+        }
+
         /// <inheritdoc />
         protected override INWindow PlatformCreateWindow(NWindowDefinition definition)
         {
@@ -20,11 +23,6 @@ namespace Patchwork.Framework.Platform
             win.Create();
             return win;
         }
-
-        /// <inheritdoc />
-        protected override void CreateManager(params AssemblyWindowingAttribute[] managers)
-        {
-            base.CreateManager(managers);
-        }
+        #endregion
     }
 }

@@ -1,14 +1,30 @@
-﻿using System;
+﻿#region Usings
 using Shin.Framework;
+#endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public abstract partial class NRenderAdapter : Initializable, INRenderAdapter
+    public abstract class NRenderAdapter : Initializable, INRenderAdapter
     {
+        #region Members
         private INRenderAdapterConfiguration m_configuration;
-        private INScreen m_screen;
         private INRenderDevice m_device;
         private INResourceFactory m_resourceFactory;
+        private INScreen m_screen;
+        #endregion
+
+        #region Properties
+        /// <inheritdoc />
+        public INRenderAdapterConfiguration Configuration
+        {
+            get { return m_configuration; }
+        }
+
+        /// <inheritdoc />
+        public INRenderDevice Device
+        {
+            get { return m_device; }
+        }
 
         /// <inheritdoc />
         public INResourceFactory ResourceFactory
@@ -21,19 +37,9 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             get { return m_screen; }
         }
+        #endregion
 
-        /// <inheritdoc />
-        public INRenderDevice Device
-        {
-            get { return m_device; }
-        }
-
-        /// <inheritdoc />
-        public INRenderAdapterConfiguration Configuration
-        {
-            get { return m_configuration; }
-        }
-
+        #region Methods
         /// <inheritdoc />
         public void SwapBuffers()
         {
@@ -49,5 +55,6 @@ namespace Patchwork.Framework.Platform.Rendering
         protected abstract void PlatformFlush();
 
         protected abstract void PlatformSwapBuffers();
+        #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.Gdi32
 {
@@ -59,6 +61,6 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         /// <summary>
         ///     Prevents the bitmap from being mirrored.
         /// </summary>
-        NOMIRRORBITMAP = unchecked((int) 0x80000000)
+        NOMIRRORBITMAP = unchecked((int)0x80000000)
     }
 }

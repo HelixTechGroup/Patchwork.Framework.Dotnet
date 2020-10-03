@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop
 {

@@ -47,7 +47,7 @@ namespace Patchwork.Framework.Environment
             }
 
             if (Type.GetType("Mono.Runtime") != null
-                || Type.GetType("Mono.Interop.IDispatch", false) != null)
+             || Type.GetType("Mono.Interop.IDispatch", false) != null)
                 m_runtimeType = RuntimeType.Mono;
 
             m_runtimeVersion = SysEnv.Version;

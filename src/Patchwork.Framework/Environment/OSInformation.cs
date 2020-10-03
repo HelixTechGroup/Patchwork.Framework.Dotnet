@@ -7,7 +7,7 @@ using SysEnv = System.Environment;
 
 namespace Patchwork.Framework.Environment
 {
-    public class OSInformation : IOSInformation
+    public class OSInformation : IOsInformation
     {
         #region Members
         protected PlatformID m_id;
@@ -15,7 +15,7 @@ namespace Patchwork.Framework.Environment
         protected bool m_isUnixBased;
         protected string m_name;
         protected PlatformType m_platform;
-        protected OSType m_type;
+        protected OsType m_type;
         protected Version m_version;
         #endregion
 
@@ -40,7 +40,7 @@ namespace Patchwork.Framework.Environment
             get { return m_platform; }
         }
 
-        public OSType Type
+        public OsType Type
         {
             get { return m_type; }
         }
@@ -58,6 +58,13 @@ namespace Patchwork.Framework.Environment
             GetOsDetails();
         }
 
+        protected virtual void GetOsDetails()
+        {
+            m_is64Bit = SysRuntime.OSArchitecture.HasFlag(Architecture.X64) || SysRuntime.OSArchitecture.HasFlag(Architecture.Arm64);
+            m_version = SysEnv.OSVersion.Version;
+            m_name = SysRuntime.OSDescription;
+        }
+
         protected virtual void GetOsType()
         {
             m_platform = PlatformType.Desktop;
@@ -65,31 +72,24 @@ namespace Patchwork.Framework.Environment
             switch ((int)m_id)
             {
                 case 6: // PlatformID.MacOSX:
-                    m_type = OSType.MacOS;
+                    m_type = OsType.MacOS;
                     m_isUnixBased = true;
                     break;
                 case 4: // PlatformID.Unix:	
-                    m_type = OSType.Unix;
+                    m_type = OsType.Unix;
                     m_isUnixBased = true;
                     break;
                 case 0: // PlatformID.Win32S:
                 case 1: // PlatformID.Win32Windows:
                 case 2: // PlatformID.Win32NT:
                 case 3: // PlatformID.WinCE:
-                    m_type = OSType.Windows;
+                    m_type = OsType.Windows;
                     break;
                 default:
-                    m_type = OSType.Unknown;
+                    m_type = OsType.Unknown;
                     m_platform = PlatformType.Unknown;
                     break;
             }
-        }
-
-        protected virtual void GetOsDetails()
-        {
-            m_is64Bit = SysRuntime.OSArchitecture.HasFlag(Architecture.X64) || SysRuntime.OSArchitecture.HasFlag(Architecture.Arm64);
-            m_version = SysEnv.OSVersion.Version;
-            m_name = SysRuntime.OSDescription;
         }
         #endregion
     }

@@ -1,6 +1,9 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [Flags]
     public enum AnimateWindowFlags
     {

@@ -1,21 +1,28 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct HardwareInput
     {
-        public uint Message;
-        public ushort Low;
+        #region Members
         public ushort High;
+        public ushort Low;
+        public uint Message;
+        #endregion
 
+        #region Properties
         public uint WParam
         {
-            get { return ((uint) this.High << 16) | this.Low; }
+            get { return ((uint)High << 16) | Low; }
             set
             {
-                this.Low = (ushort) value;
-                this.High = (ushort) (value >> 16);
+                Low = (ushort)value;
+                High = (ushort)(value >> 16);
             }
         }
+        #endregion
     }
 }

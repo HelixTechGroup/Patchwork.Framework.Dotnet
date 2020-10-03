@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
-namespace Patchwork.Framework.Platform
+﻿namespace Patchwork.Framework.Platform
 {
     public partial interface INApplication
     {
+        #region Methods
         bool OpenConsole();
+
         void CloseConsole();
+        #endregion
     }
 }

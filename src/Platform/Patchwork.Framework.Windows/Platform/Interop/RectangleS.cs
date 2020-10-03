@@ -1,12 +1,47 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct RectangleS : IEquatable<RectangleS>
+    public struct RectangleS : IEquatable<RectangleS>
     {
+        #region Members
+        public short Left, Top, Right, Bottom;
+        #endregion
+
+        #region Properties
+        public short Height
+        {
+            get { return unchecked((short)(Bottom - Top)); }
+            set { Bottom = unchecked((short)(Top + value)); }
+        }
+
+        public bool IsEmpty
+        {
+            get { return Left == 0 && Top == 0 && Right == 0 && Bottom == 0; }
+        }
+
+        public SizeS Size
+        {
+            get { return new SizeS(Width, Height); }
+            set
+            {
+                Width = value.Width;
+                Height = value.Height;
+            }
+        }
+
+        public short Width
+        {
+            get { return unchecked((short)(Right - Left)); }
+            set { Right = unchecked((short)(Left + value)); }
+        }
+        #endregion
+
         public RectangleS(short left = 0, short top = 0, short right = 0, short bottom = 0)
         {
             Left = left;
@@ -16,13 +51,13 @@ namespace Patchwork.Framework.Platform.Interop
         }
 
         public RectangleS(short width = 0, short height = 0) : this(0, 0, width, height) { }
+
         public RectangleS(short all = 0) : this(all, all, all, all) { }
 
-        public short Left, Top, Right, Bottom;
-
+        #region Methods
         public bool Equals(RectangleS other)
         {
-            return (Left == other.Left) && (Right == other.Right) && (Top == other.Top) && (Bottom == other.Bottom);
+            return Left == other.Left && Right == other.Right && Top == other.Top && Bottom == other.Bottom;
         }
 
         public override bool Equals(object obj)
@@ -45,27 +80,12 @@ namespace Patchwork.Framework.Platform.Interop
             unchecked
             {
                 var hashCode = (int)Left;
-                hashCode = (hashCode * 397) ^ (int)Top;
-                hashCode = (hashCode * 397) ^ (int)Right;
-                hashCode = (hashCode * 397) ^ (int)Bottom;
+                hashCode = (hashCode * 397) ^ Top;
+                hashCode = (hashCode * 397) ^ Right;
+                hashCode = (hashCode * 397) ^ Bottom;
                 return hashCode;
             }
         }
-
-        public SizeS Size
-        {
-            get { return new SizeS(Width, Height); }
-            set
-            {
-                Width = value.Width;
-                Height = value.Height;
-            }
-        }
-
-        public bool IsEmpty => this.Left == 0 && this.Top == 0 && this.Right == 0 && this.Bottom == 0;
-
-        public short Width { get { return unchecked((short)(Right - Left)); } set { Right = unchecked((short)(Left + value)); } }
-        public short Height { get { return unchecked((short)(Bottom - Top)); } set { Bottom = unchecked((short)(Top + value)); } }
 
         public static RectangleS Create(short x, short y, short width, short height)
         {
@@ -78,20 +98,22 @@ namespace Patchwork.Framework.Platform.Interop
         public override string ToString()
         {
             var culture = CultureInfo.CurrentCulture;
-            return $"{{ Left = {Left.ToString(culture)}, Top = {Top.ToString(culture)} , Right = {Right.ToString(culture)}, Bottom = {Bottom.ToString(culture)} }}, {{ Width: {Width.ToString(culture)}, Height: {Height.ToString(culture)} }}";
+            return
+                $"{{ Left = {Left.ToString(culture)}, Top = {Top.ToString(culture)} , Right = {Right.ToString(culture)}, Bottom = {Bottom.ToString(culture)} }}, {{ Width: {Width.ToString(culture)}, Height: {Height.ToString(culture)} }}";
         }
 
-        public static RectangleS From(ref RectangleS lvalue, ref RectangleS rvalue,
-            Func<short, short, short> leftTopOperation,
-            Func<short, short, short> rightBottomOperation = null)
+        public static RectangleS From(ref RectangleS lvalue,
+                                      ref RectangleS rvalue,
+                                      Func<short, short, short> leftTopOperation,
+                                      Func<short, short, short> rightBottomOperation = null)
         {
             if (rightBottomOperation == null) rightBottomOperation = leftTopOperation;
             return new RectangleS(
-                leftTopOperation(lvalue.Left, rvalue.Left),
-                leftTopOperation(lvalue.Top, rvalue.Top),
-                rightBottomOperation(lvalue.Right, rvalue.Right),
-                rightBottomOperation(lvalue.Bottom, rvalue.Bottom)
-            );
+                                  leftTopOperation(lvalue.Left, rvalue.Left),
+                                  leftTopOperation(lvalue.Top, rvalue.Top),
+                                  rightBottomOperation(lvalue.Right, rvalue.Right),
+                                  rightBottomOperation(lvalue.Bottom, rvalue.Bottom)
+                                 );
         }
 
         public void Add(RectangleS value)
@@ -225,8 +247,9 @@ namespace Patchwork.Framework.Platform.Interop
                 x = (short)(target.Left / x);
                 y = (short)(target.Top / y);
             }
+
             Scale(ref target, x, y);
         }
-
+        #endregion
     }
 }

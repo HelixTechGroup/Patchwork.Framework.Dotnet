@@ -1,21 +1,35 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct PointS : IEquatable<PointS>
+    public struct PointS : IEquatable<PointS>
     {
+        #region Members
+        public short X, Y;
+        #endregion
+
+        #region Properties
+        public bool IsEmpty
+        {
+            get { return X == 0 && Y == 0; }
+        }
+        #endregion
+
         public PointS(short x, short y)
         {
             X = x;
             Y = y;
         }
 
+        #region Methods
         public bool Equals(PointS other)
         {
-            return (X == other.X) && (Y == other.Y);
+            return X == other.X && Y == other.Y;
         }
 
         public override bool Equals(object obj)
@@ -27,11 +41,9 @@ namespace Patchwork.Framework.Platform.Interop
         {
             unchecked
             {
-                return ((int)X * 397) ^ (int)Y;
+                return (X * 397) ^ Y;
             }
         }
-
-        public short X, Y;
 
         public static bool operator ==(PointS left, PointS right)
         {
@@ -60,7 +72,6 @@ namespace Patchwork.Framework.Platform.Interop
             var culture = CultureInfo.CurrentCulture;
             return $"{{ X = {X.ToString(culture)}, Y = {Y.ToString(culture)} }}";
         }
-
-        public bool IsEmpty => this.X == 0 && this.Y == 0;
+        #endregion
     }
 }

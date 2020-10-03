@@ -1,16 +1,21 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct SystemTime
     {
-        public ushort Year;
-        public ushort Month;
-        public ushort DayOfWeek;
+        #region Members
         public ushort Day;
+        public ushort DayOfWeek;
         public ushort Hour;
-        public ushort Minute;
-        public ushort Second;
         public ushort Milliseconds;
+        public ushort Minute;
+        public ushort Month;
+        public ushort Second;
+        public ushort Year;
+        #endregion
     }
 }

@@ -1,12 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct Input
     {
-        public InputType Type;
+        #region Members
         public InputPacket Packet;
+        public InputType Type;
+        #endregion
 
+        #region Methods
         public static void InitHardwareInput(out Input input, uint message, ushort low, ushort high)
         {
             input = new Input
@@ -26,11 +32,14 @@ namespace Patchwork.Framework.Platform.Interop.User32 {
 
         public static void InitHardwareInput(out Input input, uint message, uint wParam)
         {
-            InitHardwareInput(out input, message, (ushort) wParam, (ushort) (wParam >> 16));
+            InitHardwareInput(out input, message, (ushort)wParam, (ushort)(wParam >> 16));
         }
 
-        public static void InitKeyboardInput(out Input input, ushort scanCode, bool isKeyUp,
-                                             bool isExtendedKey = false, uint timestampMillis = 0)
+        public static void InitKeyboardInput(out Input input,
+                                             ushort scanCode,
+                                             bool isKeyUp,
+                                             bool isExtendedKey = false,
+                                             uint timestampMillis = 0)
         {
             input = new Input
                     {
@@ -69,7 +78,9 @@ namespace Patchwork.Framework.Platform.Interop.User32 {
             if (isKeyUp) input.Packet.KeyboardInput.Flags |= KeyboardInputFlags.KEYEVENTF_KEYUP;
         }
 
-        public static void InitKeyboardInput(out Input input, VirtualKey key, bool isKeyUp,
+        public static void InitKeyboardInput(out Input input,
+                                             VirtualKey key,
+                                             bool isKeyUp,
                                              uint timestampMillis = 0)
         {
             input = new Input
@@ -89,7 +100,11 @@ namespace Patchwork.Framework.Platform.Interop.User32 {
             if (isKeyUp) input.Packet.KeyboardInput.Flags |= KeyboardInputFlags.KEYEVENTF_KEYUP;
         }
 
-        public static void InitMouseInput(out Input input, int x, int y, MouseInputFlags flags, uint data = 0,
+        public static void InitMouseInput(out Input input,
+                                          int x,
+                                          int y,
+                                          MouseInputFlags flags,
+                                          uint data = 0,
                                           uint timestampMillis = 0)
         {
             input = new Input
@@ -108,5 +123,6 @@ namespace Patchwork.Framework.Platform.Interop.User32 {
                                  }
                     };
         }
+        #endregion
     }
 }

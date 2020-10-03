@@ -1,35 +1,42 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct KeyState
     {
+        #region Members
         public short Value;
+        #endregion
 
-        public KeyState(short value)
-        {
-            this.Value = value;
-        }
-
+        #region Properties
         public bool IsPressed
         {
             // Note: The boolean check is performed on int, not short.
-            get { return (this.Value & 0x8000) > 0; }
+            get { return (Value & 0x8000) > 0; }
             set
             {
-                if (value) this.Value = unchecked ((short) (this.Value | 0x8000));
-                else this.Value = unchecked ((short) (this.Value & 0x7fff));
+                if (value) Value = unchecked((short)(Value | 0x8000));
+                else Value = unchecked((short)(Value & 0x7fff));
             }
         }
 
         public bool IsToggled
         {
-            get { return (this.Value & 0x1) == 1; }
+            get { return (Value & 0x1) == 1; }
             set
             {
-                if (value) this.Value = unchecked ((short) (this.Value | 0x1));
-                else this.Value = unchecked ((short) (this.Value & 0xfffe));
+                if (value) Value = unchecked((short)(Value | 0x1));
+                else Value = unchecked((short)(Value & 0xfffe));
             }
+        }
+        #endregion
+
+        public KeyState(short value)
+        {
+            Value = value;
         }
     }
 }

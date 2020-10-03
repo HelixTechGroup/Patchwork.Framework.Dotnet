@@ -1,26 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿#region Usings
+using System;
 using Patchwork.Framework.Environment;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework
 {
     public sealed class AssemblyPlatformAttribute : PlatformAttribute
     {
+        #region Properties
         public Type ApplicationType { get; private set; }
         public Type DispatcherType { get; private set; }
         public Type OperatingSystemType { get; }
         public Type RuntimeType { get; }
+        #endregion
 
-        public AssemblyPlatformAttribute(OSType requiredOperatingSystem,
-                                 int priority,
-                                 string name,
-                                 Type applicationType,
-                                 Type dispatcherType,
-                                 Type operatingSystemType = null,
-                                 Type runtimeType = null) 
-        : base(requiredOperatingSystem, priority, name)
+        public AssemblyPlatformAttribute(OsType requiredOperatingSystem,
+                                         int priority,
+                                         string name,
+                                         Type applicationType,
+                                         Type dispatcherType,
+                                         Type operatingSystemType = null,
+                                         Type runtimeType = null)
+            : base(requiredOperatingSystem, priority, name)
         {
             if (operatingSystemType == null)
                 operatingSystemType = typeof(OSInformation);

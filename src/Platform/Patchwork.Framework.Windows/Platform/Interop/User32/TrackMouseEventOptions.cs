@@ -1,15 +1,19 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct TrackMouseEventOptions
     {
-        public uint Size;
-        public TrackMouseEventFlags Flags;
-        public IntPtr TrackedHwnd;
-        public uint HoverTime;
-
+        #region Members
         public const uint DefaultHoverTime = 0xFFFFFFFF;
+        public TrackMouseEventFlags Flags;
+        public uint HoverTime;
+        public uint Size;
+        public IntPtr TrackedHwnd;
+        #endregion
     }
 }

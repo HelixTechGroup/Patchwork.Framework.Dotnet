@@ -1,12 +1,17 @@
-﻿using System.Drawing;
+﻿#region Usings
+using System.Drawing;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct NcCalcSizeInput
     {
-        public Rectangle TargetWindowRect;
-        public Rectangle CurrentWindowRect;
+        #region Members
         public Rectangle CurrentClientRect;
+        public Rectangle CurrentWindowRect;
+        public Rectangle TargetWindowRect;
+        #endregion
     }
 }

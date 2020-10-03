@@ -2,6 +2,8 @@
 {
     public interface INObject
     {
+        #region Properties
         INHandle Handle { get; }
+        #endregion
     }
 }

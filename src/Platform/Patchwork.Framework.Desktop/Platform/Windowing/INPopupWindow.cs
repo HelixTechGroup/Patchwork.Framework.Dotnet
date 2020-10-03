@@ -1,29 +1,45 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using Shin.Framework.ComponentModel;
+#endregion
 
 namespace Patchwork.Framework.Platform.Windowing
 {
     public interface INPopupWindow : INWindow
     {
-        event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
-        event EventHandler<PropertyChangedEventArgs<Point>> PositionChanged;
-        event EventHandler<PropertyChangingEventArgs<NWindowState>> StateChanging;
-        event EventHandler<PropertyChangedEventArgs<NWindowState>> StateChanged;
+        #region Events
         event EventHandler AttentionDrawn;
+        event EventHandler<PropertyChangedEventArgs<Point>> PositionChanged;
+        event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
+        event EventHandler<PropertyChangedEventArgs<NWindowState>> StateChanged;
+        event EventHandler<PropertyChangingEventArgs<NWindowState>> StateChanging;
+        #endregion
+
+        #region Properties
+        bool IsEnabled { get; }
+        Point Position { get; }
 
         NWindowState State { get; }
-        Point Position { get; }
         Size WindowSize { get; }
-        bool IsEnabled { get; }
+        #endregion
 
+        #region Methods
         void Move(Point position);
+
         void Restore();
+
         void Minimize();
+
         void Maximize();
+
         void Enable();
+
         void Disable();
+
         void CenterToScreen();
+
         void DrawAttention();
+        #endregion
     }
 }

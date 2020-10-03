@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Core.Windowing.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.Windowing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IWindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />

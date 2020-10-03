@@ -1,7 +1,9 @@
 ﻿#region Usings
 #endregion
 
+#region Usings
 using Patchwork.Framework.Environment;
+#endregion
 
 namespace Patchwork.Framework
 {
@@ -20,7 +22,7 @@ namespace Patchwork.Framework
 
         string NewLine { get; }
 
-        IOSInformation OperatingSystem { get; }
+        IOsInformation OperatingSystem { get; }
 
         string PathSeparator { get; }
 

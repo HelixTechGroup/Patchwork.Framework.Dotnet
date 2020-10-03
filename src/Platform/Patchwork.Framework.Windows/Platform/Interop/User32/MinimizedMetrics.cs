@@ -1,13 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct MinimizedMetrics
     {
-        public uint Size;
-        public int Width;
-        public int HorizontalGap;
-        public int VerticalGap;
+        #region Members
         public ArrangeFlags Arrange;
+        public int HorizontalGap;
+        public uint Size;
+        public int VerticalGap;
+        public int Width;
+        #endregion
     }
 }

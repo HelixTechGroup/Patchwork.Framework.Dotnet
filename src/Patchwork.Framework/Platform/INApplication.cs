@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Usings
 using System.Threading;
 using Shin.Framework;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
@@ -11,6 +11,8 @@ namespace Patchwork.Framework.Platform
         Thread Thread { get; }
         #endregion
 
+        #region Methods
         void PumpMessages(CancellationToken cancellationToken);
+        #endregion
     }
 }

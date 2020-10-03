@@ -1,21 +1,26 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct WindowClassExBlittable
     {
-        public uint Size;
-        public WindowClassStyles Styles;
-        public IntPtr WindowProc;
-        public int ClassExtraBytes;
-        public int WindowExtraBytes;
-        public IntPtr InstanceHandle;
-        public IntPtr IconHandle;
-        public IntPtr CursorHandle;
+        #region Members
         public IntPtr BackgroundBrushHandle;
-        public IntPtr MenuName;
+        public int ClassExtraBytes;
         public IntPtr ClassName;
+        public IntPtr CursorHandle;
+        public IntPtr IconHandle;
+        public IntPtr InstanceHandle;
+        public IntPtr MenuName;
+        public uint Size;
         public IntPtr SmallIconHandle;
+        public WindowClassStyles Styles;
+        public int WindowExtraBytes;
+        public IntPtr WindowProc;
+        #endregion
     }
 }

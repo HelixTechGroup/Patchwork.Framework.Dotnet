@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
 namespace Patchwork.Framework.Platform.Windowing
 {

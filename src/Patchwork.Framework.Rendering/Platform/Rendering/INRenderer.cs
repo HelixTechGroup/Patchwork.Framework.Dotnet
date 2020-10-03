@@ -1,20 +1,29 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using Shin.Framework;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
-    public partial interface INRenderer : IInitialize, IDispose
+    public interface INRenderer : IInitialize, IDispose
     {
-        event EventHandler Painting;
-        event EventHandler<Rectangle> Paint;
-        event EventHandler Painted;
+        #region Events
+        event EventHandler Rendered;
+        event EventHandler Rendering;
+        #endregion
 
+        #region Properties
         Size Size { get; }
         Size VirutalSize { get; }
+        #endregion
 
+        #region Methods
         bool Invalidate();
+
         bool Validate();
 
+        void Render();
+        #endregion
     }
 }

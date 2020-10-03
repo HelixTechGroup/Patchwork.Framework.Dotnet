@@ -1,14 +1,19 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Patchwork.Framework.Platform.Interop.User32;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.Gdi32
 {
     public static class Methods
     {
+        #region Members
         public const string LibraryName = "gdi32";
+        #endregion
 
+        #region Methods
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr GetStockObject(int fnObject);
 
@@ -31,8 +36,12 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern int SetBkMode(IntPtr hdc, int iBkMode);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr CreateDIBSection(IntPtr hdc, IntPtr pbmi,
-            DibBmiColorUsageFlag iUsage, out IntPtr ppvBits, IntPtr hSection, uint dwOffset);
+        public static extern IntPtr CreateDIBSection(IntPtr hdc,
+                                                     IntPtr pbmi,
+                                                     DibBmiColorUsageFlag iUsage,
+                                                     out IntPtr ppvBits,
+                                                     IntPtr hSection,
+                                                     uint dwOffset);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
@@ -50,24 +59,52 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern IntPtr CreateBitmapIndirect([In] ref Bitmap lpbm);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr CreateDIBitmap(IntPtr hdc, [In] ref BitmapInfoHeader
-                lpbmih, uint fdwInit, byte[] lpbInit, IntPtr lpbmi,
-            DibBmiColorUsageFlag fuUsage);
+        public static extern IntPtr CreateDIBitmap(IntPtr hdc,
+                                                   [In] ref BitmapInfoHeader
+                                                       lpbmih,
+                                                   uint fdwInit,
+                                                   byte[] lpbInit,
+                                                   IntPtr lpbmi,
+                                                   DibBmiColorUsageFlag fuUsage);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr CreateDIBitmap(IntPtr hdc, [In] ref BitmapInfoHeader
-                lpbmih, uint fdwInit, IntPtr lpbInit, IntPtr lpbmi,
-            DibBmiColorUsageFlag fuUsage);
+        public static extern IntPtr CreateDIBitmap(IntPtr hdc,
+                                                   [In] ref BitmapInfoHeader
+                                                       lpbmih,
+                                                   uint fdwInit,
+                                                   IntPtr lpbInit,
+                                                   IntPtr lpbmi,
+                                                   DibBmiColorUsageFlag fuUsage);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern int SetDIBitsToDevice(IntPtr hdc, int xDest, int yDest, uint
-                dwWidth, uint dwHeight, int xSrc, int ySrc, uint uStartScan, uint cScanLines,
-            byte[] lpvBits, IntPtr lpbmi, DibBmiColorUsageFlag fuColorUse);
+        public static extern int SetDIBitsToDevice(IntPtr hdc,
+                                                   int xDest,
+                                                   int yDest,
+                                                   uint
+                                                       dwWidth,
+                                                   uint dwHeight,
+                                                   int xSrc,
+                                                   int ySrc,
+                                                   uint uStartScan,
+                                                   uint cScanLines,
+                                                   byte[] lpvBits,
+                                                   IntPtr lpbmi,
+                                                   DibBmiColorUsageFlag fuColorUse);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern int SetDIBitsToDevice(IntPtr hdc, int xDest, int yDest, uint
-                dwWidth, uint dwHeight, int xSrc, int ySrc, uint uStartScan, uint cScanLines,
-            IntPtr lpvBits, IntPtr lpbmi, DibBmiColorUsageFlag fuColorUse);
+        public static extern int SetDIBitsToDevice(IntPtr hdc,
+                                                   int xDest,
+                                                   int yDest,
+                                                   uint
+                                                       dwWidth,
+                                                   uint dwHeight,
+                                                   int xSrc,
+                                                   int ySrc,
+                                                   uint uStartScan,
+                                                   uint cScanLines,
+                                                   IntPtr lpvBits,
+                                                   IntPtr lpbmi,
+                                                   DibBmiColorUsageFlag fuColorUse);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool DeleteDC(IntPtr hdc);
@@ -88,19 +125,27 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern IntPtr CreateRectRgnIndirect([In] ref Rectangle lprc);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr CreateEllipticRgn(int nLeftRect, int nTopRect,
-            int nRightRect, int nBottomRect);
+        public static extern IntPtr CreateEllipticRgn(int nLeftRect,
+                                                      int nTopRect,
+                                                      int nRightRect,
+                                                      int nBottomRect);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr CreateEllipticRgnIndirect([In] ref Rectangle lprc);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr CreateRoundRectRgn(int x1, int y1, int x2, int y2,
-            int cx, int cy);
+        public static extern IntPtr CreateRoundRectRgn(int x1,
+                                                       int y1,
+                                                       int x2,
+                                                       int y2,
+                                                       int cx,
+                                                       int cy);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern int CombineRgn(IntPtr hrgnDest, IntPtr hrgnSrc1,
-            IntPtr hrgnSrc2, RegionModeFlags fnCombineMode);
+        public static extern int CombineRgn(IntPtr hrgnDest,
+                                            IntPtr hrgnSrc1,
+                                            IntPtr hrgnSrc2,
+                                            RegionModeFlags fnCombineMode);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool OffsetViewportOrgEx(IntPtr hdc, int nXOffset, int nYOffset, out Point lpPoint);
@@ -164,24 +209,24 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern RegionType IntersectClipRect(IntPtr hdc,
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect
+                                                          int nLeftRect,
+                                                          int nTopRect,
+                                                          int nRightRect,
+                                                          int nBottomRect
         );
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern RegionType ExcludeClipRect(IntPtr hdc,
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect
+                                                        int nLeftRect,
+                                                        int nTopRect,
+                                                        int nRightRect,
+                                                        int nBottomRect
         );
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern RegionType OffsetClipRgn(IntPtr hdc,
-            int nXOffset,
-            int nYOffset
+                                                      int nXOffset,
+                                                      int nYOffset
         );
 
         /// <summary>
@@ -255,8 +300,11 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern IntPtr CreateSolidBrush(uint crColor);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool FrameRgn(IntPtr hdc, IntPtr hrgn, IntPtr hbr, int nWidth,
-            int nHeight);
+        public static extern bool FrameRgn(IntPtr hdc,
+                                           IntPtr hrgn,
+                                           IntPtr hbr,
+                                           int nWidth,
+                                           int nHeight);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool PaintRgn(IntPtr hdc, IntPtr hrgn);
@@ -271,26 +319,47 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern bool MoveToEx(IntPtr hdc, int x, int y, out Point lpPoint);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool RoundRect(IntPtr hdc, int nLeftRect, int nTopRect,
-            int nRightRect, int nBottomRect, int nWidth, int nHeight);
+        public static extern bool RoundRect(IntPtr hdc,
+                                            int nLeftRect,
+                                            int nTopRect,
+                                            int nRightRect,
+                                            int nBottomRect,
+                                            int nWidth,
+                                            int nHeight);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool TextOut(IntPtr hdc, int nXStart, int nYStart,
-            string lpString, int cbString);
+        public static extern bool TextOut(IntPtr hdc,
+                                          int nXStart,
+                                          int nYStart,
+                                          string lpString,
+                                          int cbString);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool BitBlt(IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight,
-            IntPtr hdcSrc,
-            int nXSrc, int nYSrc, BitBltFlags dwRop);
+        public static extern bool BitBlt(IntPtr hdc,
+                                         int nXDest,
+                                         int nYDest,
+                                         int nWidth,
+                                         int nHeight,
+                                         IntPtr hdcSrc,
+                                         int nXSrc,
+                                         int nYSrc,
+                                         BitBltFlags dwRop);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool StretchBlt(IntPtr hdcDest, int nXOriginDest, int nYOriginDest,
-            int nWidthDest, int nHeightDest,
-            IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc,
-            BitBltFlags dwRop);
+        public static extern bool StretchBlt(IntPtr hdcDest,
+                                             int nXOriginDest,
+                                             int nYOriginDest,
+                                             int nWidthDest,
+                                             int nHeightDest,
+                                             IntPtr hdcSrc,
+                                             int nXOriginSrc,
+                                             int nYOriginSrc,
+                                             int nWidthSrc,
+                                             int nHeightSrc,
+                                             BitBltFlags dwRop);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern int SaveDC(IntPtr hdc);
@@ -309,17 +378,25 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr CreatePolyPolygonRgn(Point[] lppt,
-            int[] lpPolyCounts,
-            int nCount, int fnPolyFillMode);
+                                                         int[] lpPolyCounts,
+                                                         int nCount,
+                                                         int fnPolyFillMode);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
 
         [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "GdiAlphaBlend")]
-        public static extern bool AlphaBlend(IntPtr hdcDest, int nXOriginDest, int nYOriginDest,
-            int nWidthDest, int nHeightDest,
-            IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc,
-            BlendFunction blendFunction);
+        public static extern bool AlphaBlend(IntPtr hdcDest,
+                                             int nXOriginDest,
+                                             int nYOriginDest,
+                                             int nWidthDest,
+                                             int nHeightDest,
+                                             IntPtr hdcSrc,
+                                             int nXOriginSrc,
+                                             int nYOriginSrc,
+                                             int nWidthSrc,
+                                             int nHeightSrc,
+                                             BlendFunction blendFunction);
 
         /// <summary>
         ///     The GetRandomRgn function copies the system clipping region of a specified device context to a specific region.
@@ -351,5 +428,6 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern RegionType GetRgnBox(IntPtr hWnd, out Rectangle lprc);
+        #endregion
     }
 }

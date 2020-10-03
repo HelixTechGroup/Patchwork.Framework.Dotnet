@@ -2,9 +2,11 @@
 {
     public struct NWindowSizeLimits
     {
-        public float MinWidth;
-        public float MinHeight;
-        public float MaxWidth;
+        #region Members
         public float MaxHeight;
+        public float MaxWidth;
+        public float MinHeight;
+        public float MinWidth;
+        #endregion
     }
 }

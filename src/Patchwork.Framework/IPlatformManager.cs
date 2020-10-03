@@ -1,8 +1,10 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Threading;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
-using Shin.Framework;
+using Shin.Framework.Messaging;
+#endregion
 
 namespace Patchwork.Framework
 {
@@ -10,20 +12,31 @@ namespace Patchwork.Framework
 
     public interface IPlatformManager<TAssembly, TMessage> : IPlatformManager where TAssembly : PlatformAttribute where TMessage : IPlatformMessage
     {
-        event ProcessMessageHandler ProcessMessage;
+        #region Events
+        
+        #endregion
 
+        #region Properties
         static IPlatformManager<TAssembly, TMessage> Instance { get; }
+        #endregion
     }
 
     public interface IPlatformManager : ICreate
     {
-        event Action Startup;
+        #region Events
         event Action Shutdown;
+        event ProcessMessageHandler ProcessMessage;
+        event Action Startup;
+        #endregion
+
+        #region Properties
         bool IsRunning { get; }
         IPlatformMessagePump MessagePump { get; }
 
         MessageIds[] SupportedMessages { get; }
+        #endregion
 
+        #region Methods
         void Pump(CancellationToken token);
 
         void Wait();
@@ -31,5 +44,6 @@ namespace Patchwork.Framework
         void Run(CancellationToken token);
 
         void RunAsync(CancellationToken token);
+        #endregion
     }
 }

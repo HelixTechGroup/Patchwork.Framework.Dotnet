@@ -1,6 +1,8 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Collections.Generic;
 using Shin.Framework;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
@@ -27,7 +29,9 @@ namespace Patchwork.Framework.Platform
         event EventHandler OnDestroy;
         #endregion
 
+        #region Properties
         IEnumerable<Type> SupportedResources { get; }
+        #endregion
 
         #region Methods
         object Create();
@@ -35,4 +39,4 @@ namespace Patchwork.Framework.Platform
         void Destroy(object instance);
         #endregion
     }
-} 
+}

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Patchwork.Framework.Messaging
+﻿namespace Patchwork.Framework.Messaging
 {
     public abstract class PropertyData<T>
     {
@@ -15,11 +11,11 @@ namespace Patchwork.Framework.Messaging
         {
             get { return m_value; }
         }
+        #endregion
 
         protected PropertyData(T value)
         {
             m_value = value;
         }
-        #endregion
     }
 }

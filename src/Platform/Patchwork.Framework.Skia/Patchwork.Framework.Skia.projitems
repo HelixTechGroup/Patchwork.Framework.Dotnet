@@ -9,7 +9,11 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Skia\SkiaRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Skia\SkiaRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaRenderAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaWindowRenderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Windowing\" />
   </ItemGroup>
 </Project>

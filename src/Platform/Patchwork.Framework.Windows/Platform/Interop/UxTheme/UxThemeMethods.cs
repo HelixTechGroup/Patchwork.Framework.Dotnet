@@ -1,13 +1,18 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.UxTheme
 {
     public static class UxThemeMethods
     {
+        #region Members
         public const string LibraryName = "uxtheme";
+        #endregion
 
+        #region Methods
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern HResult SetWindowThemeAttribute(
             IntPtr hwnd,
@@ -217,5 +222,6 @@ namespace Patchwork.Framework.Platform.Interop.UxTheme
             int iStateId,
             int iPropId,
             out uint pColor);
+        #endregion
     }
 }

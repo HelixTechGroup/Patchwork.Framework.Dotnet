@@ -1,6 +1,9 @@
-﻿using System;
+﻿#region Usings
+using System;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     [Flags]
     public enum FileShareMode
     {

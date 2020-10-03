@@ -1,21 +1,29 @@
-﻿using System.Threading;
+﻿#region Usings
+using System;
+using System.Threading;
 using Shin.Framework;
 using Shin.Framework.Messaging;
+#endregion
 
 namespace Patchwork.Framework.Messaging
 {
     public class PlatformMessagePump<TMessage> : MessagePump, IPlatformMessagePump where TMessage : IPlatformMessage
     {
+        #region Members
         protected bool m_isRunning;
+        #endregion
+
+        #region Properties
+        public bool IsRunning
+        {
+            get { return m_isRunning; }
+            set { m_isRunning = value; }
+        }
+        #endregion
 
         public PlatformMessagePump(ILogger logger) : base(logger) { }
 
-        public bool IsRunning
-        {
-            get => m_isRunning;
-            set => m_isRunning = value;
-        }
-
+        #region Methods
         /// <inheritdoc />
         public override void Pump(CancellationToken ctx)
         {
@@ -27,16 +35,32 @@ namespace Patchwork.Framework.Messaging
         {
             Pump(CancellationToken.None);
         }
+
+        /// <inheritdoc />
+        public bool Push(IPlatformMessage message)
+        {
+            return Push(message as IMessage);
+        }
+        #endregion
     }
 
     public class PlatformMessagePump : MessagePump, IPlatformMessagePump
     {
+        #region Members
         protected bool m_isRunning;
+        #endregion
+
+        #region Properties
+        public bool IsRunning
+        {
+            get { return m_isRunning; }
+            set { m_isRunning = value; }
+        }
+        #endregion
 
         public PlatformMessagePump(ILogger logger) : base(logger) { }
 
-        public bool IsRunning { get => m_isRunning; set => m_isRunning = value; }
-
+        #region Methods
         /// <inheritdoc />
         public override void Pump(CancellationToken ctx)
         {
@@ -44,9 +68,16 @@ namespace Patchwork.Framework.Messaging
         }
 
         /// <inheritdoc />
-        public override void Pump() 
+        public override void Pump()
         {
             Pump(CancellationToken.None);
         }
+
+        /// <inheritdoc />
+        public bool Push(IPlatformMessage message)
+        {
+            return Push(message as IMessage);
+        }
+        #endregion
     }
 }

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>6f55f2da-a116-422e-8468-f8c8947f6064</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiWindowRenderer.cs" />
+  </ItemGroup>
+</Project>

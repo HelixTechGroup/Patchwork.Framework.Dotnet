@@ -1,14 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿#region Usings
+using System;
+#endregion
 
 namespace Patchwork.Framework.Messaging
 {
     public struct PlatformMessage : IPlatformMessage<IMessageData>
     {
-        private MessageIds m_id;
-        private DateTime m_timeStamp;
-        private IMessageData m_data;
+        #region Members
+        private readonly IMessageData m_data;
+        private readonly MessageIds m_id;
+        private readonly DateTime m_timeStamp;
+        #endregion
+
+        #region Properties
+        /// <inheritdoc />
+        public IMessageData Data
+        {
+            get { return m_data; }
+        }
 
         /// <inheritdoc />
         public MessageIds Id
@@ -17,22 +26,17 @@ namespace Patchwork.Framework.Messaging
         }
 
         /// <inheritdoc />
+        public IMessageData RawData
+        {
+            get { return m_data; }
+        }
+
+        /// <inheritdoc />
         public DateTime TimeStamp
         {
             get { return m_timeStamp; }
         }
-
-        /// <inheritdoc />
-        public IMessageData RawData
-        {
-            get { return m_data as IMessageData; }
-        }
-
-        /// <inheritdoc />
-        public IMessageData Data
-        {
-            get { return m_data; }
-        }
+        #endregion
 
         public PlatformMessage(MessageIds id, IMessageData data = null)
         {
@@ -44,9 +48,18 @@ namespace Patchwork.Framework.Messaging
 
     public struct PlatformMessage<TMessageData> : IPlatformMessage<TMessageData> where TMessageData : IMessageData
     {
-        private MessageIds m_id;
-        private DateTime m_timeStamp;
-        private TMessageData m_data;
+        #region Members
+        private readonly TMessageData m_data;
+        private readonly MessageIds m_id;
+        private readonly DateTime m_timeStamp;
+        #endregion
+
+        #region Properties
+        /// <inheritdoc />
+        public TMessageData Data
+        {
+            get { return m_data; }
+        }
 
         /// <inheritdoc />
         public MessageIds Id
@@ -55,24 +68,19 @@ namespace Patchwork.Framework.Messaging
         }
 
         /// <inheritdoc />
-        public DateTime TimeStamp
-        {
-            get { return m_timeStamp; }
-        }
-
-        /// <inheritdoc />
         public IMessageData RawData
-        {
-            get { return m_data as IMessageData; }
-        }
-
-        /// <inheritdoc />
-        public TMessageData Data
         {
             get { return m_data; }
         }
 
-        public PlatformMessage(MessageIds id, TMessageData data = default(TMessageData))
+        /// <inheritdoc />
+        public DateTime TimeStamp
+        {
+            get { return m_timeStamp; }
+        }
+        #endregion
+
+        public PlatformMessage(MessageIds id, TMessageData data = default)
         {
             m_id = id;
             m_data = data;

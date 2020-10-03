@@ -25,7 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\NativeBitmapInfoHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\DcRegionType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\DibBmiColorUsageFlag.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Gdi32Helpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Helpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Methods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\RgbQuad.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\StockBrush.cs" />
@@ -209,12 +209,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\WinThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WinWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsProcessHook.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\WinWindow.WindowProc.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WinWindow.WindowProc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\WindowsWindowManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Threading\WindowsPlatformUiDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeInput.cs" />
@@ -222,6 +220,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Rendering\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Windowing\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\IO\" />
   </ItemGroup>
 </Project>

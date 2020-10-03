@@ -10,6 +10,6 @@
         WFP,
         Xamarin,
         XamarinForms,
-        None        
+        None
     }
 }

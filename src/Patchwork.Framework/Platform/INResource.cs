@@ -1,13 +1,14 @@
 ﻿#region Usings
+using Patchwork.Framework.Platform.Rendering;
 using Shin.Framework;
 #endregion
 
 namespace Patchwork.Framework.Platform
 {
-    public interface IINResource<TNType> : INRenderer
+    public interface IINResource<TNType> : INResource
     {
         #region Properties
-        TNType Resource { get; }
+        new TNType Resource { get; }
         #endregion
     }
 

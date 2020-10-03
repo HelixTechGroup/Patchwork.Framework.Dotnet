@@ -1,22 +1,32 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.Kernel32
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct SystemInfo
     {
-        public ushort ProcessorArchitecture;
-        ushort Reserved;
-        public uint PageSize;
-        public IntPtr MinimumApplicationAddress;
-        public IntPtr MaximumApplicationAddress;
+        #region Members
         public IntPtr ActiveProcessorMask;
-        public uint NumberOfProcessors;
-        public uint ProcessorType;
         public uint AllocationGranularity;
+        public IntPtr MaximumApplicationAddress;
+        public IntPtr MinimumApplicationAddress;
+        public uint NumberOfProcessors;
+        public uint PageSize;
+        public ushort ProcessorArchitecture;
         public ushort ProcessorLevel;
         public ushort ProcessorRevision;
-        public uint OemId => ((uint) this.ProcessorArchitecture << 8) | this.Reserved;
+        public uint ProcessorType;
+        readonly ushort Reserved;
+        #endregion
+
+        #region Properties
+        public uint OemId
+        {
+            get { return ((uint)ProcessorArchitecture << 8) | Reserved; }
+        }
+        #endregion
     }
 }

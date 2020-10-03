@@ -1,12 +1,15 @@
 ﻿#region Usings
 using System;
 using System.Drawing;
+using System.Linq;
+using Patchwork.Framework.Platform.Windowing;
+using Shin.Framework;
 using Shin.Framework.ComponentModel;
 #endregion
 
-namespace Patchwork.Framework.Platform.Windowing
+namespace Patchwork.Framework.Platform.Rendering
 {
-    public abstract class NWindowRenderer : NRenderer, INWindowRenderer
+    public abstract partial class NWindowRenderer
     {
         #region Events
         /// <inheritdoc />
@@ -41,40 +44,17 @@ namespace Patchwork.Framework.Platform.Windowing
         #endregion
 
         #region Members
-        protected float m_aspectRatio;
-        protected double m_dpiScaling;
         protected double m_opacity;
-        protected NWindowDecorations m_supportedDecorations;
         protected int m_titlebarSize;
         protected NWindowTransparency m_transparencySupport;
-        protected INWindow m_window;
         #endregion
 
         #region Properties
-        /// <inheritdoc />
-        public float AspectRatio
-        {
-            get { return m_aspectRatio; }
-        }
-
-        /// <inheritdoc />
-        public double DpiScaling
-        {
-            get { return m_dpiScaling; }
-        }
-
         /// <inheritdoc />
         public double Opacity
         {
             get { return m_opacity; }
             set { m_opacity = value; }
-        }
-
-        /// <inheritdoc />
-        public NWindowDecorations SupportedDecorations
-        {
-            get { return m_supportedDecorations; }
-            set { m_supportedDecorations = value; }
         }
 
         /// <inheritdoc />
@@ -91,14 +71,8 @@ namespace Patchwork.Framework.Platform.Windowing
         }
         #endregion
 
-        protected NWindowRenderer(INWindow window, INRenderDevice renderDevice)
-        {
-            m_window = window;
-            m_device = renderDevice;
-
-        }
-
         #region Methods
+
         /// <inheritdoc />
         public void EnableWindowSystemDecorations()
         {
@@ -110,22 +84,6 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             throw new NotImplementedException();
         }
-
-        /// <inheritdoc />
-        protected override void InitializeResources()
-        {
-            base.InitializeResources();
-            m_window.SizeChanging += OnSizeChanging;
-        }
-
-        /// <inheritdoc />
-        protected override void DisposeManagedResources()
-        {
-            m_window.SizeChanging -= OnSizeChanging;
-            base.DisposeManagedResources();
-        }
-
-        protected abstract void OnSizeChanging(object sender, PropertyChangingEventArgs<Size> e);
         #endregion
     }
 }

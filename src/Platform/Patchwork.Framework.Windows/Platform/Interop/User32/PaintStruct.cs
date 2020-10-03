@@ -1,22 +1,29 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PaintStruct
     {
-        public IntPtr HandleDC;
+        #region Members
         public int EraseBackgroundValue;
+        public IntPtr HandleDC;
         public Rectangle PaintRect;
-        private int ReservedInternalRestore;
-        private int ReservedInternalIncUpdate;
-        private fixed byte ReservedInternalRgb [32];
+        private readonly int ReservedInternalIncUpdate;
+        private readonly int ReservedInternalRestore;
+        private fixed byte ReservedInternalRgb[32];
+        #endregion
 
+        #region Properties
         public bool ShouldEraseBackground
         {
-            get { return this.EraseBackgroundValue > 0; }
-            set { this.EraseBackgroundValue = value ? 1 : 0; }
+            get { return EraseBackgroundValue > 0; }
+            set { EraseBackgroundValue = value ? 1 : 0; }
         }
+        #endregion
     }
 }

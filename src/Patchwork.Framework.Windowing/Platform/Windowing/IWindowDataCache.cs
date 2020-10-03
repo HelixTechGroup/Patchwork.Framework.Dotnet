@@ -1,28 +1,32 @@
-﻿using System.Drawing;
+﻿#region Usings
+using System.Drawing;
+#endregion
 
 namespace Patchwork.Framework.Platform.Windowing
 {
     public partial interface IWindowDataCache : IDataCache
     {
+        #region Properties
         Rectangle ClientArea { get; set; }
         Size ClientSize { get; set; }
-        Size PreviousClientSize { get; }
-        Size MaxClientSize { get; set; }
-        Size Size { get; set; }
-        Size PreviousSize { get; }
-        Point Position { get; set; }
-        Point PreviousPosition { get; }
-        string Title { get; set; }
-        string PreviousTitle { get; }
-        bool IsResizable { get; set; }
-        bool IsActive { get; set; }
-        bool PreviouslyActive { get; }
-        bool IsVisible { get; set; }
-        bool PreviouslyVisible { get; }
-        bool IsEnabled { get; set; }
-        bool PreviouslyEnabled { get; }
-        bool IsFocused { get; set; }
-        bool PreviouslyFocused { get; }
         NWindowDefinition Definition { get; set; }
+        bool IsActive { get; set; }
+        bool IsEnabled { get; set; }
+        bool IsFocused { get; set; }
+        bool IsResizable { get; set; }
+        bool IsVisible { get; set; }
+        Size MaxClientSize { get; set; }
+        Point Position { get; set; }
+        Size PreviousClientSize { get; }
+        bool PreviouslyActive { get; }
+        bool PreviouslyEnabled { get; }
+        bool PreviouslyFocused { get; }
+        bool PreviouslyVisible { get; }
+        Point PreviousPosition { get; }
+        Size PreviousSize { get; }
+        string PreviousTitle { get; }
+        Size Size { get; set; }
+        string Title { get; set; }
+        #endregion
     }
 }

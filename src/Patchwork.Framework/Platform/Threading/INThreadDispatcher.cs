@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 #endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Threading
 {
     public interface INThreadDispatcher
     {

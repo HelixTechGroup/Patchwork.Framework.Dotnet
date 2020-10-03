@@ -1,4 +1,4 @@
-﻿namespace Patchwork.Framework.Platform
+﻿namespace Patchwork.Framework.Platform.Threading
 {
     public enum NThreadDispatcherPriority
     {

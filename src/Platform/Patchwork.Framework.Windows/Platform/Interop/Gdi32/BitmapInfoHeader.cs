@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
 // ReSharper disable InconsistentNaming
 
@@ -7,16 +9,18 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
     [StructLayout(LayoutKind.Sequential)]
     public struct BitmapInfoHeader
     {
-        public uint Size;
-        public int Width;
+        #region Members
+        public ushort BitCount;
+        public uint ClrImportant;
+        public uint ClrUsed;
+        public BitmapCompressionMode CompressionMode;
         public int Height;
         public ushort Planes;
-        public ushort BitCount;
-        public BitmapCompressionMode CompressionMode;
+        public uint Size;
         public uint SizeImage;
+        public int Width;
         public int XPxPerMeter;
         public int YPxPerMeter;
-        public uint ClrUsed;
-        public uint ClrImportant;
+        #endregion
     }
 }

@@ -1,27 +1,30 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Drawing;
-using Patchwork.Framework.Platform.Rendering;
 using Shin.Framework;
 using Shin.Framework.Extensions;
+#endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Rendering
 {
     public abstract class NRenderer : Initializable, INRenderer
     {
+        #region Events
+        /// <inheritdoc />
+        public event EventHandler Rendered;
+
+        /// <inheritdoc />
+        public event EventHandler Rendering;
+        #endregion
+
+        #region Members
         protected INRenderDevice m_device;
         protected INScreen m_screen;
         protected Size m_size;
         protected Size m_virutalSize;
+        #endregion
 
-        /// <inheritdoc />
-        public event EventHandler<Rectangle> Paint;
-
-        /// <inheritdoc />
-        public event EventHandler Painted;
-
-        /// <inheritdoc />
-        public event EventHandler Painting;
-
+        #region Properties
         /// <inheritdoc />
         public INScreen Screen
         {
@@ -39,7 +42,14 @@ namespace Patchwork.Framework.Platform
         {
             get { return m_virutalSize; }
         }
+        #endregion
 
+        protected NRenderer(INRenderDevice device)
+        {
+            m_device = device;
+        }
+
+        #region Methods
         public bool Invalidate()
         {
             return PlatformInvalidate();
@@ -50,15 +60,27 @@ namespace Patchwork.Framework.Platform
             return PlatformValidate();
         }
 
+        /// <inheritdoc />
+        public void Render()
+        {
+            PlatformRendering();
+            Rendering.Raise(this, null);
+            PlatformRender();
+            PlatformRendered();
+            Rendered.Raise(this, null);
+        }
+
+        protected virtual void OnPaint() { }
+
         protected abstract bool PlatformValidate();
 
         protected abstract bool PlatformInvalidate();
 
-        protected abstract void PlatformPaint();
+        protected abstract void PlatformRender();
 
-        protected virtual void OnPaint()
-        {
-            Paint.Raise(this, new Rectangle());
-        }
+        protected abstract void PlatformRendering();
+
+        protected abstract void PlatformRendered();
+        #endregion
     }
 }

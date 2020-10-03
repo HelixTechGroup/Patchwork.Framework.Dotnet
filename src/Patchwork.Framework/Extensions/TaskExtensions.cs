@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Patchwork.Framework.Extensions
+﻿namespace Patchwork.Framework.Extensions
 {
     public static class TaskExtensions
     {

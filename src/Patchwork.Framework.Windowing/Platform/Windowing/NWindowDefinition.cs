@@ -9,47 +9,29 @@ namespace Patchwork.Framework.Platform.Windowing
     public partial struct NWindowDefinition
     {
         #region Members
-        private Size m_maxClientSize;
         private bool m_acceptsInput;
-        private bool m_isVisibleInTaskbar;
         private int m_cornerRadius;
         private Point m_desiredPosition;
         private Size m_desiredSize;
         private Size m_expectedMaxSize;
+        private bool m_isMainApplicationWindow;
         private bool m_isModalWindow;
         private bool m_isRegularWindow;
+        private bool m_isResizable;
         private bool m_isTopmostWindow;
-        private bool m_isMainApplicationWindow;
+        private bool m_isVisibleInTaskbar;
+        private Size m_maxClientSize;
         private float m_opacity;
         private bool m_preserveAspectRatio;
         private string m_title;
         private NWindowType m_type;
-        private bool m_isResizable;
         #endregion
 
         #region Properties
-        public Size MaxClientSize
-        {
-            get { return m_maxClientSize; }
-            set { m_maxClientSize = value; }
-        }
-
-        public bool IsResizable
-        {
-            get { return m_isResizable; }
-            set { m_isResizable = value; }
-        }
-
         public bool AcceptsInput
         {
             get { return m_acceptsInput; }
             set { m_acceptsInput = value; }
-        }
-
-        public bool IsVisibleInTaskbar
-        {
-            get { return m_isVisibleInTaskbar; }
-            set { m_isVisibleInTaskbar = value; }
         }
 
         public int CornerRadius
@@ -76,6 +58,12 @@ namespace Patchwork.Framework.Platform.Windowing
             set { m_expectedMaxSize = value; }
         }
 
+        public bool IsMainApplicationWindow
+        {
+            get { return m_isMainApplicationWindow; }
+            set { m_isMainApplicationWindow = value; }
+        }
+
         public bool IsModalWindow
         {
             get { return m_isModalWindow; }
@@ -88,10 +76,28 @@ namespace Patchwork.Framework.Platform.Windowing
             set { m_isRegularWindow = value; }
         }
 
+        public bool IsResizable
+        {
+            get { return m_isResizable; }
+            set { m_isResizable = value; }
+        }
+
         public bool IsTopmostWindow
         {
             get { return m_isTopmostWindow; }
             set { m_isTopmostWindow = value; }
+        }
+
+        public bool IsVisibleInTaskbar
+        {
+            get { return m_isVisibleInTaskbar; }
+            set { m_isVisibleInTaskbar = value; }
+        }
+
+        public Size MaxClientSize
+        {
+            get { return m_maxClientSize; }
+            set { m_maxClientSize = value; }
         }
 
         public float Opacity
@@ -117,12 +123,6 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             get { return m_type; }
             set { m_type = value; }
-        }
-
-        public bool IsMainApplicationWindow
-        {
-            get { return m_isMainApplicationWindow; }
-            set { m_isMainApplicationWindow = value; }
         }
         #endregion
 

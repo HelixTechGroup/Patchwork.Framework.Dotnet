@@ -1,44 +1,42 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Patchwork.Framework.Messaging;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.ComponentModel;
 using Shin.Framework.Extensions;
+#endregion
 
 namespace Patchwork.Framework.Platform.Windowing
 {
     public abstract partial class NWindow
     {
-        protected bool m_isChildWindow;
-        protected IList<INWindow> m_childWindows;
-        protected bool m_isFirstTimeVisible;
-        protected NWindowState m_initialState;
-
-        public event EventHandler Hidden;
-        public event EventHandler Shown;
-        public event EventHandler<PropertyChangingEventArgs<NWindowState>> StateChanging;
-        public event EventHandler<PropertyChangedEventArgs<NWindowState>> StateChanged;
-        public event EventHandler<PropertyChangingEventArgs<NWindowMode>> ModeChanging;
-        public event EventHandler<PropertyChangedEventArgs<NWindowMode>> ModeChanged;
+        #region Events
         public event EventHandler AttentionDrawn;
         public event EventHandler ChildWindowCreated;
         public event EventHandler ChildWindowDestroyed;
 
+        public event EventHandler Hidden;
+        public event EventHandler<PropertyChangedEventArgs<NWindowMode>> ModeChanged;
+        public event EventHandler<PropertyChangingEventArgs<NWindowMode>> ModeChanging;
+        public event EventHandler Shown;
+        public event EventHandler<PropertyChangedEventArgs<NWindowState>> StateChanged;
+        public event EventHandler<PropertyChangingEventArgs<NWindowState>> StateChanging;
+        #endregion
+
+        #region Members
+        protected IList<INWindow> m_childWindows;
+        protected NWindowState m_initialState;
+        protected bool m_isChildWindow;
+        protected bool m_isFirstTimeVisible;
+        #endregion
+
+        #region Properties
         /// <inheritdoc />
-        public NWindowState State
+        public IEnumerable<INWindow> ChildWindows
         {
-            get { return m_cache.State; }
-        }
-
-        public NWindowMode Mode
-        {
-            get { return m_cache.Mode; }
-        }
-
-        public NWindowType Type
-        {
-            get { return m_cache.Definition.Type; }
+            get { return m_childWindows; }
         }
 
         /// <inheritdoc />
@@ -51,7 +49,7 @@ namespace Patchwork.Framework.Platform.Windowing
         public bool IsTopmostWindow
         {
             get { return m_cache.IsTopmostWindow; }
-        }        
+        }
 
         /// <inheritdoc />
         public bool IsVisibleInTaskbar
@@ -60,25 +58,24 @@ namespace Patchwork.Framework.Platform.Windowing
             set { m_cache.IsVisibleInTaskbar = value; }
         }
 
+        public NWindowMode Mode
+        {
+            get { return m_cache.Mode; }
+        }
+
         /// <inheritdoc />
-        public IEnumerable<INWindow> ChildWindows
+        public NWindowState State
         {
-            get { return m_childWindows; }
+            get { return m_cache.State; }
         }
 
-        partial void InitializeResourcesShared()
+        public NWindowType Type
         {
-            m_childWindows = new ConcurrentList<INWindow>();
-            m_initialState = m_cache.Definition.InitialState;
-            m_isFirstTimeVisible = true;
+            get { return m_cache.Definition.Type; }
         }
+        #endregion
 
-        partial void DisposeUnmanagedResourcesShared() { }
-
-        protected abstract void PlatformShow();
-
-        protected abstract void PlatformHide();        
-
+        #region Methods
         /// <inheritdoc />
         public void Show()
         {
@@ -100,16 +97,12 @@ namespace Patchwork.Framework.Platform.Windowing
                 PlatformSetPosition(position);
         }
 
-        protected abstract void PlatformSetPosition(Point position);
-
         /// <inheritdoc />
         public void Resize(Size size)
         {
             if (m_isInitialized && size == m_cache.Size)
                 PlatformSetWindowSize(size);
         }
-
-        protected abstract void PlatformSetWindowSize(Size size);
 
         /// <inheritdoc />
         public void Focus()
@@ -125,18 +118,12 @@ namespace Patchwork.Framework.Platform.Windowing
                 PlatformUnfocus();
         }
 
-        protected abstract void PlatformFocus();
-
-        protected abstract void PlatformUnfocus();        
-
         /// <inheritdoc />
         public void Deactivate()
         {
             if (m_isInitialized && m_cache.IsActive)
                 PlatformDeactivate();
         }
-
-        protected abstract void PlatformDeactivate();
 
         /// <inheritdoc />
         public void Activate()
@@ -145,18 +132,12 @@ namespace Patchwork.Framework.Platform.Windowing
                 PlatformActivate();
         }
 
-        protected abstract void PlatformActivate();
-
         /// <inheritdoc />
         public void Restore()
         {
             if (m_isInitialized)
                 PlatformRestore();
         }
-
-        protected abstract void PlatformRestore();
-
-        protected abstract Rectangle PlatformGetRestoreArea();
 
         /// <inheritdoc />
         public void Minimize()
@@ -168,8 +149,6 @@ namespace Patchwork.Framework.Platform.Windowing
                 PlatformMaximize();
         }
 
-        protected abstract void PlatformMinimize();
-
         /// <inheritdoc />
         public void Maximize()
         {
@@ -177,22 +156,15 @@ namespace Patchwork.Framework.Platform.Windowing
                 m_initialState = NWindowState.Maximized;
 
             if (m_cache.State != NWindowState.Maximized)
-                    PlatformMaximize();
+                PlatformMaximize();
         }
-
-        protected abstract void PlatformMaximize();
-
-        protected abstract NWindowState PlatformGetState();
 
         /// <inheritdoc />
         public void Enable()
         {
             if (m_isInitialized && !m_cache.IsEnabled)
                 PlatformEnable();
-
         }
-
-        protected abstract void PlatformEnable();
 
         /// <inheritdoc />
         public void Disable()
@@ -200,8 +172,6 @@ namespace Patchwork.Framework.Platform.Windowing
             if (m_isInitialized && m_cache.IsEnabled)
                 PlatformDisable();
         }
-
-        protected abstract void PlatformDisable();
 
         /// <inheritdoc />
         public abstract void BringToFront(bool force);
@@ -219,14 +189,10 @@ namespace Patchwork.Framework.Platform.Windowing
                 PlatformDrawAttention();
         }
 
-        protected abstract void PlatformDrawAttention();
-
         public bool IsPointInWindow(Point point)
         {
             return PlatformIsPointInWindow(point);
         }
-
-        protected abstract bool PlatformIsPointInWindow(Point point);
 
         /// <inheritdoc />
         public INWindow CreateWindow()
@@ -237,8 +203,6 @@ namespace Patchwork.Framework.Platform.Windowing
             win.Create();
             return win;
         }
-
-        protected abstract INWindow PlatformCreateChildWindow(NWindowDefinition definition);
 
         public INPopupWindow CreatePopup()
         {
@@ -269,22 +233,6 @@ namespace Patchwork.Framework.Platform.Windowing
             return win;
         }
 
-        protected abstract INPopupWindow PlatformCreatePopupWindow(NWindowDefinition definition);
-
-        protected abstract NWindowMode PlatformGetMode();
-
-        protected virtual void OnShown(object sender, EventArgs e) { }
-
-        protected virtual void OnHidden(object sender, EventArgs e) { }                
-
-        protected virtual void OnStateChanging(object sender, PropertyChangingEventArgs<NWindowState> e) { }
-
-        protected virtual void OnStateChanged(object sender, PropertyChangedEventArgs<NWindowState> e) { }
-
-        protected virtual void OnModeChanging(object sender, PropertyChangingEventArgs<NWindowMode> e) { }
-
-        protected virtual void OnModeChanged(object sender, PropertyChangedEventArgs<NWindowMode> e) { }
-
         protected virtual void OnAttentionDrawn(object sender, EventArgs e) { }
 
         protected virtual void OnChildWindowCreated(object sender, EventArgs e)
@@ -299,20 +247,81 @@ namespace Patchwork.Framework.Platform.Windowing
             m_childWindows.Remove(window);
         }
 
+        protected virtual void OnHidden(object sender, EventArgs e) { }
+
+        protected virtual void OnModeChanged(object sender, PropertyChangedEventArgs<NWindowMode> e) { }
+
+        protected virtual void OnModeChanging(object sender, PropertyChangingEventArgs<NWindowMode> e) { }
+
+        protected virtual void OnShown(object sender, EventArgs e) { }
+
+        protected virtual void OnStateChanged(object sender, PropertyChangedEventArgs<NWindowState> e) { }
+
+        protected virtual void OnStateChanging(object sender, PropertyChangingEventArgs<NWindowState> e) { }
+
+        partial void InitializeResourcesShared()
+        {
+            m_childWindows = new ConcurrentList<INWindow>();
+            m_initialState = m_cache.Definition.InitialState;
+            m_isFirstTimeVisible = true;
+        }
+
+        partial void DisposeUnmanagedResourcesShared() { }
+
+        protected abstract void PlatformShow();
+
+        protected abstract void PlatformHide();
+
+        protected abstract void PlatformSetPosition(Point position);
+
+        protected abstract void PlatformSetWindowSize(Size size);
+
+        protected abstract void PlatformFocus();
+
+        protected abstract void PlatformUnfocus();
+
+        protected abstract void PlatformDeactivate();
+
+        protected abstract void PlatformActivate();
+
+        protected abstract void PlatformRestore();
+
+        protected abstract Rectangle PlatformGetRestoreArea();
+
+        protected abstract void PlatformMinimize();
+
+        protected abstract void PlatformMaximize();
+
+        protected abstract NWindowState PlatformGetState();
+
+        protected abstract void PlatformEnable();
+
+        protected abstract void PlatformDisable();
+
+        protected abstract void PlatformDrawAttention();
+
+        protected abstract bool PlatformIsPointInWindow(Point point);
+
+        protected abstract INWindow PlatformCreateChildWindow(NWindowDefinition definition);
+
+        protected abstract INPopupWindow PlatformCreatePopupWindow(NWindowDefinition definition);
+
+        protected abstract NWindowMode PlatformGetMode();
+
         partial void DisposeManagedResourcesShared()
         {
             foreach (var window in m_childWindows)
                 window.Dispose();
 
             Shown.Dispose();
-            Hidden.Dispose();            
+            Hidden.Dispose();
             StateChanging.Dispose();
             StateChanged.Dispose();
             ModeChanging.Dispose();
             ModeChanged.Dispose();
             AttentionDrawn.Dispose();
             ChildWindowCreated.Dispose();
-            ChildWindowDestroyed.Dispose();            
+            ChildWindowDestroyed.Dispose();
             base.DisposeManagedResources();
         }
 
@@ -326,7 +335,7 @@ namespace Patchwork.Framework.Platform.Windowing
             Shown += OnShown;
             Hidden += OnHidden;
             ChildWindowCreated += OnChildWindowCreated;
-            ChildWindowDestroyed += OnChildWindowDestroyed;            
+            ChildWindowDestroyed += OnChildWindowDestroyed;
         }
 
         partial void OnProcessMessageShared(IPlatformMessage message)
@@ -335,7 +344,7 @@ namespace Patchwork.Framework.Platform.Windowing
             {
                 case MessageIds.Window:
                     var data = message.RawData as WindowMessageData;
-                    if (!Equals(this, data?.Window)) 
+                    if (!Equals(this, data?.Window))
                         return;
 
                     switch (data?.MessageId)
@@ -376,8 +385,10 @@ namespace Patchwork.Framework.Platform.Windowing
                             Shown.Raise(this, null);
                             break;
                     }
+
                     break;
             }
         }
+        #endregion
     }
 }

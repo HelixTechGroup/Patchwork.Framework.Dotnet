@@ -20,12 +20,12 @@ namespace Patchwork.Framework.Platform.Windowing
         public event EventHandler Deactivated;
         public event EventHandler Deactivating;
         public event EventHandler Destroyed;
+        public event EventHandler Disabled;
+        public event EventHandler Enabled;
         public event EventHandler<PropertyChangedEventArgs<bool>> FocusChanged;
         public event EventHandler<PropertyChangingEventArgs<bool>> FocusChanging;
         public event EventHandler FocusGained;
         public event EventHandler FocusLost;
-        public event EventHandler Enabled;
-        public event EventHandler Disabled;
         public event EventHandler<PropertyChangedEventArgs<Point>> PositionChanged;
         public event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
         public event EventHandler<PropertyChangedEventArgs<Size>> SizeChanged;
@@ -34,17 +34,15 @@ namespace Patchwork.Framework.Platform.Windowing
         #endregion
 
         #region Members
-        internal IWindowDataCache m_cache;
+        protected readonly INObject m_parent;
         protected INHandle m_handle;
         protected INInput m_input;
         protected bool m_isCreated;
         protected bool m_isMainApplicationWindow;
-        protected readonly INObject m_parent;
-        //protected INWindowRenderer m_renderer;
+        internal IWindowDataCache m_cache;
         #endregion
 
         #region Properties
-
         /// <inheritdoc />
         public Rectangle ClientArea
         {
@@ -142,7 +140,7 @@ namespace Patchwork.Framework.Platform.Windowing
             WireUpWindowEvents();
         }
 
-        protected NWindow(INObject parent, NWindowDefinition definition) : this() 
+        protected NWindow(INObject parent, NWindowDefinition definition) : this()
         {
             m_cache.Definition = definition;
             m_parent = parent;
@@ -152,10 +150,7 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         public void Create(bool initialize = true)
         {
-            if (!m_isCreated)
-            {
-                PlatformCreate();
-            }
+            if (!m_isCreated) PlatformCreate();
 
             if (!m_isInitialized && initialize)
                 Initialize();
@@ -198,8 +193,10 @@ namespace Patchwork.Framework.Platform.Windowing
         public void SyncDataCache(bool force = false)
         {
             if (!force)
+            {
                 if (m_cache.IsValid)
                     return;
+            }
 
             PlatformSyncDataCache();
             m_cache.Validate();
@@ -211,6 +208,49 @@ namespace Patchwork.Framework.Platform.Windowing
             m_cache.Invalidate();
         }
 
+        /// <inheritdoc />
+        public bool Equals(NWindow other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(m_handle, other.m_handle) && Equals(m_parent, other.m_parent);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is NWindow other && Equals(other);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(m_handle, m_parent);
+        }
+
+        public static bool operator ==(NWindow left, NWindow right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(NWindow left, NWindow right)
+        {
+            return !Equals(left, right);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(INWindow other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(m_handle, other.Handle) && Equals(m_parent, other.Parent);
+        }
+
+        public IWindowDataCache GetDataCache()
+        {
+            return m_cache;
+        }
+
         protected virtual void OnActivated(object sender, EventArgs e) { }
 
         protected virtual void OnActivating(object sender, EventArgs e) { }
@@ -219,13 +259,17 @@ namespace Patchwork.Framework.Platform.Windowing
 
         protected virtual void OnClosing(object sender, EventArgs e) { }
 
-        protected virtual void OnCreated(object sender, EventArgs e){ }
+        protected virtual void OnCreated(object sender, EventArgs e) { }
 
         protected virtual void OnDeactivated(object sender, EventArgs e) { }
 
         protected virtual void OnDeactivating(object sender, EventArgs e) { }
 
         protected virtual void OnDestroyed(object sender, EventArgs e) { }
+
+        protected virtual void OnDisabled(object sender, EventArgs e) { }
+
+        protected virtual void OnEnabled(object sender, EventArgs e) { }
 
         protected virtual void OnFocusChanged(object sender, PropertyChangedEventArgs<bool> e) { }
 
@@ -235,13 +279,91 @@ namespace Patchwork.Framework.Platform.Windowing
 
         protected virtual void OnFocusLost(object sender, EventArgs e) { }
 
-        protected virtual void OnEnabled(object sender, EventArgs e) { }
-
-        protected virtual void OnDisabled(object sender, EventArgs e) { }
-
-        protected virtual void OnPositionChanged(object sender, PropertyChangedEventArgs<Point> e){ }
+        protected virtual void OnPositionChanged(object sender, PropertyChangedEventArgs<Point> e) { }
 
         protected virtual void OnPositionChanging(object sender, PropertyChangingEventArgs<Point> e) { }
+
+        protected virtual void OnProcessMessage(IPlatformMessage message)
+        {
+            if (!m_isInitialized)
+                return;
+
+            switch (message.Id)
+            {
+                case MessageIds.Quit:
+                    break;
+                case MessageIds.Window:
+                    var data = (WindowMessageData)message.RawData;
+                    if (!Equals(this, data.Window))
+                        return;
+
+                    switch (data.MessageId)
+                    {
+                        case WindowMessageIds.None:
+                            break;
+                        case WindowMessageIds.Created:
+                            Created.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Destroyed:
+                            Destroyed.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Moving:
+                            PositionChanging.Raise(this, data.PositionChangingData.ToEventArgs());
+                            break;
+                        case WindowMessageIds.Moved:
+                            PositionChanged.Raise(this, data.PositionChangedData.ToEventArgs());
+                            break;
+                        case WindowMessageIds.Resizing:
+                            SizeChanging.Raise(this, data.SizeChangingData.ToEventArgs());
+                            break;
+                        case WindowMessageIds.Resized:
+                            SizeChanged.Raise(this, data.SizeChangedData.ToEventArgs());
+                            break;
+                        case WindowMessageIds.Focusing:
+                            FocusChanging.Raise(this, new PropertyChangingEventArgs<bool>(false, true));
+                            break;
+                        case WindowMessageIds.Focused:
+                            FocusGained.Raise(this, null);
+                            FocusChanged.Raise(this, new PropertyChangedEventArgs<bool>(true, true, false));
+                            break;
+                        case WindowMessageIds.Unfocusing:
+                            FocusChanging.Raise(this, new PropertyChangingEventArgs<bool>(true, false));
+                            break;
+                        case WindowMessageIds.Unfocused:
+                            FocusLost.Raise(this, null);
+                            FocusChanged.Raise(this, new PropertyChangedEventArgs<bool>(false, false, true));
+                            break;
+                        case WindowMessageIds.Closing:
+                            Closing.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Closed:
+                            Closed.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Activating:
+                            Activating.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Activated:
+                            Activated.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Deactivating:
+                            Deactivating.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Deactivated:
+                            Deactivated.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Enabled:
+                            Enabled.Raise(this, null);
+                            break;
+                        case WindowMessageIds.Disabled:
+                            Disabled.Raise(this, null);
+                            break;
+                    }
+
+                    break;
+            }
+
+            OnProcessMessageShared(message);
+        }
 
         protected virtual void OnSizeChanged(object sender, PropertyChangedEventArgs<Size> e) { }
 
@@ -371,131 +493,9 @@ namespace Patchwork.Framework.Platform.Windowing
 
         partial void WireUpWindowEventsShared();
 
-        protected virtual void OnProcessMessage(IPlatformMessage message)
-        {
-            if (!m_isInitialized)
-                return;
-
-            switch (message.Id)
-            {
-                case MessageIds.Quit:
-                    break;
-                case MessageIds.Window:
-                    var data = (WindowMessageData)message.RawData;
-                    if (!Equals(this, data.Window))
-                        return;
-
-                    switch (data.MessageId)
-                    {
-                        case WindowMessageIds.None:
-                            break;
-                        case WindowMessageIds.Created:
-                            Created.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Destroyed:
-                            Destroyed.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Moving:
-                            PositionChanging.Raise(this, data.PositionChangingData.ToEventArgs());
-                            break;
-                        case WindowMessageIds.Moved:
-                            PositionChanged.Raise(this, data.PositionChangedData.ToEventArgs());
-                            break;
-                        case WindowMessageIds.Resizing:
-                            SizeChanging.Raise(this, data.SizeChangingData.ToEventArgs());
-                            break;
-                        case WindowMessageIds.Resized:
-                            SizeChanged.Raise(this, data.SizeChangedData.ToEventArgs());
-                            break;
-                        case WindowMessageIds.Focusing:
-                            FocusChanging.Raise(this, new PropertyChangingEventArgs<bool>(false, true));
-                            break;
-                        case WindowMessageIds.Focused:
-                            FocusGained.Raise(this, null);
-                            FocusChanged.Raise(this, new PropertyChangedEventArgs<bool>(true, true, false));
-                            break;
-                        case WindowMessageIds.Unfocusing:
-                            FocusChanging.Raise(this, new PropertyChangingEventArgs<bool>(true, false));
-                            break;
-                        case WindowMessageIds.Unfocused:                                
-                            FocusLost.Raise(this, null);
-                            FocusChanged.Raise(this, new PropertyChangedEventArgs<bool>(false, false, true));
-                            break;
-                        case WindowMessageIds.Closing:
-                            Closing.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Closed:
-                            Closed.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Activating:
-                            Activating.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Activated:
-                            Activated.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Deactivating:
-                            Deactivating.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Deactivated:
-                            Deactivated.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Enabled:
-                            Enabled.Raise(this, null);
-                            break;
-                        case WindowMessageIds.Disabled:
-                            Disabled.Raise(this, null);
-                            break;
-                    }
-                    break;
-            }
-
-            OnProcessMessageShared(message);
-        }
-
         partial void OnProcessMessageShared(IPlatformMessage message);
         #endregion
 
-        /// <inheritdoc />
-        public bool Equals(NWindow other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(m_handle, other.m_handle) && Equals(m_parent, other.m_parent);
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj) || obj is NWindow other && Equals(other);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(m_handle, m_parent);
-        }
-
-        public static bool operator ==(NWindow left, NWindow right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(NWindow left, NWindow right)
-        {
-            return !Equals(left, right);
-        }
-
-        /// <inheritdoc />
-        public bool Equals(INWindow other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(m_handle, other.Handle) && Equals(m_parent, other.Parent);
-        }
-
-        public IWindowDataCache GetDataCache()
-        {
-            return m_cache;
-        }
+        //protected INWindowRenderer m_renderer;
     }
 }

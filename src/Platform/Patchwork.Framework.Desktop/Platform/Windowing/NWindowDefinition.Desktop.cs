@@ -8,11 +8,11 @@ namespace Patchwork.Framework.Platform.Windowing
     {
         #region Members
         private NWindowActivationPolicy m_activationPolicy;
-        private NWindowSizeLimits m_sizeLimits;
-        private NWindowState m_initialState;
         private NWindowMode m_initialMode;
-        private NWindowTransparency m_transparencySupport;
+        private NWindowState m_initialState;
+        private readonly NWindowSizeLimits m_sizeLimits;
         private NWindowDecorations m_supportedDecorations;
+        private NWindowTransparency m_transparencySupport;
         #endregion
 
         #region Properties
@@ -20,6 +20,39 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             get { return m_activationPolicy; }
             set { m_activationPolicy = value; }
+        }
+
+        public static NWindowDefinition Default
+        {
+            get
+            {
+                return new NWindowDefinition
+                       {
+                           AcceptsInput = true,
+                           ActivationPolicy = NWindowActivationPolicy.FirstShown,
+                           DesiredSize = new Size(800, 600),
+                           IsRegularWindow = true,
+                           Title = "test",
+                           SupportedDecorations = NWindowDecorations.All,
+                           Type = NWindowType.Normal,
+                           IsRenderable = true,
+                           IsMainApplicationWindow = true
+                       };
+            }
+        }
+
+        public NWindowMode InitialMode
+        {
+            get { return m_initialMode; }
+            set { m_initialMode = value; }
+        }
+
+        //bool ManualDPI;
+
+        public NWindowState InitialState
+        {
+            get { return m_initialState; }
+            set { m_initialState = value; }
         }
 
         //bool SizeWillChangeOften;
@@ -33,38 +66,6 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             get { return m_transparencySupport; }
             set { m_transparencySupport = value; }
-        }
-
-        //bool ManualDPI;
-
-        public NWindowState InitialState
-        {
-            get { return m_initialState; }
-            set { m_initialState = value; }
-        }
-
-        public NWindowMode InitialMode
-        {
-            get { return m_initialMode; }
-            set { m_initialMode = value; }
-        }
-
-        public static NWindowDefinition Default
-        {
-            get
-            {
-                return new NWindowDefinition
-                          {
-                              AcceptsInput = true,
-                              ActivationPolicy = NWindowActivationPolicy.FirstShown,
-                              DesiredSize = new Size(800, 600),
-                              IsRegularWindow = true,
-                              Title = "test",
-                              SupportedDecorations = NWindowDecorations.All,
-                              Type = NWindowType.Normal,
-                              IsMainApplicationWindow = true
-                          };
-            }
         }
         #endregion
     }

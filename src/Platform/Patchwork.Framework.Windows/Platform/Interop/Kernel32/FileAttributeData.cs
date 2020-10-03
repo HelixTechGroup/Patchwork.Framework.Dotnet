@@ -1,17 +1,27 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.Kernel32 {
+namespace Patchwork.Framework.Platform.Interop.Kernel32
+{
     [StructLayout(LayoutKind.Sequential)]
     public struct FileAttributeData
     {
+        #region Members
         public FileAttributes Attributes;
         public FileTime CreationTime;
-        public FileTime LastAccessTime;
-        public FileTime LastWriteTime;
 
         public uint FileSizeHigh;
         public uint FileSizeLow;
+        public FileTime LastAccessTime;
+        public FileTime LastWriteTime;
+        #endregion
 
-        public ulong FileSize => ((ulong) this.FileSizeHigh << 32) | this.FileSizeLow;
+        #region Properties
+        public ulong FileSize
+        {
+            get { return ((ulong)FileSizeHigh << 32) | FileSizeLow; }
+        }
+        #endregion
     }
 }

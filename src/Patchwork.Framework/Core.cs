@@ -1,6 +1,5 @@
 ﻿#region Usings
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Threading;
 using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
@@ -25,7 +25,7 @@ namespace Patchwork.Framework
     public static partial class Core
     {
         #region Events
-        public static event Func<OSType> DetectUnixSystemType;
+        public static event Func<OsType> DetectUnixSystemType;
         public static event ProcessMessageHandler ProcessMessage;
 
         public static event Action Shutdown;
@@ -209,7 +209,7 @@ namespace Patchwork.Framework
             if (platform == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            IoCContainer.Register<IOSInformation>(platform.OperatingSystemType);
+            IoCContainer.Register<IOsInformation>(platform.OperatingSystemType);
             IoCContainer.Register<IRuntimeInformation>(platform.RuntimeType);
 
             //var osInfo = platform.OperatingSystemType == null
@@ -345,7 +345,7 @@ namespace Patchwork.Framework
             return false;
         }
 
-        private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OSType osType)
+        private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OsType osType)
             where TAttribute : PlatformAttribute
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -370,18 +370,18 @@ namespace Patchwork.Framework
 
         static partial void CreateResourcesShared();
 
-        private static IOSInformation CreateOs(IEnumerable<Assembly> assemblies)
+        private static IOsInformation CreateOs(IEnumerable<Assembly> assemblies)
         {
             var osType = assemblies
                         .Where(a => Attribute.IsDefined(a, typeof(PlatformAttribute)))
                         .SelectMany(a => a.GetTypes())
-                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOSInformation))).IsEmpty())
+                        .Where(t => !t.GetInterfaces().Where(i => i.IsAssignableFrom(typeof(IOsInformation))).IsEmpty())
                         .OrderBy(t => t == typeof(OSInformation)).FirstOrDefault();
 
             if (osType == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            var os = Activator.CreateInstance(osType) as IOSInformation;
+            var os = Activator.CreateInstance(osType) as IOsInformation;
             if (os == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
@@ -407,23 +407,23 @@ namespace Patchwork.Framework
             return os;
         }
 
-        private static OSType GetOsType()
+        private static OsType GetOsType()
         {
             var id = SysEnv.OSVersion.Platform;
             switch ((int)id)
             {
                 case 6: // PlatformID.MacOSX:
-                    return OSType.MacOS;
+                    return OsType.MacOS;
                 case 4: // PlatformID.Unix:	
                 case 128:
-                    return DetectUnixSystemType?.Invoke() ?? OSType.Unix;
+                    return DetectUnixSystemType?.Invoke() ?? OsType.Unix;
                 case 0: // PlatformID.Win32S:
                 case 1: // PlatformID.Win32Windows:
                 case 2: // PlatformID.Win32NT:
                 case 3: // PlatformID.WinCE:
-                    return OSType.Windows;
+                    return OsType.Windows;
                 default:
-                    return OSType.Unknown;
+                    return OsType.Unknown;
             }
         }
 
@@ -437,7 +437,5 @@ namespace Patchwork.Framework
             }
         }
         #endregion
-
-
     }
 }

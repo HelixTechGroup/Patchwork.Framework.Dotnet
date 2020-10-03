@@ -7,7 +7,7 @@ using Shin.Framework.Collections.Concurrent;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 #endregion
 
-namespace Patchwork.Framework.Platform
+namespace Patchwork.Framework.Platform.Threading
 {
     public sealed class WinThreadDispatcher : INThreadDispatcher
     {
@@ -16,8 +16,8 @@ namespace Patchwork.Framework.Platform
         #endregion
 
         #region Members
-        private readonly ConcurrentList<Delegate> m_delegates = new ConcurrentList<Delegate>();
         private readonly INApplication m_application;
+        private readonly ConcurrentList<Delegate> m_delegates = new ConcurrentList<Delegate>();
         private bool m_quitSend;
         #endregion
 
@@ -32,10 +32,6 @@ namespace Patchwork.Framework.Platform
             get { return m_application.Thread; }
         }
         #endregion
-
-        public WinThreadDispatcher()
-        {
-        }
 
         #region Methods
         public IDisposable StartTimer(NThreadDispatcherPriority priority, TimeSpan interval, Action callback)
@@ -74,5 +70,4 @@ namespace Patchwork.Framework.Platform
         }
         #endregion
     }
-
 }

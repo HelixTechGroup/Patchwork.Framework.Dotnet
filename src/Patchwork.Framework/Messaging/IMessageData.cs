@@ -1,6 +1,4 @@
-﻿namespace Patchwork.Framework.Messaging 
+﻿namespace Patchwork.Framework.Messaging
 {
-    public interface IMessageData
-    {
-    }
+    public interface IMessageData { }
 }

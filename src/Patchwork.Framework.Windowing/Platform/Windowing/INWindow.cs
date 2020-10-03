@@ -10,24 +10,24 @@ namespace Patchwork.Framework.Platform.Windowing
     public partial interface INWindow : INObject, IInitialize, IDispose, IEquatable<INWindow>
     {
         #region Events
-        event EventHandler Closing;
-        event EventHandler Closed;
-        event EventHandler Created;
-        event EventHandler Destroyed;
-        event EventHandler Activating;
         event EventHandler Activated;
-        event EventHandler Deactivating;
+        event EventHandler Activating;
+        event EventHandler Closed;
+        event EventHandler Closing;
+        event EventHandler Created;
         event EventHandler Deactivated;
+        event EventHandler Deactivating;
+        event EventHandler Destroyed;
+        event EventHandler Disabled;
+        event EventHandler Enabled;
+        event EventHandler<PropertyChangedEventArgs<bool>> FocusChanged;
+        event EventHandler<PropertyChangingEventArgs<bool>> FocusChanging;
         event EventHandler FocusGained;
         event EventHandler FocusLost;
-        event EventHandler Enabled;
-        event EventHandler Disabled;
-        event EventHandler<PropertyChangingEventArgs<bool>> FocusChanging;
-        event EventHandler<PropertyChangedEventArgs<bool>> FocusChanged;
-        event EventHandler<PropertyChangingEventArgs<Size>> SizeChanging;
-        event EventHandler<PropertyChangedEventArgs<Size>> SizeChanged;
-        event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
         event EventHandler<PropertyChangedEventArgs<Point>> PositionChanged;
+        event EventHandler<PropertyChangingEventArgs<Point>> PositionChanging;
+        event EventHandler<PropertyChangedEventArgs<Size>> SizeChanged;
+        event EventHandler<PropertyChangingEventArgs<Size>> SizeChanging;
         event EventHandler<PropertyChangedEventArgs<string>> TitleChanged;
         #endregion
 

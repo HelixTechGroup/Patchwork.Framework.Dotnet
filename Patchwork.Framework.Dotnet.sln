@@ -85,6 +85,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Windowi
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Skia", "src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.shproj", "{F81B5C8F-475F-466C-B028-D7E248C05897}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Gdi", "src\Platform\Patchwork.Framework.Gdi\Patchwork.Framework.Gdi.shproj", "{6F55F2DA-A116-422E-8468-F8C8947F6064}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{1b5d1859-9372-45dd-a5e9-830b392418d2}*SharedItemsImports = 13
@@ -108,6 +110,7 @@ Global
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{6e5462b8-0293-4944-8229-df5d4fdf1183}*SharedItemsImports = 13
+		src\Platform\Patchwork.Framework.Gdi\Patchwork.Framework.Gdi.projitems*{6f55f2da-a116-422e-8468-f8c8947f6064}*SharedItemsImports = 13
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
@@ -187,6 +190,7 @@ Global
 		{2A7C3663-0CB2-45DD-A52D-55FF3A6AB949} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 		{E3BB4D7B-FDA8-4F9D-B4E9-1613506F1E2E} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 		{F81B5C8F-475F-466C-B028-D7E248C05897} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
+		{6F55F2DA-A116-422E-8468-F8C8947F6064} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}

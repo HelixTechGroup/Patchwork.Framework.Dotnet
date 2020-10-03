@@ -1,11 +1,21 @@
-﻿using System.Runtime.InteropServices;
+﻿#region Usings
+using System.Runtime.InteropServices;
+#endregion
 
-namespace Patchwork.Framework.Platform.Interop.User32 {
+namespace Patchwork.Framework.Platform.Interop.User32
+{
     [StructLayout(LayoutKind.Explicit)]
     public struct InputPacket
     {
-        [FieldOffset(0)] public MouseInput MouseInput;
-        [FieldOffset(0)] public KeyboardInput KeyboardInput;
-        [FieldOffset(0)] public HardwareInput HardwareInput;
+        #region Members
+        [FieldOffset(0)]
+        public HardwareInput HardwareInput;
+
+        [FieldOffset(0)]
+        public KeyboardInput KeyboardInput;
+
+        [FieldOffset(0)]
+        public MouseInput MouseInput;
+        #endregion
     }
 }

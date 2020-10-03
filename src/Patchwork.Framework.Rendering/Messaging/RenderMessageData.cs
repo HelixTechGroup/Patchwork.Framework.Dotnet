@@ -1,25 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Usings
 using System.Drawing;
-using System.Text;
+using Hatzap.Rendering;
 using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Rendering;
 using Shin.Framework;
-using Shin.Framework.ComponentModel;
+#endregion
 
 namespace Patchwork.Framework.Messaging
 {
-    public partial class RenderMessageData : IRenderMessageData
+    public class RenderMessageData : IRenderMessageData
     {
+        #region Members
+        protected readonly INRenderer m_render;
         protected RenderMessageIds m_messageId;
-        protected readonly INWindowRenderer m_render;
+        protected NFrameBuffer m_frameBuffer;
+        #endregion
 
-        public RenderMessageData(INWindowRenderer renderer)
+        #region Properties
+        public PropertyChangedData<bool> FocusChangedData { get; set; }
+
+        public PropertyChangingData<bool> FocusChangingData { get; set; }
+
+        public RenderMessageIds MessageId
+        {
+            get { return m_messageId; }
+        }
+
+        public PropertyChangedData<Point> PositionChangedData { get; set; }
+
+        public PropertyChangingData<Point> PositionChangingData { get; set; }
+
+        public INRenderer Render
+        {
+            get { return m_render; }
+        }
+
+        /// <inheritdoc />
+        public NFrameBuffer FrameBuffer
+        {
+            get { return m_frameBuffer; }
+        }
+
+        public PropertyChangedData<Size> SizeChangedData { get; set; }
+
+        public PropertyChangingData<Size> SizeChangingData { get; set; }
+        #endregion
+
+        public RenderMessageData(INRenderer renderer)
         {
             Throw.If(renderer == null).InvalidOperationException();
             m_render = renderer;
         }
 
-        public RenderMessageData(RenderMessageIds messageId, INWindowRenderer renderer) : this(renderer)
+        public RenderMessageData(RenderMessageIds messageId, INRenderer renderer) : this(renderer)
         {
             m_messageId = messageId;
             PositionChangedData = new PropertyChangedData<Point>(Point.Empty, Point.Empty, Point.Empty);
@@ -28,81 +61,22 @@ namespace Patchwork.Framework.Messaging
             SizeChangingData = new PropertyChangingData<Size>(Size.Empty, Size.Empty);
             FocusChangedData = new PropertyChangedData<bool>(true, true, true);
             FocusChangingData = new PropertyChangingData<bool>(true, true);
-
         }
 
+        #region Methods
         /// <inheritdoc />
         public IRenderMessageData SetStateData<T>(MessageIds messageId, T data)
         {
-
             return this;
         }
 
-        public IRenderMessageData PositionChanging(Point requestedPosition)
+        public IRenderMessageData SetFrameBuffer(NFrameBuffer frameBuffer)
         {
-            m_messageId = RenderMessageIds.Moving;
+            m_messageId = RenderMessageIds.SetFrameBuffer;
+            m_frameBuffer = frameBuffer;
             //PositionChangingData = new PropertyChangingData<Point>(m_render.Position, requestedPosition);
             return this;
         }
-
-        public IRenderMessageData PositionChanged(Point requestedPosition)
-        {
-            m_messageId = RenderMessageIds.Moved;
-            //var data = m_render.GetDataCache();
-            //PositionChangedData = new PropertyChangedData<Point>(m_render.Position, requestedPosition, data.PreviousPosition);
-            return this;
-        }
-
-        public IRenderMessageData SizeChanging(Size requestedSize)
-        {
-            m_messageId = RenderMessageIds.Resizing;
-            //SizeChangingData = new PropertyChangingData<Size>(m_render.Size, requestedSize);
-            return this;
-        }
-
-        public IRenderMessageData SizeChanged(Size requestedSize)
-        {
-            m_messageId = RenderMessageIds.Resized;
-            //var data = m_render.GetDataCache();
-            //SizeChangedData = new PropertyChangedData<Size>(m_render.Size, requestedSize, data.PreviousSize);
-            return this;
-        }
-
-        public IRenderMessageData FocusChanging(bool requestedFocus)
-        {
-            m_messageId = requestedFocus ? RenderMessageIds.Focusing : RenderMessageIds.Unfocusing;
-            //FocusChangingData = new PropertyChangingData<bool>(m_render.IsFocused, requestedFocus);
-            return this;
-        }
-
-        public IRenderMessageData FocusChanged(bool requestedFocus)
-        {
-            m_messageId = requestedFocus ? RenderMessageIds.Focused : RenderMessageIds.Unfocused;
-            //var data = m_render.GetDataCache();
-            //FocusChangedData = new PropertyChangedData<bool>(m_render.IsFocused, requestedFocus, data.PreviouslyFocused);
-            return this;
-        }
-
-        public RenderMessageIds MessageId
-        {
-            get { return m_messageId; }
-        }
-
-        public INWindowRenderer Render
-        {
-            get { return m_render; }
-        }
-
-        public PropertyChangingData<Point> PositionChangingData { get; set; }
-
-        public PropertyChangedData<Point> PositionChangedData { get; set; }
-
-        public PropertyChangingData<Size> SizeChangingData { get; set; }
-
-        public PropertyChangedData<Size> SizeChangedData { get; set; }
-
-        public PropertyChangingData<bool> FocusChangingData { get; set; }
-
-        public PropertyChangedData<bool> FocusChangedData { get; set; }
+        #endregion
     }
 }

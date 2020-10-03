@@ -1,18 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region Usings
 using System.Drawing;
-using System.Text;
-using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
-using Shin.Framework.ComponentModel;
+#endregion
 
 namespace Patchwork.Framework.Messaging
 {
     public partial class WindowMessageData : IWindowMessageData
     {
-        protected WindowMessageIds m_messageId;
+        #region Members
         protected readonly INWindow m_window;
+        protected WindowMessageIds m_messageId;
+        #endregion
+
+        #region Properties
+        public PropertyChangedData<bool> FocusChangedData { get; set; }
+
+        public PropertyChangingData<bool> FocusChangingData { get; set; }
+
+        public WindowMessageIds MessageId
+        {
+            get { return m_messageId; }
+        }
+
+        public PropertyChangedData<Point> PositionChangedData { get; set; }
+
+        public PropertyChangingData<Point> PositionChangingData { get; set; }
+
+        public PropertyChangedData<Size> SizeChangedData { get; set; }
+
+        public PropertyChangingData<Size> SizeChangingData { get; set; }
+
+        public INWindow Window
+        {
+            get { return m_window; }
+        }
+        #endregion
 
         public WindowMessageData(INWindow window)
         {
@@ -29,13 +52,12 @@ namespace Patchwork.Framework.Messaging
             SizeChangingData = new PropertyChangingData<Size>(Size.Empty, Size.Empty);
             FocusChangedData = new PropertyChangedData<bool>(true, true, true);
             FocusChangingData = new PropertyChangingData<bool>(true, true);
-
         }
 
+        #region Methods
         /// <inheritdoc />
         public IWindowMessageData SetStateData<T>(MessageIds messageId, T data)
         {
-
             return this;
         }
 
@@ -83,27 +105,6 @@ namespace Patchwork.Framework.Messaging
             FocusChangedData = new PropertyChangedData<bool>(m_window.IsFocused, requestedFocus, data.PreviouslyFocused);
             return this;
         }
-
-        public WindowMessageIds MessageId
-        {
-            get { return m_messageId; }
-        }
-
-        public INWindow Window
-        {
-            get { return m_window; }
-        }
-
-        public PropertyChangingData<Point> PositionChangingData { get; set; }
-
-        public PropertyChangedData<Point> PositionChangedData { get; set; }
-
-        public PropertyChangingData<Size> SizeChangingData { get; set; }
-
-        public PropertyChangedData<Size> SizeChangedData { get; set; }
-
-        public PropertyChangingData<bool> FocusChangingData { get; set; }
-
-        public PropertyChangedData<bool> FocusChangedData { get; set; }
+        #endregion
     }
 }

@@ -1,39 +1,51 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct SizeS : IEquatable<SizeS>
+    public struct SizeS : IEquatable<SizeS>
     {
+        #region Members
+        public short Height;
+
+        public short Width;
+        #endregion
+
+        #region Properties
+        public bool IsEmpty
+        {
+            get { return Width == 0 && Height == 0; }
+        }
+        #endregion
 
         public SizeS(short width, short height)
         {
-            this.Width = width;
-            this.Height = height;
+            Width = width;
+            Height = height;
         }
 
+        #region Methods
         public bool Equals(SizeS other)
         {
-            return (this.Width == other.Width) && (this.Height == other.Height);
+            return Width == other.Width && Height == other.Height;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is SizeS && this.Equals((SizeS)obj);
+            return obj is SizeS && Equals((SizeS)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((int)this.Width * 397) ^ (int)this.Height;
+                return (Width * 397) ^ Height;
             }
         }
-
-        public short Width;
-        public short Height;
 
         public static bool operator ==(SizeS left, SizeS right)
         {
@@ -62,7 +74,6 @@ namespace Patchwork.Framework.Platform.Interop
             var culture = CultureInfo.CurrentCulture;
             return $"{{ Width = {Width.ToString(culture)}, Height = {Height.ToString(culture)} }}";
         }
-
-        public bool IsEmpty => this.Width == 0 && this.Height == 0;
+        #endregion
     }
 }

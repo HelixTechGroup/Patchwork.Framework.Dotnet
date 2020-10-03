@@ -1,11 +1,12 @@
-﻿using System;
+﻿#region Usings
+using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Patchwork.Framework.Platform.Interop.User32;
 using Shin.Framework;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
@@ -13,19 +14,46 @@ namespace Patchwork.Framework.Platform
 
     public class WindowsProcessHook : Initializable
     {
+        #region Events
         public event ProcessWindowsMessageHandler ProcessMessage;
+        #endregion
 
-        protected IWindowsProcess m_process;
-        protected HookProc m_hookProc;
+        #region Members
         protected INHandle m_hookHandle;
+        protected HookProc m_hookProc;
         protected WindowHookType m_hookType;
 
-        public IWindowsProcess Process { get { return m_process; } }
+        protected IWindowsProcess m_process;
+        #endregion
+
+        #region Properties
+        public IWindowsProcess Process
+        {
+            get { return m_process; }
+        }
+        #endregion
 
         public WindowsProcessHook(IWindowsProcess process, WindowHookType hookType)
         {
             m_process = process;
             m_hookType = hookType;
+        }
+
+        #region Methods
+        protected virtual IntPtr OnGetMsg(WindowsMessage message)
+        {
+            return IntPtr.Zero;
+        }
+
+        protected virtual IntPtr OnProcRet(WindowsMessage message)
+        {
+            return IntPtr.Zero;
+        }
+
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            UnhookWindowsHookEx(m_hookHandle.Pointer);
         }
 
         /// <inheritdoc />
@@ -68,13 +96,13 @@ namespace Patchwork.Framework.Platform
                 case WindowHookType.WH_CALLWNDPROCRET:
                     var msgRet = (CwpRetStruct)Marshal.PtrToStructure(lParam, typeof(CwpRetStruct));
                     wMsg = new WindowsMessage
-                                {
-                                    Id = (WindowsMessageIds)msgRet.Message,
-                                    WParam = msgRet.WParam,
-                                    LParam = msgRet.LParam,
-                                    Result = msgRet.LResult,
-                                    Hwnd = msgRet.Hwnd
-                                };
+                           {
+                               Id = (WindowsMessageIds)msgRet.Message,
+                               WParam = msgRet.WParam,
+                               LParam = msgRet.LParam,
+                               Result = msgRet.LResult,
+                               Hwnd = msgRet.Hwnd
+                           };
                     //return OnProcRet(wMsg);
                     return ProcessMessage.Invoke(wMsg);
                 case WindowHookType.WH_JOURNALRECORD:
@@ -87,7 +115,7 @@ namespace Patchwork.Framework.Platform
                     var msg = (Message)Marshal.PtrToStructure(lParam, typeof(Message));
                     wMsg = new WindowsMessage
                            {
-                               Id = (WindowsMessageIds)msg.Value,
+                               Id = msg.Value,
                                WParam = msg.WParam,
                                LParam = msg.LParam,
                                Result = IntPtr.Zero,
@@ -119,15 +147,6 @@ namespace Patchwork.Framework.Platform
 
             return CallNextHookEx(m_hookHandle.Pointer, nCode, wParam, lParam);
         }
-
-        protected virtual IntPtr OnGetMsg(WindowsMessage message) { return IntPtr.Zero; }
-
-        protected virtual IntPtr OnProcRet(WindowsMessage message) { return IntPtr.Zero; }
-
-        /// <inheritdoc />
-        protected override void DisposeManagedResources()
-        {
-            UnhookWindowsHookEx(m_hookHandle.Pointer);
-        }
+        #endregion
     }
 }

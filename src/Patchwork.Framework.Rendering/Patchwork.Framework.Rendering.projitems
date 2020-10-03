@@ -10,19 +10,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IRenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageIds.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\BufferRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\IFramebufferRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformRenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderFence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NFrameBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NPixelBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindow.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDefinition.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformRenderManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AssemblyPlatformRenderingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderAdapter.cs" />
@@ -31,7 +40,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\ResourceCreatedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\ResourceDestroyedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderCommandList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.Rendering.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />

@@ -1,14 +1,19 @@
+#region Usings
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+#endregion
 
 namespace Patchwork.Framework.Platform.Interop.User32
 {
     public static class Methods
     {
+        #region Members
         public const string LibraryName = "user32";
+        #endregion
 
+        #region Methods
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr LoadIcon(IntPtr hInstance, string lpIconName);
 
@@ -22,12 +27,20 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern IntPtr LoadCursor(IntPtr hInstance, IntPtr lpCursorResource);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr LoadImage(IntPtr hInstance, string lpszName, ResourceImageType uType,
-            int cxDesired, int cyDesired, LoadResourceFlags fuLoad);
+        public static extern IntPtr LoadImage(IntPtr hInstance,
+                                              string lpszName,
+                                              ResourceImageType uType,
+                                              int cxDesired,
+                                              int cyDesired,
+                                              LoadResourceFlags fuLoad);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr LoadImage(IntPtr hInstance, IntPtr resourceId, ResourceImageType uType,
-            int cxDesired, int cyDesired, LoadResourceFlags fuLoad);
+        public static extern IntPtr LoadImage(IntPtr hInstance,
+                                              IntPtr resourceId,
+                                              ResourceImageType uType,
+                                              int cxDesired,
+                                              int cyDesired,
+                                              LoadResourceFlags fuLoad);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr LoadBitmap(IntPtr hInstance, string lpBitmapName);
@@ -51,8 +64,11 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern IntPtr MonitorFromWindow(IntPtr hwnd, MonitorFlag dwFlags);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern int DrawText(IntPtr hdc, string lpString, int nCount, [In] ref Rectangle lpRect,
-            uint uFormat);
+        public static extern int DrawText(IntPtr hdc,
+                                          string lpString,
+                                          int nCount,
+                                          [In] ref Rectangle lpRect,
+                                          uint uFormat);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, KeyModifierFlags fsModifiers, VirtualKey vk);
@@ -91,8 +107,10 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern int GetSystemMetrics(SystemMetrics nIndex);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam,
-            SystemParamtersInfoFlags fWinIni);
+        public static extern bool SystemParametersInfo(uint uiAction,
+                                                       uint uiParam,
+                                                       IntPtr pvParam,
+                                                       SystemParamtersInfoFlags fWinIni);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr GetWindowDC(IntPtr hwnd);
@@ -113,19 +131,23 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern bool AdjustWindowRect([In] [Out] ref Rectangle lpRect, WindowStyles dwStyle, bool hasMenu);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool AdjustWindowRectEx([In] [Out] ref Rectangle lpRect, WindowStyles dwStyle, bool hasMenu,
-            WindowExStyles dwExStyle);
+        public static extern bool AdjustWindowRectEx([In] [Out] ref Rectangle lpRect,
+                                                     WindowStyles dwStyle,
+                                                     bool hasMenu,
+                                                     WindowExStyles dwExStyle);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool CopyRect(out Rectangle lprcDst, [In] ref Rectangle lprcSrc);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool IntersectRect(out Rectangle lprcDst, [In] ref Rectangle lprcSrc1,
-            [In] ref Rectangle lprcSrc2);
+        public static extern bool IntersectRect(out Rectangle lprcDst,
+                                                [In] ref Rectangle lprcSrc1,
+                                                [In] ref Rectangle lprcSrc2);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool UnionRect(out Rectangle lprcDst, [In] ref Rectangle lprcSrc1,
-            [In] ref Rectangle lprcSrc2);
+        public static extern bool UnionRect(out Rectangle lprcDst,
+                                            [In] ref Rectangle lprcSrc1,
+                                            [In] ref Rectangle lprcSrc2);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool IsRectEmpty([In] ref Rectangle lprc);
@@ -152,8 +174,10 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern RegionType GetWindowRgnBox(IntPtr hWnd, out Rectangle lprc);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha,
-            LayeredWindowAttributeFlag dwFlags);
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd,
+                                                             uint crKey,
+                                                             byte bAlpha,
+                                                             LayeredWindowAttributeFlag dwFlags);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern bool WinHelp(IntPtr hWndMain, string lpszHelp, uint uCommand, uint dwData);
@@ -177,9 +201,15 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern void DisableProcessWindowsGhosting();
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst,
-            [In] ref Point pptDst, [In] ref Size psize, IntPtr hdcSrc, [In] ref Point pptSrc, uint crKey,
-            [In] ref BlendFunction pblend, uint dwFlags);
+        public static extern bool UpdateLayeredWindow(IntPtr hwnd,
+                                                      IntPtr hdcDst,
+                                                      [In] ref Point pptDst,
+                                                      [In] ref Size psize,
+                                                      IntPtr hdcSrc,
+                                                      [In] ref Point pptSrc,
+                                                      uint crKey,
+                                                      [In] ref BlendFunction pblend,
+                                                      uint dwFlags);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, IntPtr lpPoints, int cPoints);
@@ -218,8 +248,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern IntPtr ChildWindowFromPoint(IntPtr hwndParent, Point point);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern IntPtr ChildWindowFromPointEx(IntPtr hwndParent, Point point,
-            ChildWindowFromPointFlags flags);
+        public static extern IntPtr ChildWindowFromPointEx(IntPtr hwndParent,
+                                                           Point point,
+                                                           ChildWindowFromPointFlags flags);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr GetMenu(IntPtr hwnd);
@@ -228,8 +259,11 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern MessageBoxResult MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint type);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern MessageBoxResult MessageBoxEx(IntPtr hWnd, string lpText, string lpCaption, uint type,
-            ushort wLanguageId);
+        public static extern MessageBoxResult MessageBoxEx(IntPtr hWnd,
+                                                           string lpText,
+                                                           string lpCaption,
+                                                           uint type,
+                                                           ushort wLanguageId);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
@@ -242,9 +276,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfo lpmi);
+        #endregion
 
         #region Keyboard, Mouse & Input Method Functions
-
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool IsWindowEnabled(IntPtr hWnd);
 
@@ -319,14 +353,16 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetKeyboardState(
-            [MarshalAs(UnmanagedType.LPArray, SizeConst = 256)] out byte[] lpKeyState);
+            [MarshalAs(UnmanagedType.LPArray, SizeConst = 256)]
+            out byte[] lpKeyState);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetKeyboardState(IntPtr lpKeyState);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool SetKeyboardState(
-            [MarshalAs(UnmanagedType.LPArray, SizeConst = 256)] [In] byte[] lpKeyState);
+            [MarshalAs(UnmanagedType.LPArray, SizeConst = 256)] [In]
+            byte[] lpKeyState);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool SetKeyboardState(IntPtr lpKeyState);
@@ -342,11 +378,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
         /// <returns></returns>
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetTitleBarInfo(IntPtr hwnd, IntPtr pti);
-
         #endregion
 
         #region Cursor Functions
-
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetCursorPos(out Point point);
 
@@ -370,11 +404,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetCursorInfo(ref CursorInfo info);
-
         #endregion
 
         #region Window Functions
-
         /// <summary>
         ///     Enables you to produce special effects when showing or hiding windows. There are four types of animation: roll,
         ///     slide, collapse or expand, and alpha-blended fade.
@@ -483,8 +515,10 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass,
-            string lpszWindow);
+        public static extern IntPtr FindWindowEx(IntPtr hwndParent,
+                                                 IntPtr hwndChildAfter,
+                                                 string lpszClass,
+                                                 string lpszWindow);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern IntPtr GetForegroundWindow();
@@ -511,8 +545,13 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool SetWindowPos(IntPtr hwnd, HwndZOrder hWndInsertAfter, int x, int y, int cx, int cy,
-            WindowPositionFlags flags);
+        public static extern bool SetWindowPos(IntPtr hwnd,
+                                               HwndZOrder hWndInsertAfter,
+                                               int x,
+                                               int y,
+                                               int cx,
+                                               int cy,
+                                               WindowPositionFlags flags);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
@@ -534,14 +573,16 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool SetWindowPlacement(IntPtr hWnd,
-            [In] ref WindowPlacement lpwndpl);
+                                                     [In] ref WindowPlacement lpwndpl);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WindowPlacement lpwndpl);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern bool RedrawWindow(IntPtr hWnd, [In] ref Rectangle lprcUpdate, IntPtr hrgnUpdate,
-            RedrawWindowFlags flags);
+        public static extern bool RedrawWindow(IntPtr hWnd,
+                                               [In] ref Rectangle lprcUpdate,
+                                               IntPtr hrgnUpdate,
+                                               RedrawWindowFlags flags);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool DestroyWindow(IntPtr hwnd);
@@ -554,7 +595,6 @@ namespace Patchwork.Framework.Platform.Interop.User32
         #endregion
 
         #region Window Class Functions
-
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern ushort RegisterClassEx([In] ref WindowClassEx lpwcx);
 
@@ -569,8 +609,8 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static IntPtr GetWindowLongPtr(IntPtr hwnd, WindowLongFlags nIndex)
         {
             return IntPtr.Size > 4
-                ? GetWindowLongPtr_x64(hwnd, nIndex)
-                : new IntPtr(GetWindowLong(hwnd, nIndex));
+                       ? GetWindowLongPtr_x64(hwnd, nIndex)
+                       : new IntPtr(GetWindowLong(hwnd, nIndex));
         }
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
@@ -584,8 +624,8 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static IntPtr SetWindowLongPtr(IntPtr hwnd, WindowLongFlags nIndex, IntPtr dwNewLong)
         {
             return IntPtr.Size > 4
-                ? SetWindowLongPtr_x64(hwnd, nIndex, dwNewLong)
-                : new IntPtr(SetWindowLong(hwnd, nIndex, dwNewLong.ToInt32()));
+                       ? SetWindowLongPtr_x64(hwnd, nIndex, dwNewLong)
+                       : new IntPtr(SetWindowLong(hwnd, nIndex, dwNewLong.ToInt32()));
         }
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
@@ -595,8 +635,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
         private static extern IntPtr SetWindowLongPtr_x64(IntPtr hwnd, WindowLongFlags nIndex, IntPtr dwNewLong);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool GetClassInfoEx(IntPtr hInstance, string lpClassName,
-            out WindowClassExBlittable lpWndClass);
+        public static extern bool GetClassInfoEx(IntPtr hInstance,
+                                                 string lpClassName,
+                                                 out WindowClassExBlittable lpWndClass);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
@@ -604,8 +645,8 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static IntPtr GetClassLongPtr(IntPtr hwnd, int nIndex)
         {
             return IntPtr.Size > 4
-                ? GetClassLongPtr_x64(hwnd, nIndex)
-                : new IntPtr(unchecked((int) GetClassLong(hwnd, nIndex)));
+                       ? GetClassLongPtr_x64(hwnd, nIndex)
+                       : new IntPtr(unchecked((int)GetClassLong(hwnd, nIndex)));
         }
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
@@ -618,8 +659,8 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static IntPtr SetClassLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
         {
             return IntPtr.Size > 4
-                ? SetClassLongPtr_x64(hWnd, nIndex, dwNewLong)
-                : new IntPtr(unchecked((int) SetClassLong(hWnd, nIndex, dwNewLong.ToInt32())));
+                       ? SetClassLongPtr_x64(hWnd, nIndex, dwNewLong)
+                       : new IntPtr(unchecked((int)SetClassLong(hWnd, nIndex, dwNewLong.ToInt32())));
         }
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
@@ -627,30 +668,34 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet, EntryPoint = "SetClassLongPtr")]
         private static extern IntPtr SetClassLongPtr_x64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
         #endregion
 
         #region Window Procedure Functions
-
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr DefWindowProc(IntPtr hwnd, WindowsMessageIds uMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr CallWindowProc(WindowProc lpPrevWndFunc, IntPtr hWnd, uint uMsg, IntPtr wParam,
-            IntPtr lParam);
+        public static extern IntPtr CallWindowProc(WindowProc lpPrevWndFunc,
+                                                   IntPtr hWnd,
+                                                   uint uMsg,
+                                                   IntPtr wParam,
+                                                   IntPtr lParam);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint uMsg, IntPtr wParam,
-            IntPtr lParam);
+        public static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc,
+                                                   IntPtr hWnd,
+                                                   uint uMsg,
+                                                   IntPtr wParam,
+                                                   IntPtr lParam);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr SetWinEventHook(uint eventMin,
-                                                     uint eventMax,
-                                                     IntPtr hmodWinEventProc,
-                                                     WinEventProc lpfnWinEventProc,
-                                                     uint idProcess,
-                                                     uint idThread,
-                                                     uint dwflags);
+                                                    uint eventMax,
+                                                    IntPtr hmodWinEventProc,
+                                                    WinEventProc lpfnWinEventProc,
+                                                    uint idProcess,
+                                                    uint idThread,
+                                                    uint dwflags);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern int UnhookWinEvent(IntPtr hWinEventHook);
@@ -663,16 +708,18 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr CallNextHookEx(IntPtr hhk,
-                                            WindowHookCode nCode,
-                                            IntPtr wParam,
-                                            IntPtr lParam);
+                                                   WindowHookCode nCode,
+                                                   IntPtr wParam,
+                                                   IntPtr lParam);
         #endregion
 
         #region Message Functions
-
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern bool PeekMessage(out Message lpMsg, IntPtr hWnd, uint wMsgFilterMin,
-            uint wMsgFilterMax, PeekMessageFlags wRemoveMsg);
+        public static extern bool PeekMessage(out Message lpMsg,
+                                              IntPtr hWnd,
+                                              uint wMsgFilterMin,
+                                              uint wMsgFilterMax,
+                                              PeekMessageFlags wRemoveMsg);
 
         /// <summary>
         ///     Dispatches a message to a window procedure. It is typically used to dispatch a message retrieved by the GetMessage
@@ -799,8 +846,10 @@ namespace Patchwork.Framework.Platform.Interop.User32
         ///     not generate a ghost window.
         /// </returns>
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern int GetMessage(out Message lpMsg, IntPtr hwnd, uint wMsgFilterMin,
-            uint wMsgFilterMax);
+        public static extern int GetMessage(out Message lpMsg,
+                                            IntPtr hwnd,
+                                            uint wMsgFilterMin,
+                                            uint wMsgFilterMax);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern void PostQuitMessage(int nExitCode);
@@ -843,11 +892,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern bool PostThreadMessage(uint threadId, uint msg, IntPtr wParam, IntPtr lParam);
-
         #endregion
 
         #region Clipboard Functions
-
         /// <summary>
         /// Opens the clipboard for examination and prevents other applications from modifying the clipboard content.
         /// </summary>
@@ -855,12 +902,14 @@ namespace Patchwork.Framework.Platform.Interop.User32
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+
         /// <summary>
         /// Closes the clipboard.
         /// </summary>
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool CloseClipboard();
+
         /// <summary>
         /// Retrieves data from the clipboard in a specified format. The clipboard must have been opened previously.
         /// </summary>
@@ -899,7 +948,6 @@ namespace Patchwork.Framework.Platform.Interop.User32
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern uint EnumClipboardFormats(uint format);
-
         #endregion
     }
 }

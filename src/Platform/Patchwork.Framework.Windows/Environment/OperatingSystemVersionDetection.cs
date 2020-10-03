@@ -24,8 +24,8 @@ namespace Patchwork.Framework.Environment
         {
             get
             {
-                string servicePack = string.Empty;
-                OsVersionInfoEx osVersionInfo = new OsVersionInfoEx();
+                var servicePack = string.Empty;
+                var osVersionInfo = new OsVersionInfoEx();
 
                 osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OsVersionInfoEx));
 
@@ -47,7 +47,7 @@ namespace Patchwork.Framework.Environment
         #region Windows 10 Detection
         private bool IsWindows10()
         {
-            string productName = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "");
+            var productName = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "");
             if (productName.StartsWith("Windows 10", StringComparison.OrdinalIgnoreCase)) return true;
             return false;
         }
@@ -55,14 +55,14 @@ namespace Patchwork.Framework.Environment
 
         private string RegistryRead(string RegistryPath, string Field, string DefaultValue)
         {
-            string rtn = "";
-            string backSlash = "";
-            string newRegistryPath = "";
+            var rtn = "";
+            var backSlash = "";
+            var newRegistryPath = "";
 
             try
             {
                 RegistryKey OurKey = null;
-                string[] split_result = RegistryPath.Split('\\');
+                var split_result = RegistryPath.Split('\\');
 
                 if (split_result.Length > 0)
                 {
@@ -76,7 +76,7 @@ namespace Patchwork.Framework.Environment
 
                     if (OurKey != null)
                     {
-                        for (int i = 1; i < split_result.Length; i++)
+                        for (var i = 1; i < split_result.Length; i++)
                         {
                             newRegistryPath += backSlash + split_result[i];
                             backSlash = "\\";
@@ -112,18 +112,18 @@ namespace Patchwork.Framework.Environment
                 if (s_Edition != null)
                     return s_Edition; //***** RETURN *****//
 
-                string edition = string.Empty;
+                var edition = string.Empty;
 
                 //OperatingSystem osVersion = Environment.OSVersion;
-                OsVersionInfoEx osVersionInfo = new OsVersionInfoEx();
+                var osVersionInfo = new OsVersionInfoEx();
                 osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OsVersionInfoEx));
 
                 if (GetVersionEx(ref osVersionInfo))
                 {
-                    int majorVersion = m_osVersion.Major;
-                    int minorVersion = m_osVersion.Minor;
-                    byte productType = osVersionInfo.wProductType;
-                    short suiteMask = osVersionInfo.wSuiteMask;
+                    var majorVersion = m_osVersion.Major;
+                    var minorVersion = m_osVersion.Minor;
+                    var productType = osVersionInfo.wProductType;
+                    var suiteMask = osVersionInfo.wSuiteMask;
 
                     #region VERSION 4
                     if (majorVersion == 4)
@@ -458,15 +458,15 @@ namespace Patchwork.Framework.Environment
                 if (s_Name != null)
                     return s_Name; //***** RETURN *****//
 
-                string name = "unknown";
+                var name = "unknown";
 
-                OsVersionInfoEx osVersionInfo = new OsVersionInfoEx();
+                var osVersionInfo = new OsVersionInfoEx();
                 osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OsVersionInfoEx));
 
                 if (GetVersionEx(ref osVersionInfo))
                 {
-                    int majorVersion = m_osVersion.Major;
-                    int minorVersion = m_osVersion.Minor;
+                    var majorVersion = m_osVersion.Major;
+                    var minorVersion = m_osVersion.Minor;
 
                     if (majorVersion == 6 && minorVersion == 2)
                     {
@@ -476,10 +476,10 @@ namespace Patchwork.Framework.Environment
 
                         // For applications that have been manifested for Windows 8.1 & Windows 10. Applications not manifested for 8.1 or 10 will return the Windows 8 OS version value (6.2). 
                         // By reading the registry, we'll get the exact version - meaning we can even compare against  Win 8 and Win 8.1.
-                        string exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
+                        var exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
                         if (!string.IsNullOrEmpty(exactVersion))
                         {
-                            string[] splitResult = exactVersion.Split('.');
+                            var splitResult = exactVersion.Split('.');
                             majorVersion = Convert.ToInt32(splitResult[0]);
                             minorVersion = Convert.ToInt32(splitResult[1]);
                         }
@@ -503,7 +503,7 @@ namespace Patchwork.Framework.Environment
                         {
                             if (majorVersion == 4)
                             {
-                                string csdVersion = osVersionInfo.szCSDVersion;
+                                var csdVersion = osVersionInfo.szCSDVersion;
                                 switch (minorVersion)
                                 {
                                     case 0:
@@ -529,7 +529,7 @@ namespace Patchwork.Framework.Environment
 
                         case PlatformID.Win32NT:
                         {
-                            byte productType = osVersionInfo.wProductType;
+                            var productType = osVersionInfo.wProductType;
 
                             switch (majorVersion)
                             {
@@ -675,7 +675,6 @@ namespace Patchwork.Framework.Environment
             public readonly int dwBuildNumber;
             public readonly int dwMajorVersion;
             public readonly int dwMinorVersion;
-            public int dwOSVersionInfoSize;
             public readonly int dwPlatformId;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
@@ -686,6 +685,7 @@ namespace Patchwork.Framework.Environment
             public readonly short wServicePackMajor;
             public readonly short wServicePackMinor;
             public readonly short wSuiteMask;
+            public int dwOSVersionInfoSize;
             #endregion
         }
         #endregion OSVERSIONINFOEX
@@ -842,10 +842,10 @@ namespace Patchwork.Framework.Environment
             get
             {
                 if (IsWindows10()) return 10;
-                string exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
+                var exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
                 if (!string.IsNullOrEmpty(exactVersion))
                 {
-                    string[] splitVersion = exactVersion.Split('.');
+                    var splitVersion = exactVersion.Split('.');
                     return int.Parse(splitVersion[0]);
                 }
 
@@ -863,10 +863,10 @@ namespace Patchwork.Framework.Environment
             get
             {
                 if (IsWindows10()) return 0;
-                string exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
+                var exactVersion = RegistryRead(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentVersion", "");
                 if (!string.IsNullOrEmpty(exactVersion))
                 {
-                    string[] splitVersion = exactVersion.Split('.');
+                    var splitVersion = exactVersion.Split('.');
                     return int.Parse(splitVersion[1]);
                 }
 

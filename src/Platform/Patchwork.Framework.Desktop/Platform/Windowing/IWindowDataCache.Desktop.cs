@@ -2,11 +2,13 @@
 {
     public partial interface IWindowDataCache
     {
-        NWindowState State { get; set; }
-        NWindowState PreviousState { get; }
-        bool IsVisibleInTaskbar { get; set; }
+        #region Properties
         bool IsTopmostWindow { get; set; }
+        bool IsVisibleInTaskbar { get; set; }
         NWindowMode Mode { get; set; }
         NWindowMode PreviousMode { get; }
+        NWindowState PreviousState { get; }
+        NWindowState State { get; set; }
+        #endregion
     }
 }

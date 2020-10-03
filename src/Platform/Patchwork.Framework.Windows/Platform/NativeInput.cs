@@ -1,5 +1,7 @@
-﻿using System;
+﻿#region Usings
+using System;
 using Patchwork.Framework.Platform.Interop.User32;
+#endregion
 
 namespace Patchwork.Framework.Platform
 {
@@ -8,6 +10,7 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         public NInput(IWindowsProcess process) : base(process, WindowHookType.WH_GETMESSAGE) { }
 
+        #region Methods
         /// <inheritdoc />
         protected override IntPtr OnGetMsg(WindowsMessage message)
         {
@@ -19,5 +22,6 @@ namespace Patchwork.Framework.Platform
 
             return base.OnGetMsg(message);
         }
+        #endregion
     }
 }
