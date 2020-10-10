@@ -22,7 +22,7 @@ namespace Patchwork.Framework
 
         string NewLine { get; }
 
-        IOsInformation OperatingSystem { get; }
+        IOsInformation OS { get; }
 
         string PathSeparator { get; }
 

@@ -53,7 +53,7 @@ namespace Patchwork.Framework.Environment
         }
 
         /// <inheritdoc />
-        public IOsInformation OperatingSystem
+        public IOsInformation OS
         {
             get { return m_operatingSystem; }
         }

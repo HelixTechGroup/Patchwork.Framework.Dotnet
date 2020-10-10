@@ -17,6 +17,7 @@ namespace Patchwork.Framework.Environment
 
         #region Methods
         void DetectOperatingSystem();
+        bool IsType(OsType value);
         #endregion
     }
 }

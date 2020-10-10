@@ -58,6 +58,12 @@ namespace Patchwork.Framework.Environment
             GetOsDetails();
         }
 
+        /// <inheritdoc />
+        public bool IsType(OsType value)
+        {
+            return m_type == value;
+        }
+
         protected virtual void GetOsDetails()
         {
             m_is64Bit = SysRuntime.OSArchitecture.HasFlag(Architecture.X64) || SysRuntime.OSArchitecture.HasFlag(Architecture.Arm64);
