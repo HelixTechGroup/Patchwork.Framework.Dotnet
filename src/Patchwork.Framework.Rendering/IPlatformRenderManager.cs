@@ -21,6 +21,8 @@ namespace Patchwork.Framework
         bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer;
 
         TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
+
+        TRenderer[] GetRenderers<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
         #endregion
     }
 }

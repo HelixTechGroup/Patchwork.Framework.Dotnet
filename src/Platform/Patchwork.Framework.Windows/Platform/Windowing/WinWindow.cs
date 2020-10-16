@@ -197,15 +197,15 @@ namespace Patchwork.Framework.Platform.Windowing
             var hInstance = GetModuleHandle(null);
 
             var wndClassEx = new WindowClassEx
-                             {
-                                 Size = (uint)Marshal.SizeOf<WindowClassEx>(),
-                                 Styles = WindowClassStyles.CS_OWNDC | WindowClassStyles.CS_HREDRAW |
+            {
+                Size = (uint)Marshal.SizeOf<WindowClassEx>(),
+                Styles = WindowClassStyles.CS_OWNDC | WindowClassStyles.CS_HREDRAW |
                                           WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
-                                 WindowProc = m_wndProc,
-                                 InstanceHandle = hInstance,
-                                 ClassName = m_windowClass,
-                                 BackgroundBrushHandle = (IntPtr)SystemColor.COLOR_WINDOW
-                             };
+                WindowProc = m_wndProc,
+                InstanceHandle = hInstance,
+                ClassName = m_windowClass,
+                BackgroundBrushHandle = IntPtr.Zero //(IntPtr)SystemColor.COLOR_WINDOW
+            };
 
             var atom = RegisterClassEx(ref wndClassEx);
             if (atom == 0)

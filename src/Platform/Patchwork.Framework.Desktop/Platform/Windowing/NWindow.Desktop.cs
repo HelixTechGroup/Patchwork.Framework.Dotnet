@@ -264,7 +264,10 @@ namespace Patchwork.Framework.Platform.Windowing
             m_childWindows = new ConcurrentList<INWindow>();
             m_initialState = m_cache.Definition.InitialState;
             m_isFirstTimeVisible = true;
+            InitializeResourcesShared2();
         }
+
+        partial void InitializeResourcesShared2();
 
         partial void DisposeUnmanagedResourcesShared() { }
 

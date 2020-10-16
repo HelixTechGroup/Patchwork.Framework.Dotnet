@@ -5,7 +5,7 @@ using System;
 namespace Patchwork.Framework.Platform.Interop.User32
 {
     [Flags]
-    public enum WindowLongFlags
+    public enum WindowLongFlags : int
     {
         /// <summary>
         ///     Retrieves the extended window styles.

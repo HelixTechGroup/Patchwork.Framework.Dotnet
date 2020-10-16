@@ -36,7 +36,7 @@ namespace Patchwork.Framework.Platform
 
         public WinApplication()
         {
-            m_windowClass = "ShieldMessageWindow-" + Guid.NewGuid();
+            m_windowClass = "PatchworkMessageWindow-" + Guid.NewGuid();
         }
 
         #region Methods
@@ -88,12 +88,6 @@ namespace Patchwork.Framework.Platform
 
             if (!SetStdHandle((uint)StdHandle.STD_INPUT_HANDLE, m_stdIn.DangerousGetHandle()))
                 throw new Win32Exception(Marshal.GetLastWin32Error());
-
-            //var defaultStdout = new IntPtr(7);
-            //var currentStdout = GetStdHandle((uint)StdHandle.STD_OUTPUT_HANDLE);
-
-            //if (currentStdout != defaultStdout)
-            //    SetStdHandle((uint)StdHandle.STD_OUTPUT_HANDLE, defaultStdout);
 
             Console.SetOut(new StreamWriter(Console.OpenStandardOutput()) {AutoFlush = true});
             Console.SetError(new StreamWriter(Console.OpenStandardOutput()) {AutoFlush = true});
@@ -177,10 +171,10 @@ namespace Patchwork.Framework.Platform
                     DestroyWindow(m_handle.Pointer);
                     break;
                 case WindowsMessageIds.DESTROY:
-                    PostQuitMessage(0);
-                    break;
                 case WindowsMessageIds.QUIT:
-                    break;
+                    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                    PostQuitMessage(0);
+                    break; 
             }
 
             return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -193,15 +187,19 @@ namespace Patchwork.Framework.Platform
             var hInstance = GetModuleHandle(null);
 
             var wndClassEx = new WindowClassEx
-                             {
-                                 Size = (uint)Marshal.SizeOf<WindowClassEx>(),
-                                 WindowProc = m_wndProc,
-                                 InstanceHandle = hInstance,
-                                 ClassName = m_windowClass
-                             };
+            {
+                Size = (uint)Marshal.SizeOf<WindowClassEx>(),
+                WindowProc = m_wndProc,
+                InstanceHandle = hInstance,
+                ClassName = m_windowClass
+            };
 
             var atom = RegisterClassEx(ref wndClassEx);
-            if (atom == 0) throw new Win32Exception();
+            if (atom == 0)
+            {
+                var error = GetLastError();
+                throw new Win32Exception((int)error);
+            }
 
             var hwnd = CreateWindowEx(0,
                                       m_windowClass,

@@ -1,69 +1,17 @@
 ﻿#region Usings
+using System;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using Shin.Framework;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public class NMemoryChunk : Disposable, INObject
-    {
-        #region Members
-        protected INHandle m_handle;
-        protected int m_length;
-        #endregion
-
-        #region Properties
-        public byte[] Contents
-        {
-            get
-            {
-                var managedArray = new byte[m_length];
-                Marshal.Copy(m_handle.Pointer, managedArray, 0, m_length);
-                return managedArray;
-            }
-        }
-
-        /// <inheritdoc />
-        public INHandle Handle
-        {
-            get { return m_handle; }
-        }
-
-        public int Length
-        {
-            get { return m_length; }
-        }
-        #endregion
-
-        public NMemoryChunk(int length)
-        {
-            m_length = length;
-            m_handle = new NHandle(Marshal.AllocHGlobal(m_length), "");
-        }
-
-        public NMemoryChunk()
-        {
-            m_handle = new NHandle();
-        }
-
-        #region Methods
-        /// <inheritdoc />
-        protected override void DisposeManagedResources()
-        {
-            m_handle.Dispose();
-            m_length = 0;
-
-            base.DisposeManagedResources();
-        }
-        #endregion
-    }
-
     public class NPixelBuffer : NMemoryChunk
     {
         #region Members
-        private int m_imageHeight;
-        private int m_imageWidth;
-        private int m_stride;
+        private int m_height;
+        private int m_rowBytes;
+        private int m_width;
         #endregion
 
         #region Properties
@@ -75,52 +23,59 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public int Height
         {
-            get { return m_imageHeight; }
+            get { return m_height; }
         }
 
-        public int Stride
+        public int RowBytes
         {
-            get { return m_stride; }
+            get { return m_rowBytes; }
         }
 
         public int Width
         {
-            get { return m_imageWidth; }
+            get { return m_width; }
         }
         #endregion
 
-        public NPixelBuffer(int imageWidth, int imageHeight)
+        public NPixelBuffer(int width, int height)
         {
-            EnsureSize(imageWidth, imageHeight);
+            EnsureSize(width, height);
+        }
+
+        internal NPixelBuffer(IntPtr handle, int width, int height, int rowBytes, int length)
+            : base(handle, length)
+        {
+            m_width = width;
+            m_height = height;
+            m_rowBytes = rowBytes;
         }
 
         #region Methods
-        public bool CheckSize(int imageWidth, int imageHeight)
+        public bool CheckSize(int width, int height)
         {
-            return imageWidth == m_imageWidth && imageHeight == m_imageHeight;
+            return width == m_width && height == m_height;
         }
 
-        public void EnsureSize(int imageWidth, int imageHeight)
+        public void EnsureSize(int width, int height)
         {
-            if (CheckSize(imageWidth, imageHeight))
+            if (CheckSize(width, height))
                 return;
-            Resize(imageWidth, imageHeight);
+            Resize(width, height);
         }
 
-        public void Resize(int imageWidth, int imageHeight)
+        public void Resize(int width, int height)
         {
-            var stride = 4 * ((imageWidth * 32 + 31) / 32);
-            var length = imageHeight * stride;
-            if (length != m_length)
-            {
-                m_handle.Dispose();
-                m_handle = new NHandle(Marshal.AllocHGlobal(length), ""); //Marshal.AllocHGlobal(bufferLength);
-                m_length = length;
-            }
+            if (m_isReadOnly)
+                return;
 
-            m_stride = stride;
-            m_imageWidth = imageWidth;
-            m_imageHeight = imageHeight;
+            var stride = 4 * ((width * 32 + 31) / 32);
+            var length = height * stride;
+            if (length != m_length)
+                Resize(length);
+
+            m_rowBytes = stride;
+            m_width = width;
+            m_height = height;
         }
         #endregion
     }

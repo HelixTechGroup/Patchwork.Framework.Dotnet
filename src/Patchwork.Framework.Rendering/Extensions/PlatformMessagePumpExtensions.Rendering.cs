@@ -1,6 +1,5 @@
 ﻿#region Usings
 using System.Drawing;
-using Hatzap.Rendering;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Rendering;
 using Patchwork.Framework.Platform.Windowing;

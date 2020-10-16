@@ -152,6 +152,31 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         //    }
         //}
 
+        public static IntPtr SetBitsToBitmap(IntPtr hdc, int width, int height, byte[] bits, out BitmapInfo bmi, int xSrc = 0, 
+           int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
+        {
+            var bi = new BitmapInfoHeader
+                     {
+                         Size = (uint)Marshal.SizeOf<BitmapInfoHeader>(),
+                         Width = width,
+                         Height = isImageTopDown ? -height : height,
+                         CompressionMode = BitmapCompressionMode.BI_RGB,
+                         BitCount = isRgba ? (ushort)32 : (ushort)24,
+                         Planes = 1
+                     };
+            bmi = new BitmapInfo();
+            bmi.Header = bi;
+
+            var sdc = GetDC(IntPtr.Zero);
+            var bmp = CreateCompatibleBitmap(sdc, width, height);
+
+
+            var ret = SetBitmapBits(bmp, bits.Length.ToUint(), bits);
+            ret = SetStretchBltMode(hdc, StretchBltMode.STRETCH_DELETESCANS);
+ 
+            return SelectObject(hdc, bmp);
+        }
+
         //public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, byte[] bits, int xSrc = 0,
         //    int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
         //{
@@ -179,28 +204,22 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
             var bmi = new BitmapInfo();
             bmi.Header = bi;
             //bmi.Colors = new RgbQuad[256];
-            var sdc = GetDC(IntPtr.Zero);
-            var bmp = CreateCompatibleBitmap(sdc, width, height);
-            
 
-            var ret = SetBitmapBits(bmp, bits.Length.ToUint(), bits);
-            ret = SetStretchBltMode(hdc, StretchBltMode.STRETCH_DELETESCANS);
-            //return StretchDIBits(hdc,
-            //                             xDest,
-            //                             yDest,
-            //                             width,
-            //                             height,
-            //                             xSrc,
-            //                             ySrc,
-            //                             srcWidth,
-            //                             srcHeight, 
-            //                             chunk.Contents, 
-            //                             ref bmi, 
-            //                             DibBmiColorUsageFlag.DIB_RGB_COLORS, 
-            //                             BitBltFlags.SRCCOPY);
-            SelectObject(hdc, bmp);
-            return 0;
-            //return BitBlt(hdc, 0, 0, width, height, IntPtr.Zero, 0, 0, BitBltFlags.WHITENESS) ? 0 : 1;
+            var ret = SetStretchBltMode(hdc, StretchBltMode.STRETCH_DELETESCANS);
+            return StretchDIBits(hdc,
+                                         xDest,
+                                         yDest,
+                                         width,
+                                         height,
+                                         xSrc,
+                                         ySrc,
+                                         srcWidth,
+                                         srcHeight,
+                                         bits,
+                                         ref bmi,
+                                         DibBmiColorUsageFlag.DIB_RGB_COLORS,
+                                         BitBltFlags.SRCCOPY);
+
             //return Methods.SetDIBitsToDevice(hdc, xDest, yDest, (uint)width, (uint)height, xSrc, ySrc, 0,
             //    (uint)height, pixelBufferPtr, new IntPtr(&bi),
             //    DibBmiColorUsageFlag.DIB_RGB_COLORS);

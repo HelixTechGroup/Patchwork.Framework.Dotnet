@@ -5,7 +5,7 @@ using System;
 namespace Patchwork.Framework.Platform.Interop.User32
 {
     [Flags]
-    public enum WindowClassStyles
+    public enum WindowClassStyles : uint
     {
         /// <summary>
         ///     Aligns the window's client area on a byte boundary (in the x direction). This style affects the width of the window

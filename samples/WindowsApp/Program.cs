@@ -2,7 +2,9 @@
 using System;
 using System.Threading;
 using Patchwork.Framework;
+using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
+using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework.Logging.Loggers;
 using Shin.Framework.Logging.Native;
 #endregion
@@ -32,6 +34,7 @@ namespace WindowsApp
             Core.Initialize();
 
             Core.Window.CreateWindow().Show();
+
             Core.Run(m_cts.Token);
 
             Core.Dispose();
@@ -56,9 +59,14 @@ namespace WindowsApp
             switch (message.Id)
             {
                 case MessageIds.Window:
-                    var data = message.RawData as WindowMessageData;
+                    var data = message.RawData as IWindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
                     Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
+                    break;
+                case MessageIds.Rendering:
+                    var data2 = message.RawData as IRenderMessageData;
+                    //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
+                    Core.Logger.LogDebug("--Message sub type: " + data2?.MessageId);
                     break;
                 case MessageIds.Quit:
                     m_cts.Cancel();

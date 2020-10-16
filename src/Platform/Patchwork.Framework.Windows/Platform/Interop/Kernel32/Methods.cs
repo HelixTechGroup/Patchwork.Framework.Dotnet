@@ -13,6 +13,31 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
         #endregion
 
         #region Methods
+        //[DllImport(LibraryName, ExactSpelling = true)]
+        //public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+        [Flags]
+        public enum FileMapProtection : uint
+        {
+            PageReadonly = 0x02,
+            PageReadWrite = 0x04,
+            PageWriteCopy = 0x08,
+            PageExecuteRead = 0x20,
+            PageExecuteReadWrite = 0x40,
+            SectionCommit = 0x8000000,
+            SectionImage = 0x1000000,
+            SectionNoCache = 0x10000000,
+            SectionReserve = 0x4000000,
+        }
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern IntPtr CreateFileMapping(
+            IntPtr hFile,
+            IntPtr lpFileMappingAttributes,
+            FileMapProtection flProtect,
+            uint dwMaximumSizeHigh,
+            uint dwMaximumSizeLow,
+            [MarshalAs(UnmanagedType.LPStr)] string lpName);
+
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern uint GetLastError();
 

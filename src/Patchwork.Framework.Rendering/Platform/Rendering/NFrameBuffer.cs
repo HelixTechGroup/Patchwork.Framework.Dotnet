@@ -1,34 +1,78 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Patchwork.Framework.Platform;
-using Patchwork.Framework.Platform.Rendering;
+using System.Drawing.Imaging;
+using Shin.Framework;
 
-namespace Hatzap.Rendering
+namespace Patchwork.Framework.Platform.Rendering
 {
-    public class NFrameBuffer : INObject
+    public class NFrameBuffer : Disposable
     {
-        protected INHandle m_handle;
         protected NPixelBuffer m_pixelBuffer;
-
-        /// <inheritdoc />
-        public INHandle Handle
-        {
-            get { return m_handle; }
-        }
+        //protected PixelFormat m_format;
+        protected int m_height;
+        protected int m_width;
 
         public NPixelBuffer PixelBuffer
         {
             get { return m_pixelBuffer; }
         }
 
-        public NFrameBuffer(int imageWidth, int imageHeight)
+        public int Height
         {
-            //m_pixelBuffer = new NPixelBuffer(imageWidth, imageHeight);
+            get { return m_height; }
+        }
+
+        public int Width
+        {
+            get { return m_width; }
+        }
+
+        //public PixelFormat Format
+        //{
+        //    get { return m_format; }
+        //}
+
+        public NFrameBuffer() : this(0, 0) { }
+
+        public NFrameBuffer(int width, int height)
+        {
+            m_height = height;
+            m_width = width;
+            m_pixelBuffer = new NPixelBuffer(m_width, m_height);
+        }
+
+        public void SetPixelBuffer(IntPtr handle, int width, int height, int rowBytes, int length)
+        {
+            m_height = height;
+            m_width = width;
+            m_pixelBuffer = new NPixelBuffer(handle, m_width, m_height, rowBytes, length);
+        }
+
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            m_pixelBuffer.Dispose();
+            m_height = 0;
+            m_width = 0;
+            base.DisposeManagedResources();
+        }
+
+        public bool CheckSize(int width, int height)
+        {
+            return width == m_width && height == m_height;
+        }
+
+        public void EnsureSize(int width, int height)
+        {
+            if (CheckSize(width, height))
+                return;
+            Resize(width, height);
+        }
+
+        public void Resize(int width, int height)
+        {
+            m_pixelBuffer.Resize(width, height);
+            m_width = width;
+            m_height = height;
         }
     }
 }

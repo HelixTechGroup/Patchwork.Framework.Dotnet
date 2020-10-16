@@ -9,6 +9,23 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\GpStatusExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\BitBltFlags.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Bitmap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\BitmapCompressionMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\BitmapInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\BitmapInfoColorFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\BitmapInfoHeader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\DcRegionType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\DibBmiColorUsageFlag.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Helpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\Methods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\NativeBitmapInfoHandle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\RgbQuad.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\StockBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\StockFont.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\StockObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Gdi32\StockPen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiWindowRenderer.cs" />

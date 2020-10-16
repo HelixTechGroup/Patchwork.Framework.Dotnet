@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Hatzap.Rendering;
 using Patchwork.Framework.Messaging;
 using Shin.Framework;
 #endregion

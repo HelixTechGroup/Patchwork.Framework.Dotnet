@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework", "src\Patchwork.Framework\Patchwork.Framework.shproj", "{DFF5F575-ACE9-41CE-89A9-E82D0DC8CA6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{CFE53FE4-AD85-4797-B4F8-6795A77CF798}"
-	ProjectSection(SolutionItems) = preProject
-		src\Patchwork.Framework\Environment\IApplicationEnvironment.cs = src\Patchwork.Framework\Environment\IApplicationEnvironment.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E0F2A5F-45F7-4023-BF7A-143D0031B90E}"
 	ProjectSection(SolutionItems) = preProject
@@ -87,6 +84,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Skia", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Gdi", "src\Platform\Patchwork.Framework.Gdi\Patchwork.Framework.Gdi.shproj", "{6F55F2DA-A116-422E-8468-F8C8947F6064}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "System.Drawing", "src\System.Drawing\System.Drawing.shproj", "{DC0EFC52-D116-4C15-A296-2ECA1A62479E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Patchwork.Framework.Display", "src\Patchwork.Framework.Display\Patchwork.Framework.Display.shproj", "{8262ADEC-5C8C-4270-996F-B352AD34D163}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{1b5d1859-9372-45dd-a5e9-830b392418d2}*SharedItemsImports = 13
@@ -99,11 +100,12 @@ Global
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems*{3d5071f7-da01-4d84-9b53-6d8a0e63f18b}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{5cd3f1a7-43d7-4fb2-bec0-81ff1ee8704b}*SharedItemsImports = 13
+		src\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
-		src\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Gdi\Patchwork.Framework.Gdi.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{659ffa04-d773-41e6-907a-e12fcbeb82f1}*SharedItemsImports = 5
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
@@ -111,12 +113,14 @@ Global
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{6a99aef1-84d8-4140-87df-71b9deefe43f}*SharedItemsImports = 5
 		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{6e5462b8-0293-4944-8229-df5d4fdf1183}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Gdi\Patchwork.Framework.Gdi.projitems*{6f55f2da-a116-422e-8468-f8c8947f6064}*SharedItemsImports = 13
+		src\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems*{8262adec-5c8c-4270-996f-b352ad34d163}*SharedItemsImports = 13
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Platform\Patchwork.Framework.Mobile\Patchwork.Framework.Mobile.projitems*{b3d966f1-e1a7-423a-be0e-23f1a7d53ff3}*SharedItemsImports = 4
 		src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems*{c6806c4e-c4e9-4736-ac25-300cd08b244c}*SharedItemsImports = 13
+		src\System.Drawing\System.Drawing.projitems*{dc0efc52-d116-4c15-a296-2eca1a62479e}*SharedItemsImports = 13
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{dff5f575-ace9-41ce-89a9-e82d0dc8ca6c}*SharedItemsImports = 13
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{e3bb4d7b-fda8-4f9d-b4e9-1613506f1e2e}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{e4609d0b-3a70-4ae1-9462-042a72263376}*SharedItemsImports = 13
@@ -191,6 +195,8 @@ Global
 		{E3BB4D7B-FDA8-4F9D-B4E9-1613506F1E2E} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 		{F81B5C8F-475F-466C-B028-D7E248C05897} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
 		{6F55F2DA-A116-422E-8468-F8C8947F6064} = {C20D1D25-590B-4308-97B9-AFE774CA2300}
+		{DC0EFC52-D116-4C15-A296-2ECA1A62479E} = {899F423F-E433-48CD-ADD7-BE7111060D01}
+		{8262ADEC-5C8C-4270-996F-B352AD34D163} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}

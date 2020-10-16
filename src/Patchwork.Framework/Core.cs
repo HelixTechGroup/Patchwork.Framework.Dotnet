@@ -6,10 +6,12 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Patchwork.Framework.Environment;
+using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Threading;
 using Shield.Framework.IoC.Native.DependencyInjection;
+using Shield.Framework.Threading;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
@@ -35,7 +37,7 @@ namespace Patchwork.Framework
 
         #region Members
         //private static PlatformManager m_platform;
-        //private static CancellationTokenSource m_tokenSource;
+        private static CancellationTokenSource m_tokenSource;
         //private static  CancellationToken m_token;
         //private static IContainer m_container;
         //private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
@@ -89,6 +91,8 @@ namespace Patchwork.Framework
             //m_token = token;
             //m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(m_token);  
             InitializeResourcesShared();
+            AddManager<PlatformWindowManager>();
+            AddManager<PlatformRenderManager>();
             var mans = IoCContainer.ResolveAll<IPlatformManager>();
             foreach (var m in mans)
                 m.Initialize();
@@ -119,26 +123,27 @@ namespace Patchwork.Framework
             if (!IsCreated || !IsInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            token.Register(() => Dispatcher.Signal(NThreadDispatcherPriority.Send));
+            m_tokenSource = CancellationTokenSource.CreateLinkedTokenSource(token);
+            m_tokenSource.Token.Register(() => Dispatcher.Signal(NThreadDispatcherPriority.Send));
             Startup?.Invoke();
             IsRunning = true;
             Logger.LogDebug("Pumping Messages.");
             var mans = IoCContainer.ResolveAll<IPlatformManager>();
-            while (!token.IsCancellationRequested)
+            while (!m_tokenSource.IsCancellationRequested)
             {
-                while (MessagePump.Poll(out var e, token))
+                while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 {
                     var message = e;
                     m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message as IPlatformMessage)).ContinueWith(t => m_tasks.Remove(t)));
                 }
 
-                PreRunResourcesShared(token);
+                PreRunResourcesShared(m_tokenSource.Token);
                 foreach (var m in mans)
-                    m.Pump(token);
-                PostRunResourcesShared(token);
+                    m.Pump(m_tokenSource.Token);
+                PostRunResourcesShared(m_tokenSource.Token);
             }
 
-            foreach (var m in IoCContainer.ResolveAll<IPlatformManager>())
+            foreach (var m in mans)
                 m.Wait();
 
             var whenAll = Task.WhenAll(m_tasks);
@@ -209,29 +214,19 @@ namespace Patchwork.Framework
             if (platform == null)
                 throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            IoCContainer.Register<IOsInformation>(platform.OperatingSystemType);
-            IoCContainer.Register<IRuntimeInformation>(platform.RuntimeType);
-
-            //var osInfo = platform.OperatingSystemType == null
-            //                 ? new OperatingSystemInformation()
-            //                 :  as IOperatingSystemInformation;
-            //var runtimeInfo = platform.RuntimeType == null
-            //                      ? new RuntimeInformation()
-            //                      : Activator.CreateInstance(platform.RuntimeType) as IRuntimeInformation;
-            IoCContainer.Register<INApplication>(platform.ApplicationType);
+            IoCContainer.Register(platform.OperatingSystemType);
+            IoCContainer.Register(platform.RuntimeType);
+            IoCContainer.Register(platform.ApplicationType);
             IoCContainer.Register<PlatformEnvironment>();
             IoCContainer.Register<MainMessagePump>();
 
-            //Activator.CreateInstance(platform.ApplicationType) 
-            // Activator.CreateInstance(platform.DispatcherType)
-            // new PlatformEnvironment(osInfo, runtimeInfo);
-            // new CoreMessagePump(Logger, Application);
             Application = IoCContainer.Resolve(platform.ApplicationType) as INApplication;
             Dispatcher = IoCContainer.Resolve(platform.DispatcherType) as INThreadDispatcher;
             Environment = IoCContainer.Resolve<PlatformEnvironment>();
             MessagePump = IoCContainer.Resolve<MainMessagePump>();
 
             Environment.DetectPlatform();
+            NThreadDispatcherSynchronizationContext.InstallIfNeeded();
             CreateResourcesShared();
             //Attribute.IsDefined(a, typeof(AssemblyPlatformAttribute))
             var tmp = GetAssemblyAttributes<PlatformAttribute>(os).Where(a => a.ManagerType != null);
@@ -313,10 +308,15 @@ namespace Patchwork.Framework
             IsInitialized = false;
         }
 
-        public static void AddManager<TManager>() where TManager : IPlatformManager, new()
+        public static TManager AddManager<TManager>() where TManager : IPlatformManager, new()
         {
+            IoCContainer.Register<TManager>();
             var instance = IoCContainer.Resolve<TManager>();
-            AddManager(instance);
+            instance.Create();
+            if (IsInitialized)
+                instance.Initialize();
+
+            return instance;
         }
 
         public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager
@@ -433,7 +433,12 @@ namespace Patchwork.Framework
             switch (message.Id)
             {
                 case MessageIds.Quit:
+                    if (!m_tokenSource.IsCancellationRequested)
+                        m_tokenSource.Cancel();
                     break;
+                case MessageIds.Rendering:
+                    Logger.LogDebug("Stop me");
+                    break; 
             }
         }
         #endregion

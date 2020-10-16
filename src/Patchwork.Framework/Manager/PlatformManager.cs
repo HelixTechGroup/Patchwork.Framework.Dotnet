@@ -16,7 +16,7 @@ namespace Patchwork.Framework.Manager
     public abstract class PlatformManager : Creatable, IPlatformManager
     {
         protected bool m_isRunning;
-        protected IPlatformMessagePump m_messagePump;
+        protected bool m_isPumping;
         protected MessageIds[] m_supportedMessages;
         protected IPlatformMessagePump m_pump;
         protected Task m_runTask;
@@ -40,7 +40,7 @@ namespace Patchwork.Framework.Manager
         /// <inheritdoc />
         public IPlatformMessagePump MessagePump
         {
-            get { return m_messagePump; }
+            get { return m_pump; }
         }
 
         /// <inheritdoc />
@@ -55,26 +55,30 @@ namespace Patchwork.Framework.Manager
             if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            if (m_isRunning)
-                Throw.Exception<InvalidOperationException>();
-
-            m_isRunning = true;
-            //Core.Logger.LogDebug("Pumping Manager Messages.");
             if (token.IsCancellationRequested)
                 return;
 
+            if (m_isPumping)
+                return;
+                //Wait();
+                //Throw.Exception<InvalidOperationException>();
+
+            m_isPumping = true;
+            //Core.Logger.LogDebug("Pumping Manager Messages.");
+
             while (m_pump.Poll(out var e, token))
             {
-                //var mt = typeof(TMessage);
-                //var t = e.GetType();
                 var message = e as IPlatformMessage;
+                if (m_supportedMessageIds.All(i => i != (message?.Id)))
+                    continue;
+
                 m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
             }
 
-            RunManager();
+            RunManager(token);
 
             //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
-            m_isRunning = false;
+            m_isPumping = false;
         }
 
         public void Wait()
@@ -106,22 +110,24 @@ namespace Patchwork.Framework.Manager
                 Throw.Exception<InvalidOperationException>();
 
             if (m_isRunning)
-                Throw.Exception<InvalidOperationException>();
+                return;
+            //    Wait();
+                //Throw.Exception<InvalidOperationException>();
 
             m_isRunning = true;
+            //RunManager(token);
             //Core.Logger.LogDebug("Pumping Manager Messages.");
             while (!token.IsCancellationRequested)
             {
-                while (m_pump.Poll(out var e, token))
-                {
-                    var message = e as IPlatformMessage;
-                    if (!m_supportedMessageIds.Any(i => i.HasValue(message?.Id)))
-                        continue;
+                Pump(token);
+                //while (m_pump.Poll(out var e, token))
+                //{
+                //    var message = e as IPlatformMessage;
+                //    if (!m_supportedMessageIds.Any(i => i == (message?.Id)))
+                //        continue;
 
-                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
-                }
-
-                RunManager();
+                //    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
+                //}
             }
 
             Wait();
@@ -162,8 +168,12 @@ namespace Patchwork.Framework.Manager
             if (!m_isInitialized)
                 return;
 
-            if (!m_supportedMessageIds.Any(i => i.HasValue(message.Id)))
+            if (message.Id == MessageIds.Rendering || message.Id == MessageIds.Window)
                 m_pump.Push(message);
+
+            //if (m_supportedMessageIds.Any(i => i == (message?.Id)))
+            //m_pump.Push(message);
+
             //switch (message.Id)
             //{
             //    case MessageIds.Quit:
@@ -182,7 +192,10 @@ namespace Patchwork.Framework.Manager
             }
         }
 
-        protected virtual void RunManager() { }
+        protected virtual void RunManager(CancellationToken token)
+        {
+            m_pump.Pump(token);
+        }
 
         protected virtual void WaitManager() { }
 
@@ -271,7 +284,7 @@ namespace Patchwork.Framework.Manager
         /// <inheritdoc />
         protected override void CreateResources()
         {
-            var os = Core.Environment.OperatingSystem;
+            var os = Core.Environment.OS;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
                                       .Where(a => Attribute.IsDefined(a, typeof(TAssembly))).ToArray();
 

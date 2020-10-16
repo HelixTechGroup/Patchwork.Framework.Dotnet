@@ -6,6 +6,7 @@
         OsRendering,
         OsRender,
         OsRendered,
-        SetFrameBuffer
+        SetFrameBuffer,
+        Invalidating
     }
 }

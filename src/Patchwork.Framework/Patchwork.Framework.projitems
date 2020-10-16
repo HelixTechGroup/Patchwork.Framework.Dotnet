@@ -41,12 +41,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NMemoryChunk.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\DispatcherSynchronizationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\JobRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\NThreadDispatcherPriority.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\INScreen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\INThreadDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.cs" />
@@ -56,6 +59,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\" />
   </ItemGroup>
 </Project>

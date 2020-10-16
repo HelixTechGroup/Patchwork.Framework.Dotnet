@@ -1,8 +1,11 @@
 ﻿#region Usings
 using System;
+using System.Linq;
 using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Interop.User32;
+using Patchwork.Framework.Platform.Rendering;
+using Shin.Framework.Extensions;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 #endregion
 
@@ -40,37 +43,44 @@ namespace Patchwork.Framework.Platform.Windowing
         private IntPtr OnMessage(WindowsMessage message)
         {
             var changed = false;
-
             switch (message.Id)
             {
                 case WindowsMessageIds.ACTIVATEAPP:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
                                                            ? WindowMessageIds.Activating
                                                            : WindowMessageIds.Deactivating,
                                                        this);
                     break;
                 case WindowsMessageIds.KILLFOCUS:
+                    changed = true;
                     Core.MessagePump.PushWindowUnfocusedMessage(this);
                     break;
                 case WindowsMessageIds.SETFOCUS:
+                    changed = true;
                     Core.MessagePump.PushWindowFocusedMessage(this);
                     break;
                 case WindowsMessageIds.SHOWWINDOW:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
                                                            ? WindowMessageIds.Shown
                                                            : WindowMessageIds.Hidden,
                                                        this);
                     break;
                 case WindowsMessageIds.SIZE:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
                     break;
                 case WindowsMessageIds.SIZING:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resizing, this);
                     break;
                 case WindowsMessageIds.MOVE:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
                     break;
                 case WindowsMessageIds.MOVING:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Moving, this);
                     break;
                 case WindowsMessageIds.WINDOWPOSCHANGING:
@@ -84,6 +94,7 @@ namespace Patchwork.Framework.Platform.Windowing
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Closed, this);
                     break;
                 case WindowsMessageIds.CREATE:
+                    changed = true;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Created, this);
                     break;
                 case WindowsMessageIds.DESTROY:
@@ -98,10 +109,14 @@ namespace Patchwork.Framework.Platform.Windowing
                                                        this);
                     break;
                 case WindowsMessageIds.QUIT:
+                    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
                 case WindowsMessageIds.PAINT:
+                    //Render();
+                    break;
+                case WindowsMessageIds.ERASEBKGND:
+                    return new IntPtr(1);
                 case WindowsMessageIds.NULL:
-
                 case WindowsMessageIds.SETREDRAW:
                 case WindowsMessageIds.SETTEXT:
                 case WindowsMessageIds.GETTEXT:
@@ -109,7 +124,6 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.QUERYENDSESSION:
                 case WindowsMessageIds.QUERYOPEN:
                 case WindowsMessageIds.ENDSESSION:
-                case WindowsMessageIds.ERASEBKGND:
                 case WindowsMessageIds.SYSCOLORCHANGE:
                 case WindowsMessageIds.WININICHANGE:
                 case WindowsMessageIds.DEVMODECHANGE:

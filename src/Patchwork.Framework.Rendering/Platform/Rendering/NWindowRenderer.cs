@@ -2,9 +2,11 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.ComponentModel;
+using Shin.Framework.Extensions;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
@@ -50,10 +52,10 @@ namespace Patchwork.Framework.Platform.Rendering
             Throw.IfNull(window);
             Throw.IfNull(renderDevice);
             Throw.If(!window.IsRenderable).InvalidOperationException();
-            Throw.If(renderDevice.SupportedRenderers.Contains(GetType())).InvalidOperationException();
+            Throw.If(!renderDevice.SupportedRenderers.Contains(typeof(INWindowRenderer))).InvalidOperationException();
 
             m_window = window;
-            m_device = renderDevice;
+            m_device.ProcessMessage += OnProcessMessage;
         }
 
         #region Methods
@@ -62,7 +64,7 @@ namespace Patchwork.Framework.Platform.Rendering
             Throw.IfNull(window);
             Throw.IfNull(renderDevice);
             Throw.If(!window.IsRenderable).InvalidOperationException();
-            Throw.If(renderDevice.SupportedRenderers.Contains(GetType())).InvalidOperationException();
+            Throw.If(!renderDevice.SupportedRenderers.Contains(GetType())).InvalidOperationException();
 
             m_window = window;
             m_device = renderDevice;
@@ -73,6 +75,7 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
+            m_device.ProcessMessage += OnProcessMessage;
             m_window.SizeChanging -= OnSizeChanging;
             base.DisposeManagedResources();
         }
@@ -81,10 +84,17 @@ namespace Patchwork.Framework.Platform.Rendering
         protected override void InitializeResources()
         {
             base.InitializeResources();
+            m_window.AddRenderer(this);
+            m_device.ProcessMessage += OnProcessMessage;
             m_window.SizeChanging += OnSizeChanging;
         }
 
         protected abstract void OnSizeChanging(object sender, PropertyChangingEventArgs<Size> e);
+
+        protected virtual void OnProcessMessage(IPlatformMessage message)
+        {
+
+        }
 
         protected virtual void OnWindowRender()
         {

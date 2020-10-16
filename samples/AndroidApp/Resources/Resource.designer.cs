@@ -25,8 +25,6 @@ namespace AndroidApp
 		
 		public static void UpdateIdValues()
 		{
-			global::Patchwork.Framework.Resource.String.app_name = global::AndroidApp.Resource.String.app_name;
-			global::Patchwork.Framework.Resource.String.hello = global::AndroidApp.Resource.String.hello;
 		}
 		
 		public partial class Attribute
@@ -113,9 +111,6 @@ namespace AndroidApp
 			
 			// aapt resource value: 0x7F040001
 			public const int app_name = 2130968577;
-			
-			// aapt resource value: 0x7F040002
-			public const int hello = 2130968578;
 			
 			static String()
 			{

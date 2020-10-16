@@ -6,6 +6,7 @@ using Patchwork.Framework.Manager;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Rendering;
 using Patchwork.Framework.Platform.Threading;
+using Patchwork.Framework.Platform.Windowing;
 #endregion
 
 [assembly: AssemblyTitle("Patchwork.Framework")]
@@ -22,14 +23,12 @@ using Patchwork.Framework.Platform.Threading;
 [assembly: AssemblyWindowing(OsType.Windows,
                              1,
                              "Windows",
-                             typeof(WindowsWindowManager))]
-//[assembly: AssemblyRendering(OsType.Windows,
-//                             1,
-//                             "Gdi",
-//                             typeof(PlatformRenderManager),
-//                             typeof(GdiRenderDevice))]
-//[assembly: AssemblyRendering(OsType.Windows,
-//                             1,
-//                             "Skia",
-//                             null,
-//                             typeof(SkiaRenderDevice))]
+                             typeof(WinWindow))]
+[assembly: AssemblyRendering(OsType.Windows,
+                             1,
+                             "Gdi",
+                             typeof(GdiRenderDevice))]
+[assembly: AssemblyRendering(OsType.Windows,
+                             1,
+                             "Skia",
+                             typeof(SkiaRenderDevice))]

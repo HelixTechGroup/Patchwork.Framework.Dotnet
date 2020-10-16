@@ -11,7 +11,7 @@ using Shin.Framework.Extensions;
 
 namespace Patchwork.Framework.Manager
 {
-    public abstract class PlatformWindowManager :
+    public class PlatformWindowManager :
         PlatformManager<AssemblyWindowingAttribute, IPlatformMessage<IWindowMessageData>>,
         IPlatformWindowManager
     {
@@ -59,8 +59,8 @@ namespace Patchwork.Framework.Manager
         public INWindow CreateWindow(NWindowDefinition definition)
         {
             Throw.If(!m_isInitialized).InvalidOperationException();
-            var win = PlatformCreateWindow(definition);
-
+            var win = Core.IoCContainer.Resolve<INWindow>(null, Core.Application, definition);
+            win.Create();
             return win;
         }
 
@@ -77,20 +77,18 @@ namespace Patchwork.Framework.Manager
         {
             var win = window;
             m_windows.Remove(win);
+            //if (win.IsMainApplicationWindow)
+            //    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
         }
 
         protected override void CreateManager(params AssemblyWindowingAttribute[] managers)
         {
             base.CreateManager(managers);
-            //m_devices = new ConcurrentList<INRenderDevice>();
-            //foreach (var m in managers)
-            //{
-            //    if (m.RenderDeviceType == null)
-            //        continue;
 
-            //    if (m_devices.All(d => d.GetType() != m.RenderDeviceType))
-            //        m_devices.Add(Activator.CreateInstance(m.RenderDeviceType) as INRenderDevice);
-            //}
+            foreach (var m in managers)
+            {
+                Core.IoCContainer.Register(m.WindowType, false);
+            }
         }
 
         /// <inheritdoc />
@@ -106,13 +104,12 @@ namespace Patchwork.Framework.Manager
             m_windows = new ConcurrentList<INWindow>();
             m_supportedMessageIds = new[] {MessageIds.Window, MessageIds.Quit};
             WireUpApplicationWindowEvents();
+
         }
 
         /// <inheritdoc />
         protected override void OnProcessMessage(IPlatformMessage message)
         {
-            base.OnProcessMessage(message);
-
             switch (message.Id)
             {
                 case MessageIds.Window:
@@ -131,15 +128,17 @@ namespace Patchwork.Framework.Manager
                     }
 
                     break;
+                case MessageIds.Rendering:
+                    Core.Logger.LogDebug("Render message found.");
+                    break;
             }
 
-            foreach (var window in m_windows)
-                window.SyncDataCache();
+            if (message.Id != MessageIds.Quit)
+                foreach (var window in m_windows)
+                    window.SyncDataCache();
+
+            base.OnProcessMessage(message);
         }
-
-        protected abstract INWindow PlatformCreateWindow(NWindowDefinition definition);
-
-        protected void OnProcessMessageWindow(IPlatformMessage<IRenderMessageData> message) { }
 
         private void WireUpApplicationWindowEvents()
         {

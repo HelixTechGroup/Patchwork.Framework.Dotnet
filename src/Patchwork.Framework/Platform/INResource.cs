@@ -5,7 +5,7 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public interface IINResource<TNType> : INResource
+    public interface INResource<TNType> : INResource
     {
         #region Properties
         new TNType Resource { get; }
@@ -15,7 +15,6 @@ namespace Patchwork.Framework.Platform
     public interface INResource : IInitialize, IDispose
     {
         #region Properties
-        INRenderDevice Device { get; }
         string Name { get; set; }
         object Resource { get; }
         #endregion

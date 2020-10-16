@@ -16,9 +16,8 @@ namespace Patchwork.Framework
         public AssemblyRenderingAttribute(OsType requiredOperatingSystem,
                                           int priority,
                                           string name,
-                                          Type managerType = null,
                                           Type renderDevice = null)
-            : base(requiredOperatingSystem, priority, name, managerType)
+            : base(requiredOperatingSystem, priority, name)
         {
             RenderDeviceType = renderDevice;
         }

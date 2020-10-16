@@ -20,7 +20,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public IntPtr SmallIconHandle;
         public WindowClassStyles Styles;
         public int WindowExtraBytes;
-        public IntPtr WindowProc;
+
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public WindowProc WindowProc;
         #endregion
     }
 }

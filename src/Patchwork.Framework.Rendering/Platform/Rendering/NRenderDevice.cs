@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Hatzap.Rendering;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
 using Shield.Framework.IoC.Native.DependencyInjection;
@@ -40,9 +39,10 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Members
         protected INRenderAdapter m_adapter;
         protected Priority m_priority;
-        protected IEnumerable<Type> m_supportedRenderers;
+        protected IList<Type> m_supportedRenderers;
         protected IContainer m_iocContainer;
         protected bool m_isRunning;
+        protected bool m_isPumpiing;
         protected IPlatformMessagePump m_pump;
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
@@ -74,6 +74,9 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             m_iocContainer = iocContainer.CreateChildContainer();
             m_pump = new PlatformMessagePump(Core.Logger);
+            m_supportedRenderers = new ConcurrentList<Type>();
+            ProcessMessage += OnProcessMessage;
+
         }
 
         protected NRenderDevice() : this(new IoCContainer()) { }
@@ -87,7 +90,12 @@ namespace Patchwork.Framework.Platform.Rendering
 
             var tmp = parameters.ToList(); 
             tmp.Insert(0, this);
-            return m_iocContainer.Resolve<TRenderer>(parameters: tmp);
+            var rend = m_iocContainer.Resolve<TRenderer>(parameters: tmp.ToArray());
+
+            //if (m_isInitialized)
+            //    rend.Initialize();
+
+            return rend;
             //return PlatformCreateRenderer<TRenderer>();
         }
 
@@ -97,10 +105,12 @@ namespace Patchwork.Framework.Platform.Rendering
             if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            if (m_isRunning)
-                Throw.Exception<InvalidOperationException>();
+            if (m_isPumpiing)
+                return;
+                //Wait();
+                //Throw.Exception<InvalidOperationException>();
 
-            m_isRunning = true;
+            m_isPumpiing = true;
             //Core.Logger.LogDebug("Pumping Manager Messages.");
             if (token.IsCancellationRequested)
                 return;
@@ -110,13 +120,13 @@ namespace Patchwork.Framework.Platform.Rendering
                 //var mt = typeof(TMessage);
                 //var t = e.GetType();
                 var message = e as IPlatformMessage;
-                m_tasks.Add(Task.Run(() => OnProcessMessage(message)).ContinueWith(t => m_tasks.Remove(t)));
+                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
             }
 
             RunManager();
 
             //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
-            m_isRunning = false;
+            m_isPumpiing = false;
         }
 
         /// <inheritdoc />
@@ -149,8 +159,9 @@ namespace Patchwork.Framework.Platform.Rendering
             if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            if (m_isRunning)
-                Throw.Exception<InvalidOperationException>();
+            //if (m_isRunning)
+                //Wait();
+            //Throw.Exception<InvalidOperationException>();
 
             m_isRunning = true;
             //Core.Logger.LogDebug("Pumping Manager Messages.");
@@ -182,10 +193,14 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         public void SetFrameBuffer(NFrameBuffer buffer)
         {
-            
+            PlatformSetFrameBuffer(buffer);
         }
 
-        protected virtual void RunManager() { }
+        protected abstract void PlatformSetFrameBuffer(NFrameBuffer buffer);
+
+        protected virtual void RunManager()
+        {
+        }
 
         protected virtual void WaitManager() { }
 
@@ -220,7 +235,7 @@ namespace Patchwork.Framework.Platform.Rendering
             if (!m_isInitialized)
                 return;
 
-            if (!m_supportedMessageIds.Any(i => i.HasValue(message.Id)))
+            if (m_supportedMessageIds.Any(i => i == message?.Id))
                 m_pump.Push(message);
 
             

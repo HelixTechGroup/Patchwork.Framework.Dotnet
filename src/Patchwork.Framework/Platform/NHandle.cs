@@ -45,5 +45,10 @@ namespace Patchwork.Framework.Platform
             base.DisposeUnmanagedResources();
         }
         #endregion
+
+        public static implicit operator IntPtr(NHandle obj)
+        {
+            return obj.Pointer;
+        }
     }
 }

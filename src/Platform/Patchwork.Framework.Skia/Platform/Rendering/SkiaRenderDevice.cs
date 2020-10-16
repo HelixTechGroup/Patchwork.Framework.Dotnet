@@ -1,4 +1,5 @@
 ﻿#region Usings
+using System;
 using Shin.Framework.IoC.DependencyInjection;
 using SkiaSharp;
 #endregion
@@ -12,6 +13,13 @@ namespace Patchwork.Framework.Platform.Rendering
         protected override void RegisterRenderers()
         {
             m_iocContainer.Register<INWindowRenderer, SkiaWindowRenderer>(false);
+            m_supportedRenderers.Add(typeof(INWindowRenderer));
+        }
+
+        /// <inheritdoc />
+        protected override void PlatformSetFrameBuffer(NFrameBuffer buffer)
+        {
+            
         }
 
         protected override TRenderer PlatformCreateRenderer<TRenderer>()

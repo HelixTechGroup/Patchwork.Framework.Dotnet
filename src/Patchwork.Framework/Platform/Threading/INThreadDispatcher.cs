@@ -1,6 +1,7 @@
 ﻿#region Usings
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 #endregion
 
 namespace Patchwork.Framework.Platform.Threading
@@ -27,6 +28,10 @@ namespace Patchwork.Framework.Platform.Threading
         IDisposable StartTimer(NThreadDispatcherPriority priority, TimeSpan interval, Action tick);
 
         void Signal(NThreadDispatcherPriority priority);
+
+        Task InvokeAsync(Action action, NThreadDispatcherPriority priority = NThreadDispatcherPriority.Normal);
+
+        Task<TResult> InvokeAsync<TResult>(Func<TResult> function, NThreadDispatcherPriority priority = NThreadDispatcherPriority.Normal);
         #endregion
     }
 }

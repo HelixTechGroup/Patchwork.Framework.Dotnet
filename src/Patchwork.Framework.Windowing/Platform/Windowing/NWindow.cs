@@ -401,7 +401,7 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override void DisposeUnmanagedResources()
         {
             base.DisposeUnmanagedResources();
-            Core.Window.ProcessMessage += OnProcessMessage;
+            Core.Window.ProcessMessage -= OnProcessMessage;
             DisposeUnmanagedResourcesShared();
         }
 
@@ -410,7 +410,7 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             base.InitializeResources();
             InitializeResourcesShared();
-            Core.ProcessMessage += OnProcessMessage;
+            Core.Window.ProcessMessage += OnProcessMessage;
             SyncDataCache(true);
         }
 
