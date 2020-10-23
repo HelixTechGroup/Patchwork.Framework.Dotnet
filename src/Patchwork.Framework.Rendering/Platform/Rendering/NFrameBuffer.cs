@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using Shin.Framework;
 
 namespace Patchwork.Framework.Platform.Rendering
@@ -33,11 +34,25 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public NFrameBuffer() : this(0, 0) { }
 
+        protected NFrameBuffer(int width, int height, NPixelBuffer pixelBuffer)
+        {
+            m_height = height;
+            m_width = width;
+            m_pixelBuffer = pixelBuffer;
+        }
+
         public NFrameBuffer(int width, int height)
         {
             m_height = height;
             m_width = width;
             m_pixelBuffer = new NPixelBuffer(m_width, m_height);
+        }
+
+        public void SetPixelBuffer(NPixelBuffer buffer)
+        {
+            m_width = buffer.Width;
+            m_height = buffer.Height;
+            m_pixelBuffer = buffer;
         }
 
         public void SetPixelBuffer(IntPtr handle, int width, int height, int rowBytes, int length)
@@ -73,6 +88,12 @@ namespace Patchwork.Framework.Platform.Rendering
             m_pixelBuffer.Resize(width, height);
             m_width = width;
             m_height = height;
+        }
+
+        public NFrameBuffer Copy()
+        {
+            var pb = m_pixelBuffer.Copy();
+            return new NFrameBuffer(m_width, m_height, pb);
         }
     }
 }

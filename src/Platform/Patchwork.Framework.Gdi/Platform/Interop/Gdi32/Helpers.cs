@@ -152,7 +152,7 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         //    }
         //}
 
-        public static IntPtr SetBitsToBitmap(IntPtr hdc, int width, int height, byte[] bits, out BitmapInfo bmi, int xSrc = 0, 
+        public static int SetBitsToBitmap(IntPtr hdc, int width, int height, byte[] bits, out BitmapInfo bmi, IntPtr bmp = default, int xSrc = 0, 
            int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
         {
             var bi = new BitmapInfoHeader
@@ -167,14 +167,16 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
             bmi = new BitmapInfo();
             bmi.Header = bi;
 
-            var sdc = GetDC(IntPtr.Zero);
-            var bmp = CreateCompatibleBitmap(sdc, width, height);
+            if (bmp == IntPtr.Zero)
+            {
+                var sdc = GetDC(IntPtr.Zero);
+                bmp = CreateCompatibleBitmap(sdc, width, height);
+                ReleaseDC(IntPtr.Zero, sdc);
+            }
 
 
-            var ret = SetBitmapBits(bmp, bits.Length.ToUint(), bits);
-            ret = SetStretchBltMode(hdc, StretchBltMode.STRETCH_DELETESCANS);
- 
-            return SelectObject(hdc, bmp);
+            return SetBitmapBits(bmp, bits.Length.ToUint(), bits);
+            
         }
 
         //public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, byte[] bits, int xSrc = 0,
@@ -186,11 +188,11 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         //    }
         //}
 
-        //public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, IntPtr pixelBufferPtr,
-        //    int xSrc = 0,
-        //    int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
-        public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, int srcWidth, int srcHeight, byte[] bits, int xSrc = 0,
+        public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, IntPtr pixelBufferPtr,
+            int xSrc = 0,
             int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
+        //public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, int srcWidth, int srcHeight, byte[] bits, int xSrc = 0,
+        //    int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = false)
         {
             var bi = new BitmapInfoHeader
             {
@@ -206,23 +208,23 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
             //bmi.Colors = new RgbQuad[256];
 
             var ret = SetStretchBltMode(hdc, StretchBltMode.STRETCH_DELETESCANS);
-            return StretchDIBits(hdc,
-                                         xDest,
-                                         yDest,
-                                         width,
-                                         height,
-                                         xSrc,
-                                         ySrc,
-                                         srcWidth,
-                                         srcHeight,
-                                         bits,
-                                         ref bmi,
-                                         DibBmiColorUsageFlag.DIB_RGB_COLORS,
-                                         BitBltFlags.SRCCOPY);
+            //return StretchDIBits(hdc,
+            //                             xDest,
+            //                             yDest,
+            //                             width,
+            //                             height,
+            //                             xSrc,
+            //                             ySrc,
+            //                             srcWidth,
+            //                             srcHeight,
+            //                             bits,
+            //                             ref bmi,
+            //                             DibBmiColorUsageFlag.DIB_RGB_COLORS,
+            //                             BitBltFlags.SRCCOPY);
 
-            //return Methods.SetDIBitsToDevice(hdc, xDest, yDest, (uint)width, (uint)height, xSrc, ySrc, 0,
-            //    (uint)height, pixelBufferPtr, new IntPtr(&bi),
-            //    DibBmiColorUsageFlag.DIB_RGB_COLORS);
+            return Methods.SetDIBitsToDevice(hdc, xDest, yDest, (uint)width, (uint)height, xSrc, ySrc, 0,
+                (uint)height, pixelBufferPtr, new IntPtr(&bi),
+                DibBmiColorUsageFlag.DIB_RGB_COLORS);
         }
 
         public static IntPtr CreateSolidBrush(uint r, uint g, uint b)

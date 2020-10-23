@@ -17,6 +17,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmFlip3DPolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmNCRenderingPolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmWindowAttributeType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\User32\Events.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Utilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Kernel32\DesiredAccess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\HResult.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\UxTheme\WindowThemeAttributeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\UxTheme\WindowThemeNcAttributeFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\WinThreadDispatcher.cs" />
@@ -204,6 +207,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WinWindow.WindowProc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Threading\WindowsPlatformUiDispatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NativeInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsEventHook.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WindowsRegistry.cs" />
   </ItemGroup>
   <ItemGroup>

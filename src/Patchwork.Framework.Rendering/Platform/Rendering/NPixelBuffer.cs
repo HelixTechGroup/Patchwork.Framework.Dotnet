@@ -77,6 +77,17 @@ namespace Patchwork.Framework.Platform.Rendering
             m_width = width;
             m_height = height;
         }
+
+        public NPixelBuffer Copy()
+        {
+            var ptr = Marshal.AllocHGlobal(m_length);
+            var arry = new byte[m_length];
+            Marshal.Copy(m_handle.Pointer, arry, 0, m_length);
+            Marshal.Copy(arry, 0, ptr, m_length);
+            var pb = new NPixelBuffer(ptr, m_width, m_height,  m_rowBytes, m_length);
+            pb.m_isReadOnly = false;
+            return pb;
+        }
         #endregion
     }
 }

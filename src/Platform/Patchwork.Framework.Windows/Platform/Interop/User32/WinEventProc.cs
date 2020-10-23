@@ -5,9 +5,9 @@ using System;
 namespace Patchwork.Framework.Platform.Interop.User32
 {
     public delegate void WinEventProc(IntPtr hWinEventHook,
-                                      uint eventType,
+                                      SWEH_Events eventType,
                                       IntPtr hwnd,
-                                      uint idObject,
+                                      SWEH_ObjectId idObject,
                                       uint idChild,
                                       uint dwEventThread,
                                       uint dwmsEventTime);

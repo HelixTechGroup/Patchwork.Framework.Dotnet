@@ -22,10 +22,16 @@ namespace Patchwork.Framework.Platform
                     if (m_length <= 0)
                         return Array.Empty<byte>();
 
-                    var pointer = m_handle.Pointer;
-                    var managedArray = new byte[m_length];
-                    Marshal.Copy(pointer, managedArray, 0, m_length);
-                    return managedArray;
+                    unsafe
+                    {
+                        var pointer = m_handle.Pointer;
+                        var managedArray = new byte[m_length];
+                        //for (int i = 0; i < m_length; ++i)
+                        //    managedArray[i] = pointer[i + 1];
+                        //managedArray = Marshal.PtrToStructure<byte[]>(pointer);
+                        Marshal.Copy(pointer, managedArray, 0, m_length);
+                        return managedArray;
+                    }
                 }
             }
         }
@@ -86,7 +92,8 @@ namespace Patchwork.Framework.Platform
         protected override void DisposeManagedResources()
         {
             m_handle.Dispose();
-            GC.RemoveMemoryPressure(m_length);
+            if (m_length > 0)
+                GC.RemoveMemoryPressure(m_length);
             m_length = 0;
 
             base.DisposeManagedResources();

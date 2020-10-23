@@ -111,9 +111,9 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.QUIT:
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
-                case WindowsMessageIds.PAINT:
-                    //Render();
-                    break;
+                //case WindowsMessageIds.PAINT:
+                //    Render();
+                //    break;
                 case WindowsMessageIds.ERASEBKGND:
                     return new IntPtr(1);
                 case WindowsMessageIds.NULL:

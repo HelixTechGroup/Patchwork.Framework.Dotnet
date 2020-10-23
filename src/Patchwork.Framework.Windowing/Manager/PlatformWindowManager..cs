@@ -129,7 +129,7 @@ namespace Patchwork.Framework.Manager
 
                     break;
                 case MessageIds.Rendering:
-                    Core.Logger.LogDebug("Render message found.");
+                    //Core.Logger.LogDebug("Render message found.");
                     break;
             }
 

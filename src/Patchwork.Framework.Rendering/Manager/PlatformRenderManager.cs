@@ -97,7 +97,7 @@ namespace Patchwork.Framework.Manager
             //foreach (var dev in Core.IoCContainer.ResolveAll<INRenderDevice>())
             //{
                 var renderer = GetRenderers<INWindowRenderer>(window);
-                m_renderers.AddRange(renderer);
+                //m_renderers.AddRange(renderer);
                 //}
         }
 
@@ -173,11 +173,11 @@ namespace Patchwork.Framework.Manager
                 case MessageIds.Quit:
                     return;
                 case MessageIds.Rendering:
-                    Core.Logger.LogDebug("Found Rendering Messages.");
+                    //Core.Logger.LogDebug("Found Rendering Messages.");
                     var data2 = message.RawData as IWindowMessageData;
                     break;
                 case MessageIds.Window:
-                    Core.Logger.LogDebug("Found Windowing Messages.");
+                    //Core.Logger.LogDebug("Found Windowing Messages.");
                     var data = message.RawData as IWindowMessageData;
                     switch (data?.MessageId)
                     {
@@ -236,7 +236,7 @@ namespace Patchwork.Framework.Manager
                 device.Wait();
 
 
-            foreach (var renderer in m_renderers)
+            foreach (var renderer in m_renderers.Where(r => !r.ContainsInterface<IFrameBufferRenderer>()))
             {
                 //Core.Dispatcher.InvokeAsync(() => renderer.Render());
                 renderer.Render();

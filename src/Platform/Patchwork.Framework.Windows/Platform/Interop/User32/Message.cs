@@ -9,13 +9,11 @@ namespace Patchwork.Framework.Platform.Interop.User32
     [StructLayout(LayoutKind.Sequential)]
     public struct Message
     {
-        #region Members
         public IntPtr Hwnd;
-        public IntPtr LParam;
-        public Point Point;
-        public uint Time;
-        public WindowsMessageIds Value;
+        public uint Value;
         public IntPtr WParam;
-        #endregion
+        public IntPtr LParam;
+        public uint Time;
+        public Point Point;
     }
 }

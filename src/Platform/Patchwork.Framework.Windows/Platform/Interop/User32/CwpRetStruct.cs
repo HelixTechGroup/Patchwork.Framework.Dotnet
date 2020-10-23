@@ -16,4 +16,15 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public IntPtr WParam;
         #endregion
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CwpStruct
+    {
+        #region Members
+        public IntPtr Hwnd;
+        public IntPtr LParam;
+        public uint Message;
+        public IntPtr WParam;
+        #endregion
+    }
 }

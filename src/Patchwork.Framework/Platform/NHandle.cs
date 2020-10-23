@@ -50,5 +50,10 @@ namespace Patchwork.Framework.Platform
         {
             return obj.Pointer;
         }
+
+        public static implicit operator NHandle(IntPtr obj)
+        {
+            return new NHandle(obj);
+        }
     }
 }

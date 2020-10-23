@@ -566,6 +566,9 @@ namespace Patchwork.Framework.Platform.Interop.User32
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
 
         [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int processId);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
 
         [DllImport(LibraryName, ExactSpelling = true)]
@@ -689,8 +692,8 @@ namespace Patchwork.Framework.Platform.Interop.User32
                                                    IntPtr lParam);
 
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
-        public static extern IntPtr SetWinEventHook(uint eventMin,
-                                                    uint eventMax,
+        public static extern IntPtr SetWinEventHook(SWEH_Events eventMin,
+                                                    SWEH_Events eventMax,
                                                     IntPtr hmodWinEventProc,
                                                     WinEventProc lpfnWinEventProc,
                                                     uint idProcess,

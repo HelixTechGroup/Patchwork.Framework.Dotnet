@@ -75,8 +75,8 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            m_device.ProcessMessage += OnProcessMessage;
-            m_window.SizeChanging -= OnSizeChanging;
+            m_device.ProcessMessage -= OnProcessMessage;
+            //m_window.SizeChanging -= OnSizeChanging;
             base.DisposeManagedResources();
         }
 
@@ -86,7 +86,10 @@ namespace Patchwork.Framework.Platform.Rendering
             base.InitializeResources();
             m_window.AddRenderer(this);
             m_device.ProcessMessage += OnProcessMessage;
-            m_window.SizeChanging += OnSizeChanging;
+            //m_window.SizeChanging += OnSizeChanging;
+            m_window.SizeChanged += (sender, args) => { Invalidate(); };
+            m_window.StateChanged += (sender, args) => { if (args.CurrentValue != NWindowState.Minimized) Invalidate(); };
+            Invalidate();
         }
 
         protected abstract void OnSizeChanging(object sender, PropertyChangingEventArgs<Size> e);

@@ -1,5 +1,8 @@
-﻿namespace Patchwork.Framework.Platform.Interop.User32
+﻿using System;
+
+namespace Patchwork.Framework.Platform.Interop.User32
 {
+    [Flags]
     public enum WindowHookType : uint
     {
         WH_JOURNALRECORD = 0,

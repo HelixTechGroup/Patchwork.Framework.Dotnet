@@ -147,7 +147,7 @@ namespace Patchwork.Framework.Platform
                 if (!HasMessages(out var msg))
                     break;
 
-                if (msg.Value == WindowsMessageIds.QUIT)
+                if (msg.Value == (uint)WindowsMessageIds.QUIT)
                 {
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;

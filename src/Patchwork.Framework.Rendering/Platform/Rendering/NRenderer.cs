@@ -22,6 +22,7 @@ namespace Patchwork.Framework.Platform.Rendering
         protected INScreen m_screen;
         protected Size m_size;
         protected Size m_virutalSize;
+        protected bool m_isValid;
         #endregion
 
         #region Properties
@@ -52,17 +53,22 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Methods
         public bool Invalidate()
         {
+            m_isValid = false;
             return PlatformInvalidate();
         }
 
         public bool Validate()
         {
+            m_isValid = true;
             return PlatformValidate();
         }
 
         /// <inheritdoc />
         public void Render()
         {
+            if (m_isValid)
+                return;
+
             PlatformRendering();
             Rendering.Raise(this, null);
             PlatformRender();

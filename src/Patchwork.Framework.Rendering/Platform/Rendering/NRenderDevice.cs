@@ -141,7 +141,7 @@ namespace Patchwork.Framework.Platform.Rendering
 
             for (;;)
             {
-                while (!whenAll.IsCompleted)
+                while (whenAll.Status != TaskStatus.RanToCompletion)
                 {
                     Console.Write(".");
                     Thread.Sleep(500);

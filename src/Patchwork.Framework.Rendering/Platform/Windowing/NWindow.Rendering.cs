@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Patchwork.Framework.Platform.Rendering;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
@@ -36,11 +37,11 @@ namespace Patchwork.Framework.Platform.Windowing
 
         protected virtual void Render()
         {
-            if (!m_isInitialized)
-                return;
+            //if (!m_isInitialized)
+            //    return;
 
-            //foreach (var r in m_renders)
-                //r.Render();
+            //foreach (var r in m_renders.Where(r => r.ContainsInterface(typeof(IFrameBufferRenderer))))
+            //    r.Render();
         }
     }
 }

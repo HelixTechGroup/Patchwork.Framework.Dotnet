@@ -6,6 +6,7 @@ using Patchwork.Framework.Platform.Interop.User32;
 using Shin.Framework;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
+using static Patchwork.Framework.Platform.Interop.Utilities;
 #endregion
 
 namespace Patchwork.Framework.Platform
@@ -42,12 +43,18 @@ namespace Patchwork.Framework.Platform
         #region Methods
         protected virtual IntPtr OnGetMsg(WindowsMessage message)
         {
-            return IntPtr.Zero;
+            var ret = IntPtr.Zero;
+            if (ProcessMessage != null)
+                ret = ProcessMessage(message);
+            return ret;
         }
 
         protected virtual IntPtr OnProcRet(WindowsMessage message)
         {
-            return IntPtr.Zero;
+            var ret = IntPtr.Zero;
+            if (ProcessMessage != null) 
+                ret = ProcessMessage(message);
+            return ret;
         }
 
         /// <inheritdoc />
@@ -78,9 +85,7 @@ namespace Patchwork.Framework.Platform
 
             mhnd = GetModuleHandle(module?.ModuleName);
             hhnd = SetWindowsHookEx(m_hookType, m_hookProc, mhnd, threadId);
-
-            if (hhnd == IntPtr.Zero)
-                throw new Win32Exception();
+            CheckLastError();
 
             m_hookHandle = new NHandle(hhnd, "");
         }
@@ -103,8 +108,8 @@ namespace Patchwork.Framework.Platform
                                Result = msgRet.LResult,
                                Hwnd = msgRet.Hwnd
                            };
-                    //return OnProcRet(wMsg);
-                    return ProcessMessage.Invoke(wMsg);
+                    OnProcRet(wMsg);
+                    break;
                 case WindowHookType.WH_JOURNALRECORD:
                     break;
                 case WindowHookType.WH_JOURNALPLAYBACK:
@@ -114,16 +119,25 @@ namespace Patchwork.Framework.Platform
                 case WindowHookType.WH_GETMESSAGE:
                     var msg = (Message)Marshal.PtrToStructure(lParam, typeof(Message));
                     wMsg = new WindowsMessage
-                           {
-                               Id = msg.Value,
-                               WParam = msg.WParam,
-                               LParam = msg.LParam,
-                               Result = IntPtr.Zero,
-                               Hwnd = msg.Hwnd
-                           };
-                    //return OnGetMsg(wMsg);
-                    return ProcessMessage.Invoke(wMsg);
+                    {
+                        Id = (WindowsMessageIds)msg.Value,
+                        WParam = msg.WParam,
+                        LParam = msg.LParam,
+                        Result = IntPtr.Zero,
+                        Hwnd = msg.Hwnd
+                    };
+                    OnGetMsg(wMsg);
+                    break;
                 case WindowHookType.WH_CALLWNDPROC:
+                    var msgProc = (CwpStruct)Marshal.PtrToStructure(lParam, typeof(CwpStruct));
+                    wMsg = new WindowsMessage
+                           {
+                               Id = (WindowsMessageIds)msgProc.Message,
+                               WParam = msgProc.WParam,
+                               LParam = msgProc.LParam,
+                               Hwnd = msgProc.Hwnd
+                           };
+                    OnProcRet(wMsg);
                     break;
                 case WindowHookType.WH_CBT:
                     break;
