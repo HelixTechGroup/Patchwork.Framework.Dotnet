@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-        with:
+      with:
           #token: ${{ secrets.ACCESS_TOKEN }}
           submodules: true
     #- name: Checkout submodules
