@@ -70,7 +70,7 @@ jobs:
 
     - name: Build .NET with CodeQL
       run: |
-        nuget restore Patchwork.Framework.Dotnet.sln 
+        nuget restore src\Netcore\Patchwork.Framework.Windows.NetCore 
         msbuild src\Netcore\Patchwork.Framework.Windows.NetCore /t:rebuild /p:UseSharedCompilation=false /p:Platform="Any CPU" /p:Configuration="Debug" /p:MvcBuildViews=true
         
     - name: Perform CodeQL Analysis
