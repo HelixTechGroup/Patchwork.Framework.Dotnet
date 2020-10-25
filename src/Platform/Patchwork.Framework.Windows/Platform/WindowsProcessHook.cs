@@ -57,6 +57,14 @@ namespace Patchwork.Framework.Platform
             return ret;
         }
 
+        protected virtual IntPtr OnProc(WindowsMessage message)
+        {
+            var ret = IntPtr.Zero;
+            if (ProcessMessage != null)
+                ret = ProcessMessage(message);
+            return ret;
+        }
+
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
@@ -137,7 +145,7 @@ namespace Patchwork.Framework.Platform
                                LParam = msgProc.LParam,
                                Hwnd = msgProc.Hwnd
                            };
-                    OnProcRet(wMsg);
+                    OnProc(wMsg);
                     break;
                 case WindowHookType.WH_CBT:
                     break;

@@ -57,7 +57,6 @@ namespace Patchwork.Framework.Platform
             m_handle = new NHandle(handle);
             m_isReadOnly = true;
             m_length = length;
-            GC.AddMemoryPressure(m_length);
         }
 
         public NMemoryChunk(int length)

@@ -39,7 +39,7 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             m_hook = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_GETMESSAGE);
             m_hook.ProcessMessage += OnGetMsg;
-            m_hook2 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROCRET);
+            m_hook2 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROC);
             m_hook2.ProcessMessage += OnRetMsg;
             //m_eventHook = new WindowsEventHook(window as IWindowsProcess, SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE);
             //m_eventHook.ProcessEvent += OnEventMsg;
@@ -176,8 +176,10 @@ namespace Patchwork.Framework.Platform.Rendering
             CheckOperation(DeleteDC(m_memHdc));
             CheckOperation(DeleteObject(m_bmp));
             ReleaseDC(m_window.Handle.Pointer, m_hdc);
-            //m_oldBuffer.Dispose();
-            //m_oldBuffer = m_buffer;
+            m_oldBuffer?.Dispose();
+            m_oldBuffer = m_buffer.Copy();
+            m_buffer?.Dispose();
+
         }
 
         protected override void PlatformRendering()
@@ -264,11 +266,20 @@ namespace Patchwork.Framework.Platform.Rendering
                 //Invalidate();
                 //break;
                 case WindowsMessageIds.ENTERSIZEMOVE:
-                    //m_inModalSizeLoop = true;
-                    //break;
+                    m_inModalSizeLoop = true;
+                    break;
                 case WindowsMessageIds.EXITSIZEMOVE:
-                    //m_inModalSizeLoop = false;
-                    //break;
+                    m_inModalSizeLoop = false;
+                    break;
+                case WindowsMessageIds.TIMER:
+                    var rect = Rectangle.Empty;
+                    if (m_inModalSizeLoop)
+                    {
+                        //RedrawWindow(m_window.Handle.Pointer, ref rect, IntPtr.Zero, )
+                        //    SendMessage(m_window.Handle.Pointer, (uint)WindowsMessageIds.PAINT, IntPtr.Zero, IntPtr.Zero);
+                        UpdateWindow(m_window.Handle.Pointer);
+                    }
+                    break;
                 case WindowsMessageIds.NCCALCSIZE:
                 case WindowsMessageIds.DISPLAYCHANGE:
                 case WindowsMessageIds.CAPTURECHANGED:
@@ -277,13 +288,6 @@ namespace Patchwork.Framework.Platform.Rendering
                 case WindowsMessageIds.NCPAINT:
                     break;
             }
-
-            //var rect = Rectangle.Empty;
-            //if (m_inModalSizeLoop)
-            //{
-            //    SendMessage(m_window.Handle.Pointer, (uint)WindowsMessageIds.PAINT, IntPtr.Zero, IntPtr.Zero);
-            //    UpdateWindow(m_window.Handle.Pointer);
-            //}
 
             return res;
         }
