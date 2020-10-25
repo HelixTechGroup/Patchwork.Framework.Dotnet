@@ -1,7 +1,10 @@
 
 <p align="center">
     <img src="https://placeholder.pics/svg/500x200/DEDEDE/555555/Project%20Name"
-        height="130">
+        height="130"><br>
+    Patchwork is a cross-platform development library designed
+to provide low level access to audio, keyboard, mouse, joystick, and graphics
+hardware via OpenGL, Direct3D, Vulcan, and Metal
 </p>
 <p align="center">
     <a href="https://github.com/%USER%/%ProjectName%/graphs/contributors" alt="Contributors">
