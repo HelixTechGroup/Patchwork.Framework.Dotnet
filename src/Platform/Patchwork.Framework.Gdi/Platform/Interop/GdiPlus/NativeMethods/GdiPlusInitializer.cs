@@ -1,4 +1,5 @@
 ﻿using System;
+using System.DrawingCore;
 using System.IO;
 using System.Runtime.InteropServices;
 

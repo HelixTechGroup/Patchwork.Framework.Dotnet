@@ -10,6 +10,7 @@ using Patchwork.Framework.Platform.Interop;
 using Patchwork.Framework.Platform.Interop.Kernel32;
 using Patchwork.Framework.Platform.Interop.User32;
 using Patchwork.Framework.Platform.Threading;
+using Shin.Framework.Collections.Concurrent;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 using FileAttributes = Patchwork.Framework.Platform.Interop.Kernel32.FileAttributes;
@@ -107,8 +108,6 @@ namespace Patchwork.Framework.Platform
             m_stdIn.Dispose();
         }
 
-        protected override void DisposeManagedResources() { }
-
         /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
         {
@@ -140,21 +139,23 @@ namespace Patchwork.Framework.Platform
         //    return win;
         //}
 
-        protected override void PlatformPumpMessages(CancellationToken cancellationToken)
+        protected override void PlatformPumpMessages()
         {
             do
             {
+                //AddCancellationToken(cancellationToken);
                 if (!HasMessages(out var msg))
-                    break;
+                    return;
+                //break;
 
                 if (msg.Value == (uint)WindowsMessageIds.QUIT)
                 {
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
-                    break;
+                    m_tokenSource.Cancel();
                 }
 
                 ProcessMessage(ref msg);
-            } while (!cancellationToken.IsCancellationRequested);
+            } while (!m_tokenSource.IsCancellationRequested);
         }
 
         private IntPtr WindowProc(IntPtr hWnd, WindowsMessageIds msg, IntPtr wParam, IntPtr lParam)
@@ -162,6 +163,9 @@ namespace Patchwork.Framework.Platform
             var platform = Core.Dispatcher as WinThreadDispatcher;
             switch (msg)
             {
+                case WindowsMessageIds.TIMER:
+                    Core.Pump();
+                    break;
                 case WindowsMessageIds.DISPATCH_WORK_ITEM:
                     if (wParam.ToInt64() == Constants.SignalW &&
                         lParam.ToInt64() == Constants.SignalL)

@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 namespace Patchwork.Framework.Platform.Interop.GdiPlus.NativeMethods

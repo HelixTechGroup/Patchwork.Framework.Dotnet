@@ -23,6 +23,10 @@ namespace Patchwork.Framework.Platform.Rendering
         protected Size m_size;
         protected Size m_virutalSize;
         protected bool m_isValid;
+        protected bool m_isRendering;
+
+        /// <inheritdoc />
+        protected int m_priority = 1;
         #endregion
 
         #region Properties
@@ -42,6 +46,17 @@ namespace Patchwork.Framework.Platform.Rendering
         public Size VirutalSize
         {
             get { return m_virutalSize; }
+        }
+
+        /// <inheritdoc />
+        public int Priority
+        {
+            get { return m_priority; }
+        }
+
+        public bool IsRendering
+        {
+            get { return m_isRendering; }
         }
         #endregion
 
@@ -66,14 +81,16 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         public void Render()
         {
-            if (m_isValid)
+            if (m_isValid ^ m_isRendering)
                 return;
 
+            m_isRendering = true;
             PlatformRendering();
             Rendering.Raise(this, null);
             PlatformRender();
             PlatformRendered();
             Rendered.Raise(this, null);
+            m_isRendering = false;
         }
 
         protected virtual void OnPaint() { }

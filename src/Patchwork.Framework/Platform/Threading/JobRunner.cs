@@ -17,7 +17,7 @@ namespace Patchwork.Framework.Platform.Threading
     internal class JobRunner
     {
         #region Members
-        private readonly Queue<IJob>[] _queues = Enumerable.Range(0, (int)NThreadDispatcherPriority.MaxValue + 1)
+        private readonly IList<Queue<IJob>> _queues = Enumerable.Range(0, (int)NThreadDispatcherPriority.MaxValue + 1)
                                                            .Select(_ => new Queue<IJob>()).ToArray();
 
         private INThreadDispatcher _platform;
@@ -117,8 +117,10 @@ namespace Patchwork.Framework.Platform.Threading
                 var q = _queues[c];
                 lock(q)
                 {
-                    if (q.Count > 0)
-                        return q.Dequeue();
+                    //if (q.Count > 0)
+                    //    return q.Dequeue();
+                    q.TryDequeue(out var job);
+                    return job;
                 }
             }
 

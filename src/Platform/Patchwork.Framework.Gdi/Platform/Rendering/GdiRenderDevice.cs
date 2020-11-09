@@ -16,6 +16,7 @@ namespace Patchwork.Framework.Platform.Rendering
             m_iocContainer.Register<INRenderDevice>(this);
             m_iocContainer.Register<INWindowRenderer, GdiWindowRenderer>(false);
             m_supportedRenderers.AddRange(new[] { typeof(INWindowRenderer), typeof(IFrameBufferRenderer)});
+            //Core.IoCContainer.Register<INRenderDevice>(this);
         }
 
         /// <inheritdoc />

@@ -208,7 +208,38 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern bool SetViewportOrgEx(IntPtr hdc, int x, int y, out Point lpPoint);
 
         [DllImport(LibraryName, ExactSpelling = true)]
-        public static extern int SetMapMode(IntPtr hdc, int fnMapMode);
+        public static extern int SetMapMode(IntPtr hdc, MapModes fnMapMode);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetViewportOrgEx(IntPtr hDC, int x, int y, Point[] prevPoint);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetWindowOrgEx(IntPtr hDC, int x, int y, Point[] prevPoint);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetViewportExtEx(IntPtr hDC, int nExtentX, int nExtentY, Size[] prevSize);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetWindowExtEx(IntPtr hDC, int nExtentX, int nExtentY, Size[] prevSize);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern int CreatePen(int nPenStyle, int nWidth, int nColor);
+
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern int SelectObject(IntPtr hDC, int hGdiObject);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern int DeleteObject(int hBitmap);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern int MoveToEx(IntPtr hDC, int x, int y, int nPreviousPoint);
+
+        [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "Rectangle")]
+        public static extern int DrawRectangle(IntPtr hDC, int nLeft, int nTop, int nRight, int nBottom);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool DPtoLP(IntPtr hdc, [In, Out] Point[] lpPoints, int nCount);
 
         [DllImport(LibraryName, ExactSpelling = true)]
         public static extern bool SwapBuffers(IntPtr hdc);

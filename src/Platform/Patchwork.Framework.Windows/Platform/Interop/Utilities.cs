@@ -40,7 +40,6 @@ namespace Patchwork.Framework.Platform.Interop
         {
             if (result)
                 return true;
-                //throw new Win32Exception();
 
             CheckLastError();
             return true;

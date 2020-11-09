@@ -1,7 +1,11 @@
 ﻿#region Usings
 using System;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 using Shin.Framework;
+using Shin.Framework.Extensions;
+using Shin.Framework.Runtime;
 #endregion
 
 namespace Patchwork.Framework.Platform
@@ -9,7 +13,8 @@ namespace Patchwork.Framework.Platform
     public class NHandle : Disposable, INHandle
     {
         #region Members
-        private readonly IntPtr m_handle;
+        //private readonly IntPtr m_handle;
+        private readonly SafeMemoryHandle m_handle;
         private readonly string m_handleDescriptor;
         #endregion
 
@@ -23,13 +28,42 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         public IntPtr Pointer
         {
-            get { return m_handle; }
+            get
+            {
+                //lock (m_handle)
+                //{
+                    try
+                    {
+                    //Lock();
+                        return m_handle.Lock().DangerousGetHandle();
+                        //return m_handle.DangerousGetHandle();
+ 
+                    }
+                    finally
+                    {
+                        m_handle.Unlock();
+                    }
+                //}
+            }
+        }
+
+        /// <inheritdoc />
+        public INHandle Lock()
+        {
+            m_handle.Lock();
+            return this;
+        }
+
+        /// <inheritdoc />
+        public void Unlock()
+        {
+            m_handle.Unlock();
         }
         #endregion
 
         public NHandle(IntPtr handle, string descriptor)
         {
-            m_handle = handle;
+            m_handle = new SafeMemoryHandle(handle, false);
             m_handleDescriptor = descriptor;
         }
 
@@ -41,14 +75,23 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
         {
-            Marshal.FreeHGlobal(m_handle);
+            //Marshal.FreeHGlobal(m_handle);
+            //if (m_handle.IsInvalid)
+            //    m_handle.Close();
             base.DisposeUnmanagedResources();
         }
         #endregion
 
         public static implicit operator IntPtr(NHandle obj)
         {
-            return obj.Pointer;
+            try
+            {
+                return obj.Lock().Pointer;
+            }
+            finally
+            {
+                obj.Unlock();
+            }
         }
 
         public static implicit operator NHandle(IntPtr obj)

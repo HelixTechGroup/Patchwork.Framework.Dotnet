@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Drawing;
 using System.Linq;
 using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
@@ -15,6 +16,7 @@ namespace Patchwork.Framework.Platform.Windowing
     {
         #region Members
         private readonly WindowProc m_wndProc;
+        private bool m_inModalSizeLoop;
         #endregion
 
         #region Properties
@@ -69,21 +71,26 @@ namespace Patchwork.Framework.Platform.Windowing
                     break;
                 case WindowsMessageIds.SIZE:
                     changed = true;
+                    //InvalidateDataCache();
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
                     break;
                 case WindowsMessageIds.SIZING:
                     changed = true;
+                    //InvalidateDataCache();
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resizing, this);
                     break;
                 case WindowsMessageIds.MOVE:
                     changed = true;
+                    //InvalidateDataCache();
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
                     break;
                 case WindowsMessageIds.MOVING:
                     changed = true;
+                    //InvalidateDataCache();
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Moving, this);
                     break;
                 case WindowsMessageIds.WINDOWPOSCHANGING:
+                    //InvalidateDataCache();
                     //PlatformManager.MessagePump.Push(new DesktopWindowMessage(WindowMessageIds.Resized, this));
                     break;
                 case WindowsMessageIds.WINDOWPOSCHANGED:
@@ -111,11 +118,30 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.QUIT:
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
-                //case WindowsMessageIds.PAINT:
-                //    Render();
-                //    break;
+                case WindowsMessageIds.PAINT:
+                    //Render();
+                    break;
                 case WindowsMessageIds.ERASEBKGND:
                     return new IntPtr(1);
+                    //break;
+                case WindowsMessageIds.TIMER:
+                    changed = m_inModalSizeLoop;
+                    if (m_inModalSizeLoop)
+                    {
+                        InvalidateDataCache();
+                        SyncDataCache(true);
+                        Core.Pump();
+                        //Render();
+                    }
+                    break;
+                case WindowsMessageIds.ENTERSIZEMOVE:
+                    m_inModalSizeLoop = true;
+                    SetTimer(m_handle.Pointer, new IntPtr(12345), 33, null);
+                    break;
+                case WindowsMessageIds.EXITSIZEMOVE:
+                    m_inModalSizeLoop = false;
+                    KillTimer(m_handle.Pointer, new IntPtr(12345));
+                    break;
                 case WindowsMessageIds.NULL:
                 case WindowsMessageIds.SETREDRAW:
                 case WindowsMessageIds.SETTEXT:
@@ -192,7 +218,6 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.IME_ENDCOMPOSITION:
                 case WindowsMessageIds.IME_COMPOSITION:
                 case WindowsMessageIds.INITDIALOG:
-                case WindowsMessageIds.TIMER:
                 case WindowsMessageIds.HSCROLL:
                 case WindowsMessageIds.VSCROLL:
                 case WindowsMessageIds.INITMENU:
@@ -233,8 +258,6 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.MDIICONARRANGE:
                 case WindowsMessageIds.MDIGETACTIVE:
                 case WindowsMessageIds.MDISETMENU:
-                case WindowsMessageIds.ENTERSIZEMOVE:
-                case WindowsMessageIds.EXITSIZEMOVE:
                 case WindowsMessageIds.DROPFILES:
                 case WindowsMessageIds.MDIREFRESHMENU:
                 case WindowsMessageIds.POINTERDEVICECHANGE:

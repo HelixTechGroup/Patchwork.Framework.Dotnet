@@ -10,6 +10,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\CategoryNameCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\IPropertyValueUIService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\IToolboxItemProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\IToolboxService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\IToolboxUser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\PaintValueEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\PropertyValueUIHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\PropertyValueUIItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\PropertyValueUIItemInvokeHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxComponentsCreatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxComponentsCreatedEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxComponentsCreatingEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxComponentsCreatingEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxItemCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\ToolboxItemCreatorCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\UITypeEditor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Design\UITypeEditorEditStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IRenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageData.cs" />
@@ -44,5 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Design\.gitattributes" />
   </ItemGroup>
 </Project>

@@ -129,22 +129,35 @@ namespace Patchwork.Framework
             IsRunning = true;
             Logger.LogDebug("Pumping Messages.");
             var mans = IoCContainer.ResolveAll<IPlatformManager>();
+            PreRunResourcesShared(m_tokenSource.Token);
+            //m.Pump(m_tokenSource.Token);
+
+            var timer = new Timer((state) =>
+                                  {
+                                      var mans = IoCContainer.ResolveAll<IPlatformManager>();
+                                      foreach (var m in mans)
+                                          m.RunOnce(m_tokenSource.Token);
+                                  },
+                                  null,
+                                  0,
+                                  33);
             while (!m_tokenSource.IsCancellationRequested)
             {
                 while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 {
-                    var message = e;
-                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message as IPlatformMessage)).ContinueWith(t => m_tasks.Remove(t)));
+                    var msg = e as IPlatformMessage;
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg), m_tokenSource.Token).ContinueWith(t => m_tasks.Remove(t)));
+                    if (msg?.Id == MessageIds.Quit)
+                        m_tokenSource.Cancel();
                 }
 
-                PreRunResourcesShared(m_tokenSource.Token);
-                foreach (var m in mans)
-                    m.Pump(m_tokenSource.Token);
-                PostRunResourcesShared(m_tokenSource.Token);
+                //foreach (var m in mans)
+                //    m.RunOnce(m_tokenSource.Token);
             }
 
-            foreach (var m in mans)
-                m.Wait();
+            timer.Dispose();
+            //foreach (var m in mans)
+            //    m.Wait();
 
             var whenAll = Task.WhenAll(m_tasks);
             Task.WhenAll(whenAll).ConfigureAwait(false);
@@ -160,6 +173,7 @@ namespace Patchwork.Framework
                 break;
             }
 
+            PostRunResourcesShared(m_tokenSource.Token);
             Logger.LogDebug("Exit Pumping Messages.");
             m_tasks.Clear();
             IsRunning = false;
@@ -172,6 +186,12 @@ namespace Patchwork.Framework
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
+        }
+
+        public static void Pump()
+        {
+            while (MessagePump.Poll(out var e, m_tokenSource.Token))
+                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t => m_tasks.Remove(t)));
         }
 
         public static void Create()
@@ -238,7 +258,6 @@ namespace Patchwork.Framework
                                  //var i = a.ManagerType.GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
                                  //m_managers[i[0]] = new Lazy<IPlatformManager>(m_container.Resolve(a.ManagerType) as IPlatformManager);
                              });
-            t.Start();
 
             var t1 = new Task(() =>
                               {
@@ -247,6 +266,8 @@ namespace Patchwork.Framework
                                   //var i = m.GetType().GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
                                   //m_managers[i[0]] = new Lazy<IPlatformManager>(m);
                               });
+
+            t.Start();
             t1.Start();
 
             Task.WaitAll(t, t1);
@@ -330,20 +351,20 @@ namespace Patchwork.Framework
                 instance.Initialize();
         }
 
-        private static bool TestInterface<TInterface>(Type t)
-        {
-            if (t.ContainsInterface<TInterface>()) return true;
+        //private static bool TestInterface<TInterface>(Type t)
+        //{
+        //    if (t.ContainsInterface<TInterface>()) return true;
 
-            foreach (var type in t.GetInterfaces())
-            {
-                if (type.ContainsInterface<TInterface>()) return true;
+        //    foreach (var type in t.GetInterfaces())
+        //    {
+        //        if (type.ContainsInterface<TInterface>()) return true;
 
-                if (TestInterface<TInterface>(type))
-                    return true;
-            }
+        //        if (TestInterface<TInterface>(type))
+        //            return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         private static IEnumerable<TAttribute> GetAssemblyAttributes<TAttribute>(OsType osType)
             where TAttribute : PlatformAttribute

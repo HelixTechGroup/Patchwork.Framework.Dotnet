@@ -85,10 +85,11 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             base.InitializeResources();
             m_window.AddRenderer(this);
+            m_window.SizeChanging += OnSizeChanging;
             m_device.ProcessMessage += OnProcessMessage;
             //m_window.SizeChanging += OnSizeChanging;
-            m_window.SizeChanged += (sender, args) => { Invalidate(); };
-            m_window.StateChanged += (sender, args) => { if (args.CurrentValue != NWindowState.Minimized) Invalidate(); };
+            //m_window.SizeChanged += (sender, args) => { Invalidate(); };
+            //m_window.StateChanged += (sender, args) => { if (args.CurrentValue != NWindowState.Minimized) Invalidate(); };
             Invalidate();
         }
 

@@ -44,6 +44,8 @@ namespace Patchwork.Framework
         void Run(CancellationToken token);
 
         void RunAsync(CancellationToken token);
+
+        void RunOnce(CancellationToken token);
         #endregion
     }
 }

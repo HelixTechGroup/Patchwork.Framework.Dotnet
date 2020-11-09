@@ -2,6 +2,7 @@
 using System;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
@@ -65,7 +66,7 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public void Resize(int width, int height)
         {
-            if (m_isReadOnly)
+            if (m_isReadOnly ^ m_hasLock)
                 return;
 
             var stride = 4 * ((width * 32 + 31) / 32);
@@ -80,13 +81,50 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public NPixelBuffer Copy()
         {
-            var ptr = Marshal.AllocHGlobal(m_length);
-            var arry = new byte[m_length];
-            Marshal.Copy(m_handle.Pointer, arry, 0, m_length);
-            Marshal.Copy(arry, 0, ptr, m_length);
-            var pb = new NPixelBuffer(ptr, m_width, m_height,  m_rowBytes, m_length);
-            pb.m_isReadOnly = false;
-            return pb;
+
+            try
+            {
+                //if (m_hasLock)
+                //    return null;
+
+                //if (!m_spin.IsHeldByCurrentThread)
+                //m_spin.TryEnter(ref m_hasLock);
+                //m_hasLock = m_semaphore.Wait(m_lockTimeout);
+                //if (!m_hasLock)
+                //    return null;
+
+                TryLock();
+                //Monitor.Enter(m_lock);
+                lock (m_lock)
+                {
+                    NPixelBuffer pb;
+                    lock (m_handle)
+                    {
+                        var ptr = Marshal.AllocHGlobal(m_length);
+                        var arry = new byte[m_length];
+
+                        Marshal.Copy(m_handle.Pointer, arry, 0, m_length);
+                        Marshal.Copy(arry, 0, ptr, m_length);
+                        pb = new NPixelBuffer(ptr, m_width, m_height, m_rowBytes, m_length);
+                        pb.m_isReadOnly = false;
+                    }
+
+                    //Monitor.Exit(m_lock);
+                    return pb;
+                }
+            }
+            finally
+            {
+                if (m_hasLock)
+                {
+                    //if (m_spin.IsHeldByCurrentThread)
+                    //    m_spin.Exit();
+                    //Monitor.Exit(m_lock);
+                    //m_semaphore.Release();
+                    m_lockSlim.ExitWriteLock();
+                    m_hasLock = false;
+                }
+            }
         }
         #endregion
     }

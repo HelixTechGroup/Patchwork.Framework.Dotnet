@@ -37,11 +37,11 @@ namespace Patchwork.Framework.Platform.Windowing
 
         protected virtual void Render()
         {
-            //if (!m_isInitialized)
-            //    return;
+            if (!m_isInitialized)
+                return;
 
-            //foreach (var r in m_renders.Where(r => r.ContainsInterface(typeof(IFrameBufferRenderer))))
-            //    r.Render();
+            foreach (var r in m_renders/*.Where(r => r.ContainsInterface(typeof(IFrameBufferRenderer)))*/)
+                r.Render();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Patchwork.Framework.Platform.Rendering
         protected IList<Type> m_supportedRenderers;
         protected IContainer m_iocContainer;
         protected bool m_isRunning;
-        protected bool m_isPumpiing;
+        protected bool m_isPumping;
         protected IPlatformMessagePump m_pump;
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
@@ -102,18 +102,20 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         public void Pump(CancellationToken token)
         {
-            if (!m_isInitialized)
-                Throw.Exception<InvalidOperationException>();
-
-            if (m_isPumpiing)
+            if ((!m_isInitialized | token.IsCancellationRequested) ^ m_isPumping)
                 return;
-                //Wait();
-                //Throw.Exception<InvalidOperationException>();
+            //if (!m_isInitialized)
+            //    Throw.Exception<InvalidOperationException>();
 
-            m_isPumpiing = true;
+            //if (m_isPumpiing)
+            //    return;
+            //Wait();
+            //Throw.Exception<InvalidOperationException>();
+
+            m_isPumping = true;
             //Core.Logger.LogDebug("Pumping Manager Messages.");
-            if (token.IsCancellationRequested)
-                return;
+            //if (token.IsCancellationRequested)
+            //    return;
 
             while (m_pump.Poll(out var e, token))
             {
@@ -126,14 +128,14 @@ namespace Patchwork.Framework.Platform.Rendering
             RunManager();
 
             //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
-            m_isPumpiing = false;
+            m_isPumping = false;
         }
 
         /// <inheritdoc />
         public void Wait()
         {
             if (!m_isInitialized)
-                Throw.Exception<InvalidOperationException>();
+                return;//Throw.Exception<InvalidOperationException>();
 
             WaitManager();
             var whenAll = Task.WhenAll(m_tasks);

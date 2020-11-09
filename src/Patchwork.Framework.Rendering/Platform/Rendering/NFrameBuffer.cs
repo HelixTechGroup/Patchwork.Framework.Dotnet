@@ -65,7 +65,7 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            m_pixelBuffer.Dispose();
+            m_pixelBuffer?.Dispose();
             m_height = 0;
             m_width = 0;
             base.DisposeManagedResources();

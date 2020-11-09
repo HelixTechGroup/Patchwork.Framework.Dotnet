@@ -52,14 +52,15 @@ namespace Patchwork.Framework.Manager
         /// <inheritdoc />
         public void Pump(CancellationToken token)
         {
-            if (!m_isInitialized)
-                Throw.Exception<InvalidOperationException>();
-
-            if (token.IsCancellationRequested)
+            if ((!m_isInitialized | token.IsCancellationRequested) ^ m_isPumping)
                 return;
+            //Throw.Exception<InvalidOperationException>();
 
-            if (m_isPumping)
-                return;
+            //if (token.IsCancellationRequested)
+            //    return;
+
+            //if (m_isPumping)
+            //    return;
                 //Wait();
                 //Throw.Exception<InvalidOperationException>();
 
@@ -141,6 +142,19 @@ namespace Patchwork.Framework.Manager
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
+        }
+        
+        public void RunOnce(CancellationToken token)
+        {
+            if (!m_isInitialized)
+                Throw.Exception<InvalidOperationException>();
+
+            if (m_isRunning)
+                return;
+
+            m_isRunning = true;
+            Pump(token);
+            m_isRunning = false;
         }
 
         /// <inheritdoc />

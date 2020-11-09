@@ -39,7 +39,8 @@ namespace Patchwork.Framework.Messaging
         /// <inheritdoc />
         public bool Push(IPlatformMessage message)
         {
-            return Push(message as IMessage);
+            /*Core.Dispatcher.InvokeAsync(() => */Push(message as IMessage)/*).ConfigureAwait(false)*/;
+            return true;
         }
         #endregion
     }
@@ -76,7 +77,8 @@ namespace Patchwork.Framework.Messaging
         /// <inheritdoc />
         public bool Push(IPlatformMessage message)
         {
-            return Push(message as IMessage);
+            /*Core.Dispatcher.InvokeAsync(() => */Push(message as IMessage)/*).ConfigureAwait(false)*/;
+            return true;
         }
         #endregion
     }

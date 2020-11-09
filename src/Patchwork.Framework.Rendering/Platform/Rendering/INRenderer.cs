@@ -16,6 +16,7 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Properties
         Size Size { get; }
         Size VirutalSize { get; }
+        int Priority { get; }
         #endregion
 
         #region Methods

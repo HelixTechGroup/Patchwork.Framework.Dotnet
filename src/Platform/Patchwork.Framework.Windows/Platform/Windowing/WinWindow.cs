@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Patchwork.Framework.Platform.Interop;
 using Patchwork.Framework.Platform.Interop.User32;
+using Shin.Framework.Extensions;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 #endregion
@@ -199,8 +200,9 @@ namespace Patchwork.Framework.Platform.Windowing
             var wndClassEx = new WindowClassEx
             {
                 Size = (uint)Marshal.SizeOf<WindowClassEx>(),
-                Styles = WindowClassStyles.CS_OWNDC | WindowClassStyles.CS_HREDRAW |
-                                          WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
+                Styles = WindowClassStyles.CS_OWNDC | 
+                         WindowClassStyles.CS_HREDRAW |
+                         WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
                 WindowProc = m_wndProc,
                 InstanceHandle = hInstance,
                 ClassName = m_windowClass,
@@ -263,7 +265,9 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         protected override void PlatformDisable()
         {
+            m_handle.Lock();
             EnableWindow(m_handle.Pointer, false);
+            m_handle.Unlock();
         }
 
         /// <inheritdoc />
