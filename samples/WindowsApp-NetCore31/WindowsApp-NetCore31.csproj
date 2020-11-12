@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Netcore\Patchwork.Framework.Windows.NetCore\Patchwork.Framework.Windows.NetCore.csproj" />
+    <ProjectReference Include="..\..\third-party\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj" />
+  </ItemGroup>
+  
+</Project>

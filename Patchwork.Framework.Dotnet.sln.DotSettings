@@ -469,6 +469,7 @@
 protected abstract void PlatformSet$object$($type$ value);</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Longacre/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nuspec/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Renderers/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Skia/@EntryIndexedValue">True</s:Boolean>
 	
 	

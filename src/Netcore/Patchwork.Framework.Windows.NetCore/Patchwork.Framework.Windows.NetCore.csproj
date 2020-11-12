@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <RootNamespace>Patchwork.Framework</RootNamespace>
     <AssemblyName>Patchwork.Framework</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -19,7 +21,7 @@
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
+    <ProjectReference Include="..\..\..\third-party\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj" />
   </ItemGroup>
   <Import Project="..\..\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems" Label="Shared" />
   <Import Project="..\..\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />

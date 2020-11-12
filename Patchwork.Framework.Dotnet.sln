@@ -54,8 +54,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patchwork.Framework.Windows
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B013D504-A2C9-4216-A4A1-EB7BC9588F3A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsApp", "samples\WindowsApp\WindowsApp.csproj", "{29B1323F-0025-4179-93FE-17324907B56E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin", "Xamarin", "{6A736ACF-1D8F-4114-AF8A-775F8DB712D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patchwork.Framework.Android.Xamarin", "src\Xamarin\Patchwork.Framework.Android.Xamarin\Patchwork.Framework.Android.Xamarin.csproj", "{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}"
@@ -87,6 +85,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinuxApp", "samples\LinuxApp\LinuxApp.csproj", "{0A43644B-6981-4BA9-9707-9775DF8BB0A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidApp", "samples\AndroidApp\AndroidApp.csproj", "{DB453995-65F3-4E33-B135-17E7DE2E4CC0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shin.Framework.NetCore", "third-party\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj", "{F88FBD65-21AC-47A9-BE44-B3B586762E93}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsApp-NetCore31", "samples\WindowsApp-NetCore31\WindowsApp-NetCore31.csproj", "{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsApp-Net5", "samples\WindowsApp-Net5\WindowsApp-Net5.csproj", "{C298080E-8345-4793-9589-584227872D9C}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -125,6 +129,7 @@ Global
 		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{e3bb4d7b-fda8-4f9d-b4e9-1613506f1e2e}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems*{e4609d0b-3a70-4ae1-9462-042a72263376}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems*{f81b5c8f-475f-466c-b028-d7e248c05897}*SharedItemsImports = 13
+		third-party\shin\src\Shin.Framework\Shin.Framework.projitems*{f88fbd65-21ac-47a9-be44-b3b586762e93}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,10 +148,6 @@ Global
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29B1323F-0025-4179-93FE-17324907B56E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29B1323F-0025-4179-93FE-17324907B56E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29B1323F-0025-4179-93FE-17324907B56E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29B1323F-0025-4179-93FE-17324907B56E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -165,6 +166,18 @@ Global
 		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB453995-65F3-4E33-B135-17E7DE2E4CC0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F88FBD65-21AC-47A9-BE44-B3B586762E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F88FBD65-21AC-47A9-BE44-B3B586762E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F88FBD65-21AC-47A9-BE44-B3B586762E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F88FBD65-21AC-47A9-BE44-B3B586762E93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C298080E-8345-4793-9589-584227872D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C298080E-8345-4793-9589-584227872D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C298080E-8345-4793-9589-584227872D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C298080E-8345-4793-9589-584227872D9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,7 +195,6 @@ Global
 		{2FEF6F21-FCA7-4282-8FED-CEA9B0261A83} = {CFE53FE4-AD85-4797-B4F8-6795A77CF798}
 		{E4609D0B-3A70-4AE1-9462-042A72263376} = {4D64F963-5E27-4E1A-93D3-8725EA168F83}
 		{659FFA04-D773-41E6-907A-E12FCBEB82F1} = {300DD736-6641-4130-86BC-62D40E84FD0F}
-		{29B1323F-0025-4179-93FE-17324907B56E} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
 		{6A736ACF-1D8F-4114-AF8A-775F8DB712D6} = {DF9F35D5-782A-4517-9EED-56DC59ABC127}
 		{B3D966F1-E1A7-423A-BE0E-23F1A7D53FF3} = {6A736ACF-1D8F-4114-AF8A-775F8DB712D6}
 		{C6806C4E-C4E9-4736-AC25-300CD08B244C} = {4D64F963-5E27-4E1A-93D3-8725EA168F83}
@@ -197,6 +209,9 @@ Global
 		{8262ADEC-5C8C-4270-996F-B352AD34D163} = {899F423F-E433-48CD-ADD7-BE7111060D01}
 		{0A43644B-6981-4BA9-9707-9775DF8BB0A0} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
 		{DB453995-65F3-4E33-B135-17E7DE2E4CC0} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{F88FBD65-21AC-47A9-BE44-B3B586762E93} = {AED9F4B2-5880-4135-BB4E-E79F37FF755A}
+		{8548E2DB-ACD4-4D2F-8773-3E2D092DC4B0} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{C298080E-8345-4793-9589-584227872D9C} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}

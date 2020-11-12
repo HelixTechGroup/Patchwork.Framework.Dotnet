@@ -34,7 +34,6 @@ namespace WindowsApp
             Core.Initialize();
 
             Core.Window.CreateWindow().Show();
-
             Core.Run(m_cts.Token);
 
             Core.Dispose();
