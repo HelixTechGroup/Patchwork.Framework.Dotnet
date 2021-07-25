@@ -2,12 +2,14 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Interop.User32;
 using Patchwork.Framework.Platform.Rendering;
 using Shin.Framework.Extensions;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
+using static Patchwork.Framework.Platform.Interop.Utilities;
 #endregion
 
 namespace Patchwork.Framework.Platform.Windowing
@@ -17,6 +19,7 @@ namespace Patchwork.Framework.Platform.Windowing
         #region Members
         private readonly WindowProc m_wndProc;
         private bool m_inModalSizeLoop;
+        private bool m_timerRunning;
         #endregion
 
         #region Properties
@@ -73,6 +76,22 @@ namespace Patchwork.Framework.Platform.Windowing
                     changed = true;
                     //InvalidateDataCache();
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
+                    switch ((WindowSizeFlag)message.WParam)
+                    {
+                        case WindowSizeFlag.SIZE_MAXIMIZED:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Maximized);
+                            //Core.MessagePump.PushWindowMessage(WindowMessageIds.Restored, this);
+                            break;
+                        case WindowSizeFlag.SIZE_RESTORED:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Restored);
+                            break;
+                        case WindowSizeFlag.SIZE_MINIMIZED:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Minimized);
+                            break;
+                    }
                     break;
                 case WindowsMessageIds.SIZING:
                     changed = true;
@@ -122,10 +141,10 @@ namespace Patchwork.Framework.Platform.Windowing
                     //Render();
                     break;
                 case WindowsMessageIds.ERASEBKGND:
-                    return new IntPtr(1);
+                    //return new IntPtr(1);
                     //break;
                 case WindowsMessageIds.TIMER:
-                    changed = m_inModalSizeLoop;
+                    //changed = m_inModalSizeLoop;
                     if (m_inModalSizeLoop)
                     {
                         InvalidateDataCache();
@@ -135,12 +154,39 @@ namespace Patchwork.Framework.Platform.Windowing
                     }
                     break;
                 case WindowsMessageIds.ENTERSIZEMOVE:
+                    if (m_timerRunning)
+                        break;
+
+                    CheckOperation(SetTimer(m_handle.Pointer, new IntPtr(12345), 33, null) != IntPtr.Zero);
+                    m_timerRunning = true;
                     m_inModalSizeLoop = true;
-                    SetTimer(m_handle.Pointer, new IntPtr(12345), 33, null);
                     break;
                 case WindowsMessageIds.EXITSIZEMOVE:
+                    if (!m_timerRunning)
+                        break;
+                    
+                    CheckOperation(KillTimer(m_handle.Pointer, new IntPtr(12345)));
+                    m_timerRunning = false;
                     m_inModalSizeLoop = false;
-                    KillTimer(m_handle.Pointer, new IntPtr(12345));
+                    break;
+                case WindowsMessageIds.SYSCOMMAND:
+                    switch ((SysCommand)message.WParam)
+                    {
+                        case SysCommand.SC_MAXIMIZE:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Maximized);
+                            break;
+                        case SysCommand.SC_RESTORE:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Restored);
+                            //ore.MessagePump.PushWindowMessage(WindowMessageIds.Restored, this);
+                            break;
+                        case SysCommand.SC_MINIMIZE:
+                            changed = true;
+                            Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Minimized);
+                            break;
+                    }
+
                     break;
                 case WindowsMessageIds.NULL:
                 case WindowsMessageIds.SETREDRAW:
@@ -361,7 +407,6 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.SYSKEYUP:
                 case WindowsMessageIds.SYSKEYDOWN:
                 case WindowsMessageIds.COMMAND:
-                case WindowsMessageIds.SYSCOMMAND:
                 case WindowsMessageIds.MENUCOMMAND:
                 case WindowsMessageIds.APPCOMMAND:
                 case WindowsMessageIds.CAPTURECHANGED:

@@ -61,6 +61,7 @@ namespace Patchwork.Framework.Manager
             Throw.If(!m_isInitialized).InvalidOperationException();
             var win = Core.IoCContainer.Resolve<INWindow>(null, Core.Application, definition);
             win.Create();
+
             return win;
         }
 
@@ -129,6 +130,8 @@ namespace Patchwork.Framework.Manager
 
                     break;
                 case MessageIds.Rendering:
+                    //foreach (var window in m_windows)
+                    //    window.Render();
                     //Core.Logger.LogDebug("Render message found.");
                     break;
             }

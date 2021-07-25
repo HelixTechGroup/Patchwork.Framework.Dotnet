@@ -1,0 +1,109 @@
+﻿<Project InitialTargets="InitializeEnvironment">
+  <ItemGroup>
+    <MSBuildProjectParentDirectory Include="$(MSBuildProjectDirectory)\..\" />
+  </ItemGroup>
+  <PropertyGroup Condition="$(SolutionDir) == ''">
+    <RootPath>$(MSBuildProjectParentDirectory.FullPath)</RootPath>
+    <SolutionDir>$(RootPath.FullPath)</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(SolutionDir) != ''">
+    <SolutionDir>$(SolutionDir.TrimEnd('\'))</SolutionDir>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <IsSharedProject Condition=" '$(IsSharedProject)' == '' ">False</IsSharedProject>
+    <SourceDirectory Condition=" '$(SourceDirectory)' == '' ">$(SolutionDir)src</SourceDirectory>
+    <PlatformDirectory Condition=" '$(PlatformDirectory)' == '' ">$(SourceDirectory)\Platform</PlatformDirectory>
+    <ThirdPartyDirectory Condition=" '$(ThirdPartyDirectory)' == '' ">$(SolutionDir)third-party</ThirdPartyDirectory>
+    <!--<PrometheusDirectory Condition=" '$(PrometheusDirectory)' == '' ">$(ThirdPartyDirectory)\Prometheus</PrometheusDirectory>-->
+    <NuspecDirectory Condition=" '$(NuspecDirectory)' == '' ">$(SolutionDir)nuspecs</NuspecDirectory>
+    <ShieldCheckTargets>$(PrometheusDirectory)\Check.Build.targets</ShieldCheckTargets>
+    <ShieldCommonTargets Condition=" '$(ShieldCommonTargets)' == '' ">$(PrometheusDirectory)\Common.Build.targets</ShieldCommonTargets>
+    <ShieldCommonProps Condition=" '$(ShieldCommonProps)' == '' ">$(PrometheusDirectory)\Common.Build.props</ShieldCommonProps>
+    <ShieldPlatformProps Condition=" '$(ShieldPlatformProps)' == '' ">$(PrometheusDirectory)\Platform.Build.props</ShieldPlatformProps>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">$(OutputDirectory)</OutputPath>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <SetupCompleted Condition=" '$(SetupCompleted)' == '' ">False</SetupCompleted>
+    <TargetPlatform Condition=" '$(TargetPlatform)' == '' ">None</TargetPlatform>
+    <PlatformId Condition=" '$(PlatformId)' == '' ">None</PlatformId>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(TargetPlatform.Contains(`android`))' == 'true'">
+      <PropertyGroup>
+        <TargetFramework>net5.0-android</TargetFramework>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <PropertyGroup>
+    <!--<TargetPlatform>net5.0</TargetPlatform>-->
+    <ProductName Condition=" '$(ProductName)' == '' ">Shield.Application</ProductName>
+    <CompanyName Condition=" '$(CompanyNamed)' == '' ">HelixTechGroup,llc</CompanyName>
+    <AuthorName Condition=" '$(AuthorName)' == '' ">Bryan M. Longacre</AuthorName>
+    <ProductVersion Condition=" '$(ProductVersion)' == '' ">0.0.0.1</ProductVersion>
+    <IsSharedProject Condition=" '$(IsSharedProject)' == '' ">$(MSBuildProjectExtension.Contains('shproj'))</IsSharedProject>
+    <IsTestProject Condition=" '$(IsTestProject)' == '' ">False</IsTestProject>
+    <IsLibraryProject Condition=" '$(IsLibraryProject)' == '' ">False</IsLibraryProject>
+    <MergeBinary Condition=" '$(MergeBinary)' == '' ">True</MergeBinary>
+    <SolutionProps Condition=" '$(SolutionProps)' == '' ">$(SolutionDir)Solution.Build.props</SolutionProps>
+    <UserProps Condition=" '$(UserProps)' == '' ">$(SolutionDir)User.Build.props</UserProps>
+    <!--<HasWindows>$(TargetPlatform.Contains('windows'))</HasWindows>
+    <HasAndroid>$(TargetPlatform.Contains(`android`))</HasAndroid>-->
+    <!--<IsTestProject Condition="$(IsSharedProject) == 'false'">$(MSBuildProjectName.Contains($(ProductName)))</IsTestProject>-->
+    <!--<IsLibraryProject Condition="$(IsSharedProject) == 'false'">$(MSBuildProjectName.Contains($(ProductName)))</IsLibraryProject>-->
+  </PropertyGroup>
+  <PropertyGroup>
+    <Description>Description</Description>
+    <DisableExtraReferences>true</DisableExtraReferences>
+  </PropertyGroup>
+  <Import Project="$(SolutionProps)" Condition="Exists($(SolutionProps))"/>
+  <Import Project="$(UserProps)" Condition="Exists($(UserProps))" />
+  <PropertyGroup>
+    <Product>$(ProductName)</Product>
+    <AssemblyName>$(ProductName)</AssemblyName>
+    <Company>$(CompanyName)</Company>
+    <Authors>$(AuthorName)</Authors>
+    <Owners>$(CompanyName)</Owners>
+    <Copyright>copyright © $(CompanyName) 2017-2020</Copyright>
+    <Version>$(ProductVersion)</Version>
+    <FileVersion>$(ProductVersion)</FileVersion>
+    <OutputDirectory Condition=" '$(OutputDirectory)' == '' ">$(SolutionDir)build\$(Configuration)\$(AssemblyName)</OutputDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(SolutionDir) != ''">
+    <SourceDirectory>$(SolutionDir)src</SourceDirectory>
+    <OutputDirectory>$(SolutionDir)build\$(Configuration)\$(AssemblyName)</OutputDirectory>
+    <PlatformDirectory>$(SourceDirectory)\Platform</PlatformDirectory>
+    <ThirdPartyDirectory>$(SolutionDir)third-party</ThirdPartyDirectory>
+    <PrometheusDirectory>$(ThirdPartyDirectory)\Prometheus</PrometheusDirectory>
+    <NuspecDirectory>$(SolutionDir)nuspecs</NuspecDirectory>
+    <ShieldCheckTargets>$(PrometheusDirectory)\Check.Build.targets</ShieldCheckTargets>
+    <ShieldCommonTargets>$(PrometheusDirectory)\Common.Build.targets</ShieldCommonTargets>
+    <ShieldCommonProps>$(PrometheusDirectory)\Common.Build.props</ShieldCommonProps>
+    <ShieldPlatformProps>$(PrometheusDirectory)\Platform.Build.props</ShieldPlatformProps>
+    <OutputPath>$(OutputDirectory)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Configure assembly names and namespaces">
+    <!--<TargetFrameworks>netstandard2.1;net5.0;netcoreapp3.1</TargetFrameworks>-->
+    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!--<PublishSingleFile>True</PublishSingleFile>-->
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsLibraryProject)' == 'true'">
+    <OutputType>Library</OutputType>
+    <DocumentationFile>$(SolutionDir)build\$(Configuration)\$(AssemblyName)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Normalize stack trace file locations" Condition="$(BuildingInsideVisualStudio) != 'true'">
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=X:\</PathMap>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SourceDirectory)\GlobalSuppressions.cs" 
+             Link="GlobalSuppressions.cs" 
+             Condition="Exists('$(SourceDirectory)\GlobalSuppressions.cs')"/>
+    <Compile Include="$(SourceDirectory)\SharedAssemblyInfo.cs" 
+             Link="Properties\SharedAssemblyInfo.cs"
+             Condition="Exists('$(SourceDirectory)\SharedAssemblyInfo.cs')" />
+  </ItemGroup>
+</Project>

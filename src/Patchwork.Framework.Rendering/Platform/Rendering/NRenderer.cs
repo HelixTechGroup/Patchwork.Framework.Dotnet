@@ -1,8 +1,10 @@
 ﻿#region Usings
 using System;
 using System.Drawing;
+using System.Threading;
 using Shin.Framework;
 using Shin.Framework.Extensions;
+using Shin.Framework.Threading;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
@@ -24,9 +26,15 @@ namespace Patchwork.Framework.Platform.Rendering
         protected Size m_virutalSize;
         protected bool m_isValid;
         protected bool m_isRendering;
-
-        /// <inheritdoc />
-        protected int m_priority = 1;
+        protected bool m_isEnabled;
+        protected bool m_checkEnabled;
+        protected bool m_handleRenderLoop = true;
+        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        protected RenderPriority m_priority = RenderPriority.Normal;
+        protected RenderStage m_level = RenderStage.Application;
+        protected static readonly object m_lock = new object();
+        protected bool m_hasLock;
+        protected readonly int m_lockTimeout = 50;
         #endregion
 
         #region Properties
@@ -49,23 +57,52 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         /// <inheritdoc />
-        public int Priority
+        public RenderPriority Priority
         {
             get { return m_priority; }
+        }
+
+        /// <inheritdoc />
+        public RenderStage Stage
+        {
+            get { return m_level; }
         }
 
         public bool IsRendering
         {
             get { return m_isRendering; }
         }
+
+        public bool IsEnabled
+        {
+            get { return m_isEnabled; }
+            set
+            {
+                m_isEnabled = value;
+            }
+        }
+
+        public bool HandleRenderLoop
+        {
+            get { return m_handleRenderLoop; }
+        }
         #endregion
 
         protected NRenderer(INRenderDevice device)
         {
             m_device = device;
+            m_checkEnabled = true;
         }
 
         #region Methods
+        /// <inheritdoc />
+        protected override void InitializeResources()
+        {
+            base.InitializeResources();
+            m_isEnabled = true;
+            m_isValid = m_isRendering = false;
+        }
+
         public bool Invalidate()
         {
             m_isValid = false;
@@ -81,19 +118,56 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         public void Render()
         {
-            if (m_isValid ^ m_isRendering)
+            //^ m_isValid
+
+            if (!m_isEnabled ^ m_isRendering ^ !m_isInitialized ^ m_isDisposed)
                 return;
 
-            m_isRendering = true;
-            PlatformRendering();
-            Rendering.Raise(this, null);
-            PlatformRender();
-            PlatformRendered();
-            Rendered.Raise(this, null);
-            m_isRendering = false;
+            if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+                return;
+
+            m_hasLock = true;
+            try
+            {
+                //lock(m_lock)
+                {
+                    CheckEnabled();
+
+                    m_isRendering = true;
+                    PlatformRendering();
+                    Rendering.Raise(this, null);
+                    PlatformRender();
+                    PlatformRendered();
+                    Rendered.Raise(this, null);
+                    m_isRendering = false;
+                }
+            }
+            finally
+            {
+                if (m_hasLock)
+                {
+                    m_lockSlim.ExitWriteLock();
+                    m_hasLock = false;
+                }
+            }
+            ///CheckEnabled();
+
         }
 
-        protected virtual void OnPaint() { }
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            m_isEnabled = false;
+            base.DisposeManagedResources();
+        }
+
+        protected virtual bool CheckEnabled()
+        {
+            if (!m_checkEnabled)
+                return true;
+
+            return false;
+        }
 
         protected abstract bool PlatformValidate();
 

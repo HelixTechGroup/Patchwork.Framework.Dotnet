@@ -10,5 +10,7 @@ namespace Patchwork.Framework.Platform.Windowing
         #endregion
 
         void AddRenderer(params INRenderer[] renderer);
+
+        void Render();
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
@@ -132,30 +133,37 @@ namespace Patchwork.Framework
             PreRunResourcesShared(m_tokenSource.Token);
             //m.Pump(m_tokenSource.Token);
 
-            var timer = new Timer((state) =>
-                                  {
-                                      var mans = IoCContainer.ResolveAll<IPlatformManager>();
-                                      foreach (var m in mans)
-                                          m.RunOnce(m_tokenSource.Token);
-                                  },
-                                  null,
-                                  0,
-                                  33);
+            var timer = new System.Timers.Timer();
+            timer.AutoReset = true;
+            timer.Interval = 33;
+            timer.Enabled = true;
+            timer.Elapsed += ((sender, args) =>
+                                                    {
+                                                        var mans = IoCContainer.ResolveAll<IPlatformManager>();
+                                                        foreach (var m in mans)
+                                                            Task.Factory.StartNew(() => m.RunOnce(m_tokenSource.Token), m_tokenSource.Token);
+                                                    });
             while (!m_tokenSource.IsCancellationRequested)
             {
+                timer.Start();
                 while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 {
                     var msg = e as IPlatformMessage;
-                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg), m_tokenSource.Token).ContinueWith(t => m_tasks.Remove(t)));
+                    var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg), m_tokenSource.Token));
+                                    //.ContinueWith(t => m_tasks.Remove(t)));
+                    foreach (var c in complete)
+                        m_tasks.Remove(c);
+
                     if (msg?.Id == MessageIds.Quit)
                         m_tokenSource.Cancel();
-                }
 
+                    timer.Stop();
+                }
                 //foreach (var m in mans)
                 //    m.RunOnce(m_tokenSource.Token);
             }
 
-            timer.Dispose();
             //foreach (var m in mans)
             //    m.Wait();
 
@@ -191,7 +199,13 @@ namespace Patchwork.Framework
         public static void Pump()
         {
             while (MessagePump.Poll(out var e, m_tokenSource.Token))
-                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t => m_tasks.Remove(t)));
+                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t =>
+                                                                                                       {
+                                                                                                           m_tasks.Remove(t); 
+                                                                                                           ((e as IPlatformMessage)?
+                                                                                                           .RawData as IDispose)?
+                                                                                                              .Dispose();
+                                                                                                       }));
         }
 
         public static void Create()

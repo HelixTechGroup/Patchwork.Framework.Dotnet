@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
@@ -45,6 +45,12 @@ namespace Patchwork.Framework.Platform
 
         /// <inheritdoc />
         public void PumpMessages(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool OpenConsole()
         {
             throw new NotImplementedException();
         }

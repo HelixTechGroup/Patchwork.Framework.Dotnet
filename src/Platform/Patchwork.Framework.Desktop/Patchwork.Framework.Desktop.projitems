@@ -9,6 +9,7 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Extenstions\PlatformMessagePumpExtensions.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.Desktop.cs" />

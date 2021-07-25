@@ -29,7 +29,7 @@ namespace Patchwork.Framework.Extensions
 
         public static void PushFrameBuffer(this IPlatformMessagePump pump, INRenderer renderer, NFrameBuffer frameBuffer)
         {
-            pump.PushRenderMessage(new RenderMessageData(renderer).SetFrameBuffer(frameBuffer));
+            pump.PushRenderMessage(new RenderMessageData(renderer).SetFrameBuffer(frameBuffer.Copy()));
         }
 
         public static void PushRenderWindowMessage(this IPlatformMessagePump pump,

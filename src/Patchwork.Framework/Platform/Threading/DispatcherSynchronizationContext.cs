@@ -15,7 +15,7 @@ namespace Shield.Framework.Threading
     /// </summary>
     public class NThreadDispatcherSynchronizationContext : SynchronizationContext
     {
-        JobRunner m_jobRunner;
+        private static JobRunner m_jobRunner;
 
         #region Properties
         /// <summary>
@@ -27,6 +27,9 @@ namespace Shield.Framework.Threading
         #region Methods
         public NThreadDispatcherSynchronizationContext()
         {
+            if (m_jobRunner != null) 
+                return;
+
             m_jobRunner = new JobRunner(Core.Dispatcher);
             Core.Dispatcher.Signaled += m_jobRunner.RunJobs;
         }

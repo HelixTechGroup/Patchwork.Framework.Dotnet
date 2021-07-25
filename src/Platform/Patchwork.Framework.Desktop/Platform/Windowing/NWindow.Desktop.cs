@@ -264,10 +264,7 @@ namespace Patchwork.Framework.Platform.Windowing
             m_childWindows = new ConcurrentList<INWindow>();
             m_initialState = m_cache.Definition.InitialState;
             m_isFirstTimeVisible = true;
-            InitializeResourcesShared2();
         }
-
-        partial void InitializeResourcesShared2();
 
         partial void DisposeUnmanagedResourcesShared() { }
 
@@ -374,15 +371,16 @@ namespace Patchwork.Framework.Platform.Windowing
                             ModeChanged.Raise(this, data.ModeChangedData.ToEventArgs());
                             break;
                         case WindowMessageIds.StateChanging:
-                            StateChanging.Raise(this, data.StateChangingData.ToEventArgs());
+                            //StateChanging.Raise(this, data.StateChangingData.ToEventArgs());
                             break;
                         case WindowMessageIds.StateChanged:
-                            StateChanged.Raise(this, data.StateChangedData.ToEventArgs());
+                            //StateChanged.Raise(this, data.StateChangedData.ToEventArgs());
                             break;
                         case WindowMessageIds.AttentionDrawn:
                             AttentionDrawn.Raise(this, null);
                             break;
                         case WindowMessageIds.Restored:
+                            StateChanged.Raise(this, data.StateChangedData.ToEventArgs());
                             break;
                         case WindowMessageIds.Shown:
                             Shown.Raise(this, null);

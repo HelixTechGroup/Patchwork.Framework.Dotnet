@@ -1,4 +1,5 @@
 ﻿#region Usings
+using System;
 using System.Drawing;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
@@ -6,7 +7,7 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Messaging
 {
-    public partial class WindowMessageData : IWindowMessageData
+    public partial class WindowMessageData : IWindowMessageData, IEquatable<WindowMessageData>
     {
         #region Members
         protected readonly INWindow m_window;
@@ -104,6 +105,53 @@ namespace Patchwork.Framework.Messaging
             var data = m_window.GetDataCache();
             FocusChangedData = new PropertyChangedData<bool>(m_window.IsFocused, requestedFocus, data.PreviouslyFocused);
             return this;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(WindowMessageData other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return (m_window == other.Window) &&
+                (m_messageId == other.MessageId) &&
+                PositionChangingData.Equals(other.PositionChangingData) &&
+                PositionChangedData.Equals(other.PositionChangedData) &&
+                SizeChangingData.Equals(other.SizeChangingData) &&
+                SizeChangedData.Equals(other.SizeChangedData) &&
+                FocusChangingData.Equals(other.FocusChangingData) &&
+                FocusChangedData.Equals(other.FocusChangedData);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IWindowMessageData other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return (m_window == other.Window) &&
+                   (m_messageId == other.MessageId) && 
+                   PositionChangingData.Equals(other.PositionChangingData) &&
+                   PositionChangedData.Equals(other.PositionChangedData) &&
+                   SizeChangingData.Equals(other.SizeChangingData) &&
+                   SizeChangedData.Equals(other.SizeChangedData) &&
+                   FocusChangingData.Equals(other.FocusChangingData) &&
+                   FocusChangedData.Equals(other.FocusChangedData);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is WindowMessageData other && Equals(other);
+        }
+
+
+        public static bool operator ==(WindowMessageData left, WindowMessageData right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(WindowMessageData left, WindowMessageData right)
+        {
+            return !Equals(left, right);
         }
         #endregion
     }

@@ -59,5 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Threading\" />
   </ItemGroup>
 </Project>

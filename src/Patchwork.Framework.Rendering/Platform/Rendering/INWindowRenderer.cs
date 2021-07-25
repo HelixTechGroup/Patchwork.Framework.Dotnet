@@ -1,10 +1,11 @@
 ﻿#region Usings
+using System;
 using Patchwork.Framework.Platform.Windowing;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public partial interface INWindowRenderer : INRenderer
+    public partial interface INWindowRenderer : INRenderer, IEquatable<INWindowRenderer>
     {
         #region Properties
         float AspectRatio { get; }

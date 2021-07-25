@@ -1,0 +1,13 @@
+﻿<Project>
+  <!--<Import Project=".\Default.build.props" />-->
+  <PropertyGroup>
+    <TFN Condition="'$(TargetPlatform.Contains(`net5.0`))' == 'true'">net5.0-windows</TFN>
+    <PlatformId>Windows</PlatformId>
+    <PlatformType>Desktop</PlatformType>
+    <Rendering>True</Rendering>
+    <TargetFramework Condition="'$(TargetPlatform.Contains(`net5.0`))' == 'true'">net5.0-windows</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+  </ItemGroup>
+</Project>

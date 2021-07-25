@@ -7,7 +7,7 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Messaging
 {
-    public class RenderMessageData : IRenderMessageData
+    public class RenderMessageData : Disposable, IRenderMessageData
     {
         #region Members
         protected readonly INRenderer m_render;
@@ -37,7 +37,7 @@ namespace Patchwork.Framework.Messaging
         /// <inheritdoc />
         public NFrameBuffer FrameBuffer
         {
-            get { return m_frameBuffer; }
+            get { return m_frameBuffer.Copy(); }
         }
 
         public PropertyChangedData<Size> SizeChangedData { get; set; }
@@ -72,9 +72,17 @@ namespace Patchwork.Framework.Messaging
         public IRenderMessageData SetFrameBuffer(NFrameBuffer frameBuffer)
         {
             m_messageId = RenderMessageIds.SetFrameBuffer;
-            m_frameBuffer = frameBuffer;
+            m_frameBuffer = frameBuffer.Copy();
             //PositionChangingData = new PropertyChangingData<Point>(m_render.Position, requestedPosition);
             return this;
+        }
+
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            m_frameBuffer?.Dispose();
+
+            base.DisposeManagedResources();
         }
         #endregion
     }

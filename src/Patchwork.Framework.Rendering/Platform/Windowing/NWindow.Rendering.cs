@@ -35,12 +35,12 @@ namespace Patchwork.Framework.Platform.Windowing
             m_renders = new ConcurrentList<INRenderer>();
         }
 
-        protected virtual void Render()
+        public virtual void Render()
         {
             if (!m_isInitialized)
                 return;
 
-            foreach (var r in m_renders/*.Where(r => r.ContainsInterface(typeof(IFrameBufferRenderer)))*/)
+            foreach (var r in m_renders/*.Where(r => !r.ContainsInterface(typeof(IFrameBufferRenderer)))*/)
                 r.Render();
         }
     }

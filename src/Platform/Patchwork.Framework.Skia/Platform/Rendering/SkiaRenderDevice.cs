@@ -22,21 +22,21 @@ namespace Patchwork.Framework.Platform.Rendering
             
         }
 
-        protected override TRenderer PlatformCreateRenderer<TRenderer>()
-        {
-            var renderer = m_iocContainer.Resolve<TRenderer>();
-            //if (typeof(TRenderer).ContainsInterface<INWindowRenderer>())
-            //{
-            //renderer.Render += (sender, rectangle) =>
-                //                  {
-                //                      var pixelBuffer = new NPixelBuffer(rectangle.Width, rectangle.Height);
-                //                      var info = new SKImageInfo(rectangle.Width, rectangle.Height);
-                //                      var surface = SKSurface.Create(info, pixelBuffer.Handle.Pointer);
-                //                  };
-            //}
+        //protected override TRenderer PlatformCreateRenderer<TRenderer>()
+        //{
+        //    var renderer = m_iocContainer.Resolve<TRenderer>();
+        //    //if (typeof(TRenderer).ContainsInterface<INWindowRenderer>())
+        //    //{
+        //    //renderer.Render += (sender, rectangle) =>
+        //        //                  {
+        //        //                      var pixelBuffer = new NPixelBuffer(rectangle.Width, rectangle.Height);
+        //        //                      var info = new SKImageInfo(rectangle.Width, rectangle.Height);
+        //        //                      var surface = SKSurface.Create(info, pixelBuffer.Handle.Pointer);
+        //        //                  };
+        //    //}
 
-            return renderer;
-        }
+        //    return renderer;
+        //}
         #endregion
 
         /// <inheritdoc />

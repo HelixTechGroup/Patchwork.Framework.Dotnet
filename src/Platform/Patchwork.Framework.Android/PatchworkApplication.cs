@@ -28,7 +28,7 @@ namespace Patchwork.Framework
             var log = new Logger();
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger(false));
-            Core.DetectUnixSystemType += () => OSType.Android;
+            Core.DetectUnixSystemType += () => OsType.Android;
             Core.ProcessMessage += OnMessage;
             Core.Create(log);
             Core.Initialize();            
@@ -49,7 +49,7 @@ namespace Patchwork.Framework
             switch (message.Id)
             {
                 case MessageIds.Window:
-                    var data = message.Data as WindowMessageData;
+                    var data = message.RawData as IWindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
                     Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
                     break;

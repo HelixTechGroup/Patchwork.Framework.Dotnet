@@ -68,7 +68,8 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            UnhookWindowsHookEx(m_hookHandle.Pointer);
+            if (m_hookHandle != null && m_hookHandle?.Pointer != IntPtr.Zero)
+                UnhookWindowsHookEx(m_hookHandle.Pointer);
         }
 
         /// <inheritdoc />

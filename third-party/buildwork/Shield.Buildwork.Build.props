@@ -1,0 +1,26 @@
+﻿<Project>
+  <PropertyGroup>
+    <PrometheusEnabled Condition="'$(PrometheusEnabled)' == ''" >False</PrometheusEnabled>
+    <PrometheusAutoLoad Condition="'$(PrometheusAutoLoad)' == ''">True</PrometheusAutoLoad>
+    <ProjectImports Condition="'$(ProjectImports)' == ''"></ProjectImports>
+    <PrometheusGlobalProps>$(PrometheusDirectory)\Globals.Build.props</PrometheusGlobalProps>
+    <PrometheusCheckTargets>$(PrometheusDirectory)\Check.Build.targets</PrometheusCheckTargets>
+    <PrometheusCommonTargets>$(PrometheusDirectory)\Common.Build.targets</PrometheusCommonTargets>
+    <PrometheusCommonProps>$(PrometheusDirectory)\Common.Build.props</PrometheusCommonProps>
+    <PrometheusPlatformProps>$(PrometheusDirectory)\Platform.Build.props</PrometheusPlatformProps>
+    <PrometheusPlatformDirectory>$(PrometheusDirectory)\Platform</PrometheusPlatformDirectory>
+    <DefaultImportProps>$(SolutionDir)Imports.Build.props</DefaultImportProps>
+    <SharedImports></SharedImports>
+  </PropertyGroup>
+  <ImportGroup Condition="'$(PrometheusEnabled)' == 'true'">
+    <Import Project="$(PrometheusGlobalProps)" Condition="Exists('$(PrometheusGlobalProps)')" />
+    <Import Project="$(PrometheusPlatformProps)" Condition="Exists('$(PrometheusPlatformProps)')" />
+    <Import Project="$(PrometheusCommonProps)" Condition="Exists('$(PrometheusCommonProps)')" />
+    <Import Project="$(PrometheusCheckTargets)" Condition="Exists('$(PrometheusCheckTargets)')" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(PrometheusEnabled)' == 'true' And '$(PrometheusAutoLoad)' == 'true'">
+    <Import Project="$(PrometheusCommonTargets)" Condition="Exists($(PrometheusCommonTargets))" />
+  </ImportGroup>
+  <!--<Import Project="$(SharedImports)" Label="Shared" />-->
+</Project>

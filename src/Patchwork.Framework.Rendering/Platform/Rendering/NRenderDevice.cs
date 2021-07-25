@@ -6,11 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
-using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
 using Shin.Framework.IoC.DependencyInjection;
+using Shield.Framework.IoC.Native.DependencyInjection;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
@@ -47,6 +47,7 @@ namespace Patchwork.Framework.Platform.Rendering
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
         protected IList<Task> m_tasks;
+        protected IList<INRenderer> m_renderers;
         #endregion
 
         #region Properties
@@ -75,6 +76,7 @@ namespace Patchwork.Framework.Platform.Rendering
             m_iocContainer = iocContainer.CreateChildContainer();
             m_pump = new PlatformMessagePump(Core.Logger);
             m_supportedRenderers = new ConcurrentList<Type>();
+            m_renderers = new ConcurrentList<INRenderer>();
             ProcessMessage += OnProcessMessage;
 
         }
@@ -88,12 +90,30 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             Throw.IfNot<NotSupportedException>(m_supportedRenderers.Contains(typeof(TRenderer)));
 
-            var tmp = parameters.ToList(); 
+            //PlatformCreateRenderer<TRenderer>(parameters);
+
+            var tmp = parameters.ToList();
             tmp.Insert(0, this);
             var rend = m_iocContainer.Resolve<TRenderer>(parameters: tmp.ToArray());
+            
+            if (!m_renderers.Contains(rend)) 
+                m_renderers.Add(rend);
+            else
+            {
+                rend.Dispose();
+                foreach (var r in m_renderers)
+                {
+                    if (Equals(r, rend as INRenderer))
+                    {
+                        rend = (TRenderer)r;
+                        break;
+                    }
+                }
+                //rend = (TRenderer)m_renderers.Where(r => r == rend as INRenderer);
+            }
 
-            //if (m_isInitialized)
-            //    rend.Initialize();
+            if (m_isInitialized && !rend.IsInitialized)
+                rend.Initialize();
 
             return rend;
             //return PlatformCreateRenderer<TRenderer>();
@@ -202,6 +222,10 @@ namespace Patchwork.Framework.Platform.Rendering
 
         protected virtual void RunManager()
         {
+            foreach (var r in m_renderers)
+            {
+                r.Render();
+            }
         }
 
         protected virtual void WaitManager() { }
@@ -259,7 +283,7 @@ namespace Patchwork.Framework.Platform.Rendering
             }
         }
 
-        protected abstract TRenderer PlatformCreateRenderer<TRenderer>() where TRenderer : INRenderer;
+        //protected abstract TRenderer PlatformCreateRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
         #endregion
     }
 }

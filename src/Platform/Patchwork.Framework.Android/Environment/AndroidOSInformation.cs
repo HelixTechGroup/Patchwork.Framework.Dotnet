@@ -1,4 +1,5 @@
-﻿using Android.OS;
+﻿using System;
+using Android.OS;
 using ver = System.Version;
 
 namespace Patchwork.Framework.Environment
@@ -9,9 +10,10 @@ namespace Patchwork.Framework.Environment
 	    {
 	        base.GetOsDetails();
             m_platform = PlatformType.Mobile;
-            m_type = OSType.Android;
+            m_type = OsType.Android;
             m_name = Build.VERSION.SdkInt.ToString();
-            m_version = ver.Parse(Build.VERSION.Release);
+            if (!ver.TryParse(Build.VERSION.Release, out m_version))
+                m_version = new ver(Int32.Parse(Build.VERSION.Release), 0);
         }
 	}
 }

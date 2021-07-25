@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Shin.Framework;
+using Shin.Framework.Extensions;
+using Shin.Framework.Threading;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public class NFrameBuffer : Disposable
+    public class NFrameBuffer : Disposable, IEquatable<NFrameBuffer>
     {
         protected NPixelBuffer m_pixelBuffer;
         //protected PixelFormat m_format;
         protected int m_height;
         protected int m_width;
+        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         public NPixelBuffer PixelBuffer
         {
@@ -32,7 +36,7 @@ namespace Patchwork.Framework.Platform.Rendering
         //    get { return m_format; }
         //}
 
-        public NFrameBuffer() : this(0, 0) { }
+        public NFrameBuffer() : this(1, 1) { }
 
         protected NFrameBuffer(int width, int height, NPixelBuffer pixelBuffer)
         {
@@ -50,16 +54,32 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public void SetPixelBuffer(NPixelBuffer buffer)
         {
-            m_width = buffer.Width;
-            m_height = buffer.Height;
-            m_pixelBuffer = buffer;
+            m_lockSlim.TryEnter(SynchronizationAccess.Write);
+            try
+            {
+                m_width = buffer.Width;
+                m_height = buffer.Height;
+                m_pixelBuffer = buffer;
+            }
+            finally
+            {
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
+            }
         }
 
         public void SetPixelBuffer(IntPtr handle, int width, int height, int rowBytes, int length)
         {
-            m_height = height;
-            m_width = width;
-            m_pixelBuffer = new NPixelBuffer(handle, m_width, m_height, rowBytes, length);
+            m_lockSlim.TryEnter(SynchronizationAccess.Write);
+            try
+            {
+                m_height = height;
+                m_width = width;
+                m_pixelBuffer = new NPixelBuffer(handle, m_width, m_height, rowBytes, length);
+            }
+            finally
+            {
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
+            }
         }
 
         /// <inheritdoc />
@@ -73,27 +93,92 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public bool CheckSize(int width, int height)
         {
-            return width == m_width && height == m_height;
+            m_lockSlim.TryEnter();
+            try
+            {
+                return (width <= 0 && height <= 0) || 
+                       (width == m_width && height == m_height);
+            }
+            finally
+            {
+                m_lockSlim.TryExit();
+            }
         }
 
         public void EnsureSize(int width, int height)
         {
-            if (CheckSize(width, height))
-                return;
-            Resize(width, height);
+            m_lockSlim.TryEnter();
+            try
+            {
+                if (CheckSize(width, height))
+                    return;
+                Resize(width, height);
+            }
+            finally
+            {
+                m_lockSlim.TryExit();
+            }
         }
 
         public void Resize(int width, int height)
         {
-            m_pixelBuffer.Resize(width, height);
-            m_width = width;
-            m_height = height;
+            m_lockSlim.TryEnter(SynchronizationAccess.Write);
+            try
+            {
+                m_pixelBuffer.Resize(width, height);
+                m_width = width;
+                m_height = height;
+            }
+            finally
+            {
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
+            }
         }
 
         public NFrameBuffer Copy()
         {
-            var pb = m_pixelBuffer.Copy();
-            return new NFrameBuffer(m_width, m_height, pb);
+
+            m_lockSlim.TryEnter();
+            try
+            {
+                var pb = m_pixelBuffer.Copy();
+                return new NFrameBuffer(m_width, m_height, pb);
+            }
+            finally
+            {
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
+            }
+        }
+
+
+        /// <inheritdoc />
+        public bool Equals(NFrameBuffer other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(m_pixelBuffer, other.m_pixelBuffer) && m_height == other.m_height && m_width == other.m_width;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is NFrameBuffer other && Equals(other);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(m_pixelBuffer, m_height, m_width);
+        }
+
+        public static bool operator ==(NFrameBuffer left, NFrameBuffer right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(NFrameBuffer left, NFrameBuffer right)
+        {
+            return !Equals(left, right);
         }
     }
 }

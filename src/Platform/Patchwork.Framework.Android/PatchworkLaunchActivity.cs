@@ -14,13 +14,13 @@ using Shin.Framework.Logging.Native;
 namespace Patchwork.Framework
 {
     [Activity(MainLauncher = true)]
-    public class PatchworkLaunchActivity : Activity
+    public class PatchworkLaunchActivity : PatchworkActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             var token = (Application.Context as PatchworkApplication)?.Token.Token ?? CancellationToken.None;
-            var win = Core.Application.CreateWindow();
+            var win = Core.Window.CurrentWindow ?? Core.Window.CreateWindow();
             Title = win.Title;
             Core.RunAsync(token);
             Finish();

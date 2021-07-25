@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <ProductName>Patchwork.Framework</ProductName>
+    <Description>Patchwork.Framework</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Rendering Condition=" '$(Rendering)' == '' ">False</Rendering>
+    <Gdi Condition=" '$(Gdi)' == '' ">False</Gdi>
+    <Skia Condition=" '$(Skia)' == '' ">False</Skia>
+    <!--<ProjectImports>$(SolutionDir)Imports.Build.props</ProjectImports>-->
+  </PropertyGroup>
+
+  <!--<Target Name="ExtraPlatformProps">
+    <PropertyGroup>
+      <CurrentImport>%(Imports.Identity)</CurrentImport>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetPlatform.Contains(`console`))' == 'true'">
+      <Rendering>False</Rendering>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(TargetPlatform.Contains(`gdi`))' == 'true'">
+      <Gdi Condition="'$(PlatformId)' == 'windows'">True</Gdi>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(TargetPlatform.Contains(`skia`))' == 'true'">
+      <Skia>True</Skia>
+      <Gdi Condition="'$(PlatformId)' == 'windows'">True</Gdi>
+    </PropertyGroup>
+  </Target>-->
+</Project>

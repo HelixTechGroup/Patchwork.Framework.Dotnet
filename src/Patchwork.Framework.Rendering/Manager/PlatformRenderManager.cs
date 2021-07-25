@@ -37,12 +37,12 @@ namespace Patchwork.Framework.Manager
         #endregion
 
         #region Members
-        protected IList<INRenderer> m_renderers;
+        //protected IList<INRenderer> m_renderers;
         #endregion
 
         public PlatformRenderManager()
         {
-            m_renderers = new ConcurrentList<INRenderer>();
+            //m_renderers = new ConcurrentList<INRenderer>();
 
             WindowCreated += OnWindowCreated;
             WindowDestroyed += OnWindowDestroyed;
@@ -53,39 +53,46 @@ namespace Patchwork.Framework.Manager
         public bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer
         {
             var devs = Core.IoCContainer.ResolveAll<INRenderDevice>();
+            if (m_isInitialized)
+                foreach (var d in devs)
+                    d.Initialize();
+
             return devs.Any(device => device.SupportedRenderers.ContainsType<TRenderer>());
         }
 
         public TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer
         {
             Throw.If(!IsRendererSupported<TRenderer>()).InvalidOperationException();
-            var devs = Core.IoCContainer.ResolveAll<INRenderDevice>()
+            var renderer = Core.IoCContainer.ResolveAll<INRenderDevice>()
                       .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
                       .OrderBy(d => d.Priority)
                       .First().GetRenderer<TRenderer>(parameters);
 
             if (m_isInitialized)
-                devs.Initialize();
-            m_renderers.Add(devs);
-            return devs;
+                renderer.Initialize();
+
+            return renderer;
         }
 
         public TRenderer[] GetRenderers<TRenderer>(params object[] parameters) where TRenderer : INRenderer
         {
             Throw.If(!IsRendererSupported<TRenderer>()).InvalidOperationException();
-            var devs = Core.IoCContainer.ResolveAll<INRenderDevice>()
+            var renderers = Core.IoCContainer.ResolveAll<INRenderDevice>()
                            .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
                            .OrderBy(d => d.Priority)
                            .Select(r => r.GetRenderer<TRenderer>(parameters));
 
-            var nRenderers = devs as TRenderer[] ?? devs.ToArray();
             if (m_isInitialized)
-                foreach (var renderer in nRenderers)
+                foreach (var renderer in renderers)
                     renderer.Initialize();
 
-            m_renderers.AddRange(nRenderers.Select(r => r as INRenderer));
-
-            return nRenderers.ToArray();
+            //var renderers = m_renderers;
+            //m_renderers = m_renderers.AddRange(nRenderers
+            //                                    .Select(r => r as INRenderer))
+            //                       .OrderBy(r => r.Stage)
+            //                       .ThenBy(r => r.Priority)
+            //                       .ToList();
+            return renderers.ToArray();
         }
 
         protected virtual void OnWindowCreated(object sender, INWindow window)
@@ -93,6 +100,9 @@ namespace Patchwork.Framework.Manager
             var win = window;
             if (!window.IsRenderable)
                 return;
+
+            if (!window.IsInitialized)
+                window.Initialize();
 
             //foreach (var dev in Core.IoCContainer.ResolveAll<INRenderDevice>())
             //{
@@ -107,17 +117,18 @@ namespace Patchwork.Framework.Manager
             if (!window.IsRenderable)
                 return;
 
-            if (window.IsMainApplicationWindow) 
-                return;
+            //if (window.IsMainApplicationWindow) 
+            //    return;
 
             //lock(m_renderers)
             //{
-            var renderers = m_renderers.Where(e => e.ContainsInterface(typeof(INWindowRenderer)) && (e as INWindowRenderer).Window == window);
-            foreach (var ren in renderers)
-            {
-                m_renderers.Remove(ren);
-                ren.Dispose();
-            }
+            
+            var renderers = GetRenderers<INWindowRenderer>(window);
+            //foreach (var ren in renderers)
+            //{
+            //    m_renderers.Remove(ren);
+            //    ren.Dispose();
+            //}
             //}
         }
 
@@ -143,8 +154,8 @@ namespace Patchwork.Framework.Manager
 
             //lock(m_renderers)
             //{
-                foreach (var ren in m_renderers)
-                    ren.Dispose();
+                //foreach (var ren in m_renderers)
+                //    ren.Dispose();
             //}
 
             base.DisposeManagedResources();
@@ -162,8 +173,8 @@ namespace Patchwork.Framework.Manager
             foreach (var device in Core.IoCContainer.ResolveAll<INRenderDevice>())
                 Core.Dispatcher.InvokeAsync(() => device.Initialize());
 
-            foreach (var renderer in m_renderers)
-                Core.Dispatcher.InvokeAsync(() => renderer.Initialize());
+            //foreach (var renderer in m_renderers)
+            //    Core.Dispatcher.InvokeAsync(() => renderer.Initialize());
         }
 
         protected override void OnProcessMessage(IPlatformMessage message)
@@ -191,11 +202,12 @@ namespace Patchwork.Framework.Manager
                             break;
                         case WindowMessageIds.Resizing:
                         case WindowMessageIds.Moving:
-                            foreach (var r in m_renderers)
-                            {
-                                Core.Dispatcher.InvokeAsync(() => r.Invalidate());
-                                Core.MessagePump.PushRenderMessage(RenderMessageIds.Invalidating, r);
-                            }
+                        case WindowMessageIds.Activated:
+                            //foreach (var r in m_renderers.Where(r => !r.ContainsInterface<IFrameBufferRenderer>()))
+                            //{
+                            //    /*Core.Dispatcher.InvokeAsync(() => */r.Invalidate()/*)*/;
+                            //    Core.MessagePump.PushRenderMessage(RenderMessageIds.Invalidating, r);
+                            //}
                             break;
                     }
 
@@ -232,15 +244,14 @@ namespace Patchwork.Framework.Manager
             //    break;
             //}
 
+            //foreach (var renderer in m_renderers.Where(r => r.HandleRenderLoop)/*.Where(r  => !r.ContainsInterface<IFrameBufferRenderer>())*/)
+            //{
+            //    Core.Dispatcher.InvokeAsync(() => renderer.Render());
+                //renderer.Render();
+            //}
+
             foreach (var device in devices)
                 device.Wait();
-
-
-            foreach (var renderer in m_renderers.Where(r => !r.ContainsInterface<IFrameBufferRenderer>()))
-            {
-                //Core.Dispatcher.InvokeAsync(() => renderer.Render());
-                renderer.Render();
-            }
         }
 
         private void WireUpApplicationWindowEvents()

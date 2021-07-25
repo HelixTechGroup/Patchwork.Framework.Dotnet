@@ -1,0 +1,22 @@
+﻿<Project>
+  <PropertyGroup>
+    <OsProps>$(ProductName).$(PlatformId)\Common.Build.props</OsProps>
+    <OsPropsPath>$(PlatformDirectory)\$(OsProps)</OsPropsPath>
+    <DefaultImportProps>$(SolutionDir)Imports.Build.props</DefaultImportProps>
+    <ProjectImports>$(SourceDirectory)\Imports.Build.props</ProjectImports>
+  </PropertyGroup>
+
+  <Import Project="$(DefaultImportProps)" Condition="Exists($(DefaultImportProps))" />
+
+  <Import Project="$(ProjectImports)" Condition="Exists('$(ProjectImports)')" />
+  <ItemGroup Condition="$(MergeBinary) == 'true'">
+    <PackageReference Include="Costura.Fody" Version="5.0.0-alpha0281">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <PropsImported>True</PropsImported>
+  </PropertyGroup>
+  <!--<Import Project="$(SharedImports)" Label="Shared" />-->
+</Project>

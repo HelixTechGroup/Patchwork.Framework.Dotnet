@@ -1,0 +1,60 @@
+﻿<Project>
+  <Target Name="Android-Build-props">
+    <PropertyGroup Condition="'$(HasXamarin)' == 'true'">
+      <ProjectGuid>{99BC5618-6F55-4B69-8BB6-BD29A856D9F6}</ProjectGuid>
+      <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+      <TemplateGuid>{9ef11e43-1701-4396-8835-8392d57abb70}</TemplateGuid>
+      <TFN></TFN>
+      <TargetFramework></TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(HasXamarin)' != 'true'">
+      <TFN>net5.0-android</TFN>
+      <TargetFramework>net5.0-android</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup>
+      <PlatformId>Android</PlatformId>
+      <PlatformType>Mobile</PlatformType>
+      <Rendering>True</Rendering>
+      <AppDesignerFolder>Properties</AppDesignerFolder>
+      <FileAlignment>512</FileAlignment>
+      <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+      <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+      <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+      <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+      <SupportedOSPlatformVersion>5.0</SupportedOSPlatformVersion>
+      <AndroidUseAapt2>true</AndroidUseAapt2>
+      <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+    <ItemGroup>
+      <Reference Include="Microsoft.CSharp" />
+      <Reference Include="Mono.Android" />
+      <Reference Include="mscorlib" />
+      <Reference Include="System" />
+      <Reference Include="System.Core" />
+      <Reference Include="System.Xml.Linq" />
+      <Reference Include="System.Xml" />
+      <!--<PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />-->
+      <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.0.2-preview01" />
+      <PackageReference Include="Xamarin.AndroidX.Migration" Version="1.0.0-preview03" />
+      <AndroidResource Include="Resources\values\strings.xml" />
+      <Folder Include="Resources\drawable\" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
+      <None Include="Resources\AboutResources.txt" />
+      <AndroidResource Include="Resources\values\strings.xml" />
+      <Folder Include="Resources\drawable\" />
+    </ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug' ">
+      <DebugSymbols>true</DebugSymbols>
+      <DebugType>portable</DebugType>
+      <Optimize>false</Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' ">
+      <DebugType>embedded</DebugType>
+      <Optimize>true</Optimize>
+    </PropertyGroup>
+    <Message Text="| $(SectionSymbol) > Setting PlatformId for Android::$(PlatformId)" Importance="high" />
+    <Message Text="| $(SectionSymbol) > TargetFramework: $(TargetFramework)" Importance="high"/>
+  </Target>
+</Project>

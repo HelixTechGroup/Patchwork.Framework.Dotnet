@@ -14,6 +14,7 @@ using Shin.Framework;
 using Shin.Framework.ComponentModel;
 using Shin.Framework.Extensions;
 using Shin.Framework.Runtime;
+using Shin.Framework.Threading;
 using SkiaSharp;
 #endregion
 
@@ -21,10 +22,10 @@ namespace Patchwork.Framework.Platform.Rendering
 {
     public class SkiaWindowRenderer : NWindowRenderer
     {
-        protected static readonly object m_lock = new object();
-        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        protected bool m_hasLock = false;
-        protected readonly int m_lockTimeout = 100;
+        //protected static readonly object m_lock = new object();
+        //protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        //protected bool m_hasLock = false;
+        //protected readonly int m_lockTimeout = 100;
         //protected static readonly Mutex m_mutex = new Mutex(true);
         //protected static readonly SemaphoreSlim m_semaphore = new SemaphoreSlim(0);
         protected NFrameBuffer m_buffer;
@@ -35,11 +36,13 @@ namespace Patchwork.Framework.Platform.Rendering
         protected SKPixmap m_pixMap;
         protected SafeHandle m_pointer;
         protected bool m_hasRendered;
+        protected bool m_bufferChanged;
 
         /// <inheritdoc />
         public SkiaWindowRenderer(INRenderDevice renderDevice, INWindow window) : base(renderDevice, window)
         {
             m_hasLock = false;
+            m_level = RenderStage.Hal;
             //m_mutex = new Mutex(true);
         }
 
@@ -48,15 +51,13 @@ namespace Patchwork.Framework.Platform.Rendering
         protected override void InitializeResources()
         {
             base.InitializeResources();
-            m_buffer = new NFrameBuffer();
-            m_oldBuffer = new NFrameBuffer();
-            CreateSurface();
+            m_buffer = m_oldBuffer = new NFrameBuffer();
+            //CreateSurface();
         }
 
         /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
         {
-            m_pointer.Dispose();
             //Marshal.Release(m_pointer);
             base.DisposeUnmanagedResources();
         }
@@ -64,152 +65,216 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            ReleaseSurface();
+            m_pointer?.Dispose();
+            m_buffer?.Dispose();
+            m_oldBuffer?.Dispose();
 
             base.DisposeManagedResources();
         }
 
         protected void CreateSurface()
         {
+
+            if (!m_isInitialized)
+                return;
+            //try
+            //{
+            //if (m_hasLock)
+            //    return;
+
+            //m_hasLock = Monitor.TryEnter(m_lock, m_lockTimeout);
+            //m_hasLock = m_mutex.WaitOne(m_lockTimeout);
+            //m_hasLock = m_semaphore.AvailableWaitHandle.WaitOne(m_lockTimeout);
+            //m_semaphore.WaitAsync();
+            //m_hasLock = m_semaphore.Wait(m_lockTimeout);
+            //m_hasLock = m_lockSlim.TryEnterWriteLock(m_lockTimeout);
+            //if (!m_hasLock)
+            //    return;
+            //m_hasLock = TryLock();
+            //Monitor.TryEnter(m_lock, m_lockTimeout);
+            //lock (m_lock)
+            //{
+            //m_hasLock = true;
+            //lock (m_buffer)
+            //{
+
+            m_lockSlim.TryEnter(SynchronizationAccess.Write);
             try
             {
-                if (m_hasLock)
+                var rec = m_window.ClientArea;
+                if (m_buffer.CheckSize(rec.Width, rec.Height))
                     return;
 
-                //m_hasLock = Monitor.TryEnter(m_lock, m_lockTimeout);
-                //m_hasLock = m_mutex.WaitOne(m_lockTimeout);
-                //m_hasLock = m_semaphore.AvailableWaitHandle.WaitOne(m_lockTimeout);
-                //m_semaphore.WaitAsync();
-                //m_hasLock = m_semaphore.Wait(m_lockTimeout);
-                //m_hasLock = m_lockSlim.TryEnterWriteLock(m_lockTimeout);
-                //if (!m_hasLock)
-                //    return;
-                m_hasLock = TryLock();
-                //m_hasLock = true;
-                lock (m_buffer)
-                {
-                    m_buffer.EnsureSize(m_window.ClientSize.Width, m_window.ClientSize.Height);
-                    var info = new SKImageInfo(m_window.ClientSize.Width, m_window.ClientSize.Height, SKColorType.Bgra8888);
-                    m_map = SKImage.Create(info);
-                    lock (m_map)
-                    {
-                        //m_pixMap = new SKPixmap(info, m_buffer.PixelBuffer.Handle.Pointer, m_buffer.PixelBuffer.RowBytes);
-                        m_pixMap = m_map.PeekPixels();
-                        lock (m_pixMap)
-                        {
-                            if (!m_hasLock)
-                                return;
+                m_bufferChanged = true;
+                m_surface?.Dispose();
+                m_buffer.EnsureSize(m_window.ClientSize.Width, m_window.ClientSize.Height);
+                var info = new SKImageInfo(m_window.ClientSize.Width, m_window.ClientSize.Height, SKColorType.Bgra8888);
+                //m_map = SKImage.Create(info);
+                //m_pixMap = new SKPixmap(info, m_buffer.PixelBuffer.Handle.Pointer, m_buffer.PixelBuffer.RowBytes);
+                //m_pixMap = m_map.PeekPixels();
 
-                            var surface = SKSurface.Create(m_pixMap);
-                            //Throw.If(surface is null).InvalidOperationException();
-                            
-                            m_surface = surface;
-                        }
-                    }
-                }
+                //var surface = SKSurface.Create(m_pixMap);
+                var surface = SKSurface.Create(info, m_buffer.PixelBuffer.Handle.Pointer);
+                //Throw.If(surface is null).InvalidOperationException();
+
+                m_surface = surface;
             }
             finally
             {
-                if (m_hasLock)
-                {
-                    //Monitor.Exit(m_lock);
-                    //m_mutex.ReleaseMutex();
-                    //m_semaphore.Release();
-                    if(m_lockSlim.IsWriteLockHeld)
-                        m_lockSlim.ExitWriteLock();
-                    m_hasLock = false;
-                }
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
             }
+            
         }
 
-        protected void ReleaseSurface()
+        protected void SetBuffer()
         {
+            if (!m_bufferChanged)
+                return;
+
+            m_lockSlim.TryEnter(SynchronizationAccess.Write);
             try
             {
-                if (m_hasLock || m_surface is null)
-                    return;
-                //m_hasLock = Monitor.TryEnter(m_lock, m_lockTimeout);
-                //m_hasLock = m_mutex.WaitOne(m_lockTimeout);
-                // m_hasLock = m_semaphore.AvailableWaitHandle.WaitOne();
-                //m_semaphore.WaitAsync();
-                //m_hasLock = true;
-                //m_semaphore.WaitAsync();
-                //m_hasLock = m_semaphore.Wait(m_lockTimeout);
-                //m_hasLock = m_lockSlim.TryEnterWriteLock(m_lockTimeout);
-                //if (!m_hasLock)
-                //    return;
-                m_hasLock = TryLock();
-                //lock (m_surface)
-                //{
-                //    lock (m_pixMap)
-                //    {
-                //using var pixels = m_pixMap;
-                //var p = new SafeMemoryHandle(Marshal.AllocHGlobal(m_pixMap.BytesSize));
-                //lock (p)
-                //{
-                //using var ptr = m_pointer;
-                //var pixels = m_map.PeekPixels();
-                //using var pixels = m_map.PeekPixels().WithColorType(SKColorType.Rgb888x);
+                Core.MessagePump.PushFrameBuffer(this, m_buffer);
+                m_oldBuffer?.Dispose();
+                m_oldBuffer = m_buffer;
+                m_bufferChanged = false;
+            }
+            finally
+            {
+                m_lockSlim.TryExit(SynchronizationAccess.Write);
+            }
+        }
+        protected void SwapBuffer()
+        { 
+            //try
+            //{
+            if (m_surface is null)
+                return;
+            //m_hasLock = Monitor.TryEnter(m_lock, m_lockTimeout);
+            //m_hasLock = m_mutex.WaitOne(m_lockTimeout);
+            // m_hasLock = m_semaphore.AvailableWaitHandle.WaitOne();
+            //m_semaphore.WaitAsync();
+            //m_hasLock = true;
+            //m_semaphore.WaitAsync();
+            //m_hasLock = m_semaphore.Wait(m_lockTimeout);
+            //m_hasLock = m_lockSlim.TryEnterWriteLock(m_lockTimeout);
+            //if (!m_hasLock)
+            //    return;
+            //m_hasLock = TryLock();
+            //Monitor.TryEnter(m_lock, m_lockTimeout);
+            //lock(m_lock)
+            //{
+            //lock (m_surface)
+            //{
+            //    lock (m_pixMap)
+            //    {
+            //using var pixels = m_pixMap;
+            //var p = new SafeMemoryHandle(Marshal.AllocHGlobal(m_pixMap.BytesSize));
+            //lock (p)
+            //{
+            //using var ptr = m_pointer;
+            //var pixels = m_map.PeekPixels();
+            //using var pixels = m_map.PeekPixels().WithColorType(SKColorType.Rgb888x);
 
-                //m_pixMap.ReadPixels(m_pixMap.Info, p.DangerousGetHandle(), m_pixMap.RowBytes);
-                //var ba = new byte[pixels.BytesSize];
-                //m_buffer = new NFrameBuffer(pixels.Width, pixels.Height);
-                //Marshal.Copy(pixels.GetPixels(), ba, 0, pixels.BytesSize);
-                //Marshal.Copy(ba, 0, ptr, pixels.BytesSize);
-                //lock (m_buffer)
-                //{
-                if (!m_hasLock)
-                                    return;
+            //m_pixMap.ReadPixels(m_pixMap.Info, p.DangerousGetHandle(), m_pixMap.RowBytes);
+            //var ba = new byte[pixels.BytesSize];
+            //m_buffer = new NFrameBuffer(pixels.Width, pixels.Height);
+            //Marshal.Copy(pixels.GetPixels(), ba, 0, pixels.BytesSize);
+            //Marshal.Copy(ba, 0, ptr, pixels.BytesSize);
+            //lock (m_buffer)
+            //{
+            //if (!m_hasLock)
+            //    return;
 
-                                var snap = m_surface.Snapshot().PeekPixels();
-                                m_buffer.SetPixelBuffer(snap.GetPixels()/*m_pixMap.GetPixels()*/,
-                                                        snap.Width,
-                                                        snap.Height,
-                                                        snap.RowBytes,
-                                                        snap.BytesSize);
-                                Core.MessagePump.PushFrameBuffer(this, m_buffer.Copy());
+            lock (m_buffer.PixelBuffer)
+            {
+                var snap = m_surface.Snapshot().PeekPixels();
+                var check = false;
+                if (m_buffer.IsDisposed)
+                {
+                    m_buffer = new NFrameBuffer();
+                    check = true;
+                }
+                else
+                {
+                    var c = new ReadOnlySpan<byte>();
+                    //var c = m_buffer.PixelBuffer.Contents;
+                    var sc = snap.GetPixelSpan();
+                    if (!c.SequenceEqual(sc))
+                        check = true;
+                }
 
-                                //lock (m_oldBuffer)
-                                //{
-                                    m_oldBuffer?.Dispose();
-                                    m_oldBuffer = m_buffer.Copy();
-                                //}
-                                m_buffer?.Dispose();
+
+                if (check)
+                {
+                    m_buffer.SetPixelBuffer(snap.GetPixels()/*m_pixMap.GetPixels()*/,
+                                            snap.Width,
+                                            snap.Height,
+                                            snap.RowBytes,
+                                            snap.BytesSize);
+
+                    //if (m_oldBuffer != m_buffer)
+                    //{
+                    Core.MessagePump.PushFrameBuffer(this, m_buffer);
+                    //m_oldBuffer?.Dispose();
+                    m_oldBuffer = m_buffer;
+                    //}
+                }
+            }    
+                    //m_buffer.Dispose();
+
+                        //m_surface.Canvas.Flush();
+                    //lock (m_oldBuffer)
+                    //{
+                        
+                    //}
+                    //m_buffer?.Dispose();
                             //}
                         //}
                         //p.Dispose();
                     //}
                 //}
-            }
-            finally
-            {
-                m_surface?.Dispose();
-                m_pixMap?.Dispose();
-                m_map?.Dispose();
+            //    }
+            //}
+            //finally
+            //{
+            //    m_surface?.Dispose();
+            //    m_pixMap?.Dispose();
+            //    m_map?.Dispose();
 
-                if (m_hasLock)
-                {
-                    //Monitor.Exit(m_lock);
-                    //m_mutex.ReleaseMutex();
-                    //m_semaphore.Release();
-                    m_lockSlim.ExitWriteLock();
-                    m_hasLock = false;
-                }
-            }
+            //    if (m_hasLock)
+            //    {
+            //        Monitor.Exit(m_lock);
+            //        //m_mutex.ReleaseMutex();
+            //        //m_semaphore.Release();
+            //        m_lockSlim.ExitWriteLock();
+            //        m_hasLock = false;
+            //    }
+            //}
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc />  
         protected override void OnSizeChanging(object sender, PropertyChangingEventArgs<Size> e)
         {
+
             //Invalidate();
             //CreateSurface();
             
-            Render();
+            //Render();
+        }
+
+        /// <inheritdoc />
+        protected override void OnSizeChanged(object sender, PropertyChangedEventArgs<Size> e)
+        {
+            
         }
 
         /// <inheritdoc />
         protected override bool PlatformInvalidate()
         {
+            //if (m_isInitialized)
+            //    Render();
+
             return true;
         }
 
@@ -218,12 +283,10 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             Core.Logger.LogDebug("---Skia Rendering Messages.");
             m_hasRendered = false;
-            try
-            {
-                if (m_surface is null)
-                    CreateSurface();
+            //try
+            //{
 
-                if (m_hasLock || m_surface is null)
+            if (m_surface is null)
                     return;
 
                 //m_hasLock = Monitor.TryEnter(m_lock, m_lockTimeout);
@@ -237,10 +300,10 @@ namespace Patchwork.Framework.Platform.Rendering
                 //m_hasLock = m_lockSlim.TryEnterWriteLock(m_lockTimeout);
                 //if (!m_hasLock)
                 //    return;
-                m_hasLock = TryLock();
-                Monitor.TryEnter(m_lock, m_lockTimeout);
-                lock (m_lock)
-                { 
+                //m_hasLock = TryLock();
+                //Monitor.TryEnter(m_lock, m_lockTimeout);
+                //lock (m_lock)
+                //{ 
                 //lock (m_surface)
                 //{
                 //m_hasLock = l.ConfigureAwait(false).GetAwaiter().GetResult();
@@ -266,13 +329,19 @@ namespace Patchwork.Framework.Platform.Rendering
                             Color = Color.Blue.ToSKColor()
                         };
 
-                        if (!m_hasLock)
-                            return;
+            //if (!m_hasLock)
+            //    return;
 
-                        m_surface.Canvas.Clear(Color.BlueViolet.ToSKColor());
-                        // draw fill
-                        m_surface.Canvas.DrawRect(rect, paint);
-                        //handler(surface);
+            //lock (m_buffer)
+            //{
+                lock (m_buffer)
+                { 
+                    m_surface.Canvas.Clear(Color.BlueViolet.ToSKColor());
+                    // draw fill
+                    m_surface.Canvas.DrawRect(rect, paint);
+                    //handler(surface);
+                }
+            //}
                         m_hasRendered = true;
 
                         // the brush (fill with blue)
@@ -291,26 +360,27 @@ namespace Patchwork.Framework.Platform.Rendering
                         //    m_canvas.Clear(c);
                         //}  
                    //}     
-                }
-            }
-            finally
-            {
-                if (m_hasLock)
-                {
-                    Monitor.Exit(m_lock);
-                    //m_mutex.ReleaseMutex();
-                    //m_semaphore.Release();
-                    m_lockSlim.ExitWriteLock();
-                    m_hasLock = false;
-                }
-            }
+            //    }
+            //}
+            //finally
+            //{
+            //    if (m_hasLock)
+            //    {
+            //        Monitor.Exit(m_lock);
+            //        //m_mutex.ReleaseMutex();
+            //        //m_semaphore.Release();
+            //        m_lockSlim.ExitWriteLock();
+            //        m_hasLock = false;
+            //    }
+            //}
         }
 
         /// <inheritdoc />
         protected override void PlatformRendered()
         {
-            ReleaseSurface();
-            Validate();
+            SetBuffer();
+            //ReleaseSurface();
+            //Validate();
         }
 
         /// <inheritdoc />
@@ -325,53 +395,6 @@ namespace Patchwork.Framework.Platform.Rendering
             return true;
         }
 
-        protected override void OnProcessMessage(IPlatformMessage message)
-        {
-            switch (message.Id)
-            {
-                case MessageIds.Rendering:
-                    var data = message.RawData as IRenderMessageData;
-                    switch (data?.MessageId)
-                    {
-                        case RenderMessageIds.None:
-                            break;
-                        //case RenderMessageIds.OsRendering:
-                        case RenderMessageIds.OsRender:
-                        //case RenderMessageIds.OsRendered:
-                            //Render();
-                            //Core.MessagePump.PushFrameBuffer(this, m_buffer);
-                            break;
-                    }
-
-                    break;
-            }
-
-            base.OnProcessMessage(message);
-        }
-
-        protected bool TryLock(int maxRetries = 3, int retryDelay = 50, int lockTimeout = 50)
-        {
-            for (var i = 0; i <= maxRetries; i++)
-            {
-                if (m_hasLock)
-                    Thread.Sleep(retryDelay);
-
-                var hasLock = m_lockSlim.TryEnterWriteLock(lockTimeout);
-                //m_hasLock = true;
-                //m_semaphore.Wait();
-                if (hasLock) 
-                    return true;
-
-                Thread.Sleep(retryDelay);
-                continue;
-
-                //if (m_hasLock)
-                //    return true;
-                //    return null;
-            }
-
-            return false;
-        }
         #endregion
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Patchwork.Framework.Manager;
+using SkiaSharp;
 #endregion
 
 namespace Patchwork.Framework.Platform.Threading
@@ -44,7 +45,7 @@ namespace Patchwork.Framework.Platform.Threading
             while (true)
             {
                 var job = GetNextJob(minimumPriority);
-                if (job == null)
+                if (job is null)
                     return;
 
                 job.Run();
@@ -155,12 +156,12 @@ namespace Patchwork.Framework.Platform.Threading
             /// <summary>
             /// The method to call.
             /// </summary>
-            private readonly Action _action;
+            private Action _action;
 
             /// <summary>
             /// The task completion source.
             /// </summary>
-            private readonly TaskCompletionSource<object> _taskCompletionSource;
+            private TaskCompletionSource<object> _taskCompletionSource;
             #endregion
 
             #region Properties
@@ -208,6 +209,8 @@ namespace Patchwork.Framework.Platform.Threading
                 {
                     _taskCompletionSource.SetException(e);
                 }
+                _taskCompletionSource = null;
+                _action = null;
             }
             #endregion
         }
@@ -218,7 +221,7 @@ namespace Patchwork.Framework.Platform.Threading
         private sealed class Job<TResult> : IJob
         {
             #region Members
-            private readonly Func<TResult> _function;
+            private Func<TResult> _function;
             private readonly TaskCompletionSource<TResult> _taskCompletionSource;
             #endregion
 
@@ -260,6 +263,8 @@ namespace Patchwork.Framework.Platform.Threading
                 {
                     _taskCompletionSource.SetException(e);
                 }
+
+                _function = null;
             }
             #endregion
         }

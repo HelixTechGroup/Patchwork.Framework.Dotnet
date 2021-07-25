@@ -16,7 +16,9 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Properties
         Size Size { get; }
         Size VirutalSize { get; }
-        int Priority { get; }
+        RenderPriority Priority { get; }
+        RenderStage Stage { get; }
+        bool HandleRenderLoop { get; }
         #endregion
 
         #region Methods

@@ -45,10 +45,17 @@ namespace WindowsApp
         private static void OnShutdown()
         {
             Core.Logger.LogNone("Press any key to exit.");
-            while (!Console.KeyAvailable)
+            try
             {
-                Core.Logger.LogNone(".");
-                Thread.Sleep(250);
+                while (!Console.KeyAvailable)
+                {
+                    Core.Logger.LogNone(".");
+                    Thread.Sleep(100);
+                }
+            }
+            catch (InvalidOperationException iEx)
+            {
+                
             }
         }
 

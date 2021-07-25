@@ -1,0 +1,145 @@
+﻿<Project>
+  <PropertyGroup>
+    <SectionSymbol>@</SectionSymbol>
+    <LocalNugetRepo>D:\Users\Bryan\Documents\Projects\HelixTechGroup\local-nuget</LocalNugetRepo>
+    <RepositoryHttpUrl>https://github.com/HelixTechGroup/Patchwork.Framework.Dotnet</RepositoryHttpUrl>
+    <UseGitHub>True</UseGitHub>
+    <PlatformDirectory>$(SourceDirectory)\Platform</PlatformDirectory>
+    <IsFrameworkProject Condition="'$(IsFrameworkProject)' == ''">False</IsFrameworkProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="obj\\**\*" />
+    <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+  </ItemGroup>
+  <PropertyGroup>
+    <CompanyName>HelixTechGroup,llc</CompanyName>
+    <AuthorName>Bryan M. Longacre</AuthorName>
+    <ProductVersion>0.0.1</ProductVersion>
+  </PropertyGroup>
+
+  <!--<ItemGroup>
+    <MSBuildProjectParentDirectory Include="$(MSBuildProjectDirectory)\..\..\" />
+    <Compile Remove="obj\\**\*" />
+  </ItemGroup>-->
+  <!--<PropertyGroup>
+    <PrometheusEnabled>True</PrometheusEnabled>
+    --><!--<PrometheusDirectory>$(SolutionDir)third-party\buildwork</PrometheusDirectory>
+    <PrometheusProps>$(PrometheusDirectory)\Shield.Buildwork.Build.props</PrometheusProps>--><!--
+    <IsLibraryProject>True</IsLibraryProject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CompanyName>HelixTechGroup,llc</CompanyName>
+    <AuthorName>Bryan M. Longacre</AuthorName>
+    <ProductVersion>0.0.1</ProductVersion>
+  </PropertyGroup>-->
+  <!--<PropertyGroup>
+    <ProjectImports Condition="'$(ProjectImports)' == ''"></ProjectImports>
+    <PrometheusGlobalProps>$(PrometheusDirectory)\Globals.Build.props</PrometheusGlobalProps>
+    <PrometheusCheckTargets>$(PrometheusDirectory)\Check.Build.targets</PrometheusCheckTargets>
+    <PrometheusCommonTargets>$(PrometheusDirectory)\Common.Build.targets</PrometheusCommonTargets>
+    <PrometheusCommonProps>$(PrometheusDirectory)\Common.Build.props</PrometheusCommonProps>
+    <PrometheusPlatformProps>$(PrometheusDirectory)\Platform.Build.props</PrometheusPlatformProps>
+    <PrometheusPlatformDirectory>$(PrometheusDirectory)\Platform</PrometheusPlatformDirectory>
+    <DefaultImportProps>$(SolutionDir)Imports.Build.props</DefaultImportProps>
+  </PropertyGroup>-->
+
+  <!--<Import Project="$(PrometheusProps)" Condition="Exists('$(PrometheusProps)')" />-->
+
+  <!--<PropertyGroup Condition="$(IsLibraryProject) == 'true'">
+    <GitHubRepositoryUrl>https://github.com/$(CompanyName)/$(SolutionName)</GitHubRepositoryUrl>
+    <GitHubOrg>$([System.Text.RegularExpressions.Regex]::Match($(GitHubRepositoryUrl), `https://github.com/([^/]*)/([^/]*)`).Groups[1].Value)</GitHubOrg>
+    <GitHubProject>$([System.Text.RegularExpressions.Regex]::Match($(GitHubRepositoryUrl), `https://github.com/([^/]*)/([^/]*)`).Groups[2].Value)</GitHubProject>
+  </PropertyGroup>-->
+
+  <!--<PropertyGroup Condition="$(IsLibraryProject) == 'true'">
+    <RepositoryUrl>https://github.com/$(GitHubOrg)/$(GitHubProject).git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/$(GitHubOrg)/$(GitHubProject)</PackageProjectUrl>
+    <PackageReleaseNotes>See https://github.com/$(GitHubOrg)/$(GitHubProject)/releases/</PackageReleaseNotes>
+
+    <RepositoryType>git</RepositoryType>
+
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/$(GitHubOrg)/$(GitHubProject)/blob/master/LICENSE.md</PackageLicenseUrl>
+
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Enable SourceLink Support">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <DebugType>portable</DebugType>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup Label="Enable SourceLink GitHub Support">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>-->
+
+  <!--<Import Project="Imports.Build.props"/>-->
+
+  <!--<PropertyGroup>
+    <CoreImportFile>$(SourceDirectory)\$(ProductName)\$(ProductName).projitems</CoreImportFile>
+    <PlatformImportFile>$(PlatformDirectory)\$(ProductName).$(PlatformId)\$(ProductName).$(PlatformId).projitems</PlatformImportFile>
+    <MobileImportFile>$(PlatformDirectory)\$(ProductName).Mobile\$(ProductName).Mobile.projitems</MobileImportFile>
+    <DesktopImportFile>$(PlatformDirectory)\$(ProductName).Desktop\$(ProductName).Desktop.projitems</DesktopImportFile>
+    <DisplayImportFile>$(SourceDirectory)\$(ProductName).Display\$(ProductName).Display.projitems</DisplayImportFile>
+    <WindowingImportFile>$(SourceDirectory)\$(ProductName).Windowing\$(ProductName).Windowing.projitems</WindowingImportFile>
+    <RenderingImportFile>$(SourceDirectory)\$(ProductName).Rendering\$(ProductName).Rendering.projitems</RenderingImportFile>
+    <GdiImportFile>$(PlatformDirectory)\$(ProductName).Gdi\$(ProductName).Gdi.projitems</GdiImportFile>
+    <SkiaImportFile>$(PlatformDirectory)\$(ProductName).Skia\$(ProductName).Skia.projitems</SkiaImportFile>
+  </PropertyGroup>-->
+
+  <!--<Import Project="$(CoreImportFile)" Label="Shared" />
+
+  <PropertyGroup>
+    <PlatformTypeImport>$(DesktopImportFile)</PlatformTypeImport>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(PlatformType)' == 'mobile'">
+      <PropertyGroup>
+        <PlatformTypeImport>$(MobileImportFile)</PlatformTypeImport>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <ImportGroup>
+    <Import Project="$(PlatformImportFile)" Label="Shared" />
+    <Import Project="$(PlatformTypeImport)" Label="Shared" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Rendering)' == 'true'">
+    <Import Project="$(DisplayImportFile)" Label="Shared" />
+    <Import Project="$(WindowingImportFile)" Label="Shared" />
+    <Import Project="$(RenderingImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Gdi)' == 'true'">
+    <Import Project="$(GdiImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Skia)' == 'true'">
+    <Import Project="$(SkiaImportFile)" Label="Shared" />
+  </ImportGroup>
+  <Choose>
+    <When Condition="'$(Rendering)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+      </ItemGroup>
+      <Choose>
+        <When Condition="'$(Gdi)' == 'true'">
+        </When>
+        <When Condition="'$(Skia)' == 'true'">
+          <ItemGroup>
+            <PackageReference Include="SkiaSharp" Version="2.80.2"/>
+          </ItemGroup>
+        </When>
+      </Choose>
+    </When>
+  </Choose>-->
+
+  <!--<Import Project="$(SharedImports)" Label="Shared" />-->
+  <Target Name="ShowGlobal">
+    
+  </Target>
+</Project>

@@ -1,0 +1,62 @@
+﻿<Project>
+  <!--<ItemGroup>
+    <MSBuildProjectParentDirectory Include="$(MSBuildProjectDirectory)\..\" />
+  </ItemGroup>
+  <PropertyGroup Condition="$(SolutionDir) == ''">
+    <RootPath>$(MSBuildProjectParentDirectory.FullPath)</RootPath>
+    <SolutionDir>$(RootPath.FullPath)</SolutionDir>
+  </PropertyGroup>-->
+  <!--<PropertyGroup>
+    <PrometheusEnabled>True</PrometheusEnabled>
+    <PrometheusDirectory>$(SolutionDir)third-party\buildwork</PrometheusDirectory>
+    <PrometheusProps>$(PrometheusDirectory)\Shield.Buildwork.Build.props</PrometheusProps>
+  </PropertyGroup>-->
+  <!--<PropertyGroup>
+    <ProjectImports Condition="'$(ProjectImports)' == ''"></ProjectImports>
+    <PrometheusGlobalProps>$(PrometheusDirectory)\Globals.Build.props</PrometheusGlobalProps>
+    <PrometheusCheckTargets>$(PrometheusDirectory)\Check.Build.targets</PrometheusCheckTargets>
+    <PrometheusCommonTargets>$(PrometheusDirectory)\Common.Build.targets</PrometheusCommonTargets>
+    <PrometheusCommonProps>$(PrometheusDirectory)\Common.Build.props</PrometheusCommonProps>
+    <PrometheusPlatformProps>$(PrometheusDirectory)\Platform.Build.props</PrometheusPlatformProps>
+    <PrometheusPlatformDirectory>$(PrometheusDirectory)\Platform</PrometheusPlatformDirectory>
+    <DefaultImportProps>$(SolutionDir)Imports.Build.props</DefaultImportProps>
+  </PropertyGroup>-->
+
+  <!--<Import Project="$(PrometheusProps)" Condition="Exists('$(PrometheusProps)')" />-->
+
+  <!--<PropertyGroup Condition="$(IsLibraryProject) == 'true'">
+    <GitHubRepositoryUrl>https://github.com/$(CompanyName)/$(SolutionName)</GitHubRepositoryUrl>
+    <GitHubOrg>$([System.Text.RegularExpressions.Regex]::Match($(GitHubRepositoryUrl), `https://github.com/([^/]*)/([^/]*)`).Groups[1].Value)</GitHubOrg>
+    <GitHubProject>$([System.Text.RegularExpressions.Regex]::Match($(GitHubRepositoryUrl), `https://github.com/([^/]*)/([^/]*)`).Groups[2].Value)</GitHubProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsLibraryProject) == 'true'">
+    <RepositoryUrl>https://github.com/$(GitHubOrg)/$(GitHubProject).git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/$(GitHubOrg)/$(GitHubProject)</PackageProjectUrl>
+    <PackageReleaseNotes>See https://github.com/$(GitHubOrg)/$(GitHubProject)/releases/</PackageReleaseNotes>
+
+    <RepositoryType>git</RepositoryType>
+
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/$(GitHubOrg)/$(GitHubProject)/blob/master/LICENSE.md</PackageLicenseUrl>
+
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Enable SourceLink Support">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <DebugType>portable</DebugType>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup Label="Enable SourceLink GitHub Support">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>-->
+
+  <Target Name="ShowGlobal">
+    
+  </Target>
+</Project>

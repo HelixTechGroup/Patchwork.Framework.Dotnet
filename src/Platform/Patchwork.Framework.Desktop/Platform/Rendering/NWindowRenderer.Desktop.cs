@@ -84,6 +84,32 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             throw new NotImplementedException();
         }
+
+        protected virtual void OnStateChanged(object sender, PropertyChangedEventArgs<NWindowState> e)
+        {
+            if (e.PreviousValue == NWindowState.Minimized)
+            {
+                m_isEnabled = true;
+                Invalidate();
+            }
+
+            if (e.RequestedValue == NWindowState.Restored)
+            {
+                m_isEnabled = true;
+                Invalidate();
+            }
+
+            if (e.RequestedValue == NWindowState.Maximized)
+                Invalidate();
+
+            if (e.RequestedValue == NWindowState.Minimized)
+                m_isEnabled = false;
+        }
+
+        partial void InitializeResourcesShared()
+        {
+            m_window.StateChanged += OnStateChanged;
+        }
         #endregion
     }
 }

@@ -1,15 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetPlatform>net5.0-windows</TargetPlatform>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <ApplicationIcon />
-    <StartupObject />
+    <StartupObject>WindowsApp.Program</StartupObject>
+    <IsFrameworkProject>False</IsFrameworkProject>
+    <PrometheusEnabled>False</PrometheusEnabled>
+    <PrometheusImporterEnabled>False</PrometheusImporterEnabled>
+    <MergeBinary>False</MergeBinary>
+    <ProductName>WindowsApp</ProductName>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Netcore\Patchwork.Framework.Windows.NetCore\Patchwork.Framework.Windows.NetCore.csproj" />
-    <ProjectReference Include="..\..\third-party\shin\src\Netstandard\Shin.Framework.NetStandard\Shin.Framework.NetStandard.csproj" />
+    <PackageReference Include="Shin.Framework" Version="0.0.1" />
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Net5\Net5.Windows\Net5.Windows.csproj" />
+  </ItemGroup>
 </Project>

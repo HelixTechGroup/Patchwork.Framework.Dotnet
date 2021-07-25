@@ -1,0 +1,59 @@
+<Project>
+  <PropertyGroup>
+    <DefaultMessage>When using the $(ProductName) NuGet package, you must add &lt;Import Project=&quot;%24(ShieldCommonTargets)&quot; Condition=&quot;%24(ShieldCommonTargets) != ''&quot; /&gt; at the top of your csproj file</DefaultMessage>
+  </PropertyGroup>
+  <!--<Target Name="Check" AfterTargets="Build">
+    <CallTarget Targets="CheckShieldSetup"/>
+  </Target>-->
+  <Target Name="CheckPlatform" AfterTargets="InitializePlatform">
+    <Message Text="$~%%%%%% Checking Platform for $(MSBuildProjectName) %%%%%%~$" Importance="high" />
+    <!--And ($(SuppressCommonPropsImportError) != 'true'-->
+    <Error Condition=" '$(PlatformId)' == 'none' "
+           Text="CheckPlatform: $(DefaultMessage)" />
+
+    <Error Condition=" Exists($(PlatformPropsPath)) != 'true' "
+           Text="PlatformPropsPath: $(PlatformPropsPath) does not exist." />
+  </Target>
+
+  <Target Name="CheckFramework" AfterTargets="InitializeFramework">
+    <Message Text="$~%%%%%% Checking Imports for $(MSBuildProjectName) %%%%%%~$" Importance="high" />
+    <!--And ($(SuppressCommonPropsImportError) != 'true'-->
+    <Error Condition=" '$(PropsImported)' != 'true' "
+           Text="CheckFramework: $(DefaultMessage)" />
+
+    <!--<Error Condition=" Exists($(CoreImportFile)) != 'true' "
+           Text="CoreImportFile: $(CoreImportFile) does not exist." />
+    <Error Condition=" Exists($(PlatformImportFile)) != 'true' " 
+           Text="PlatformImportFile: $(PlatformImportFile) does not exist." />
+    <Error Condition=" Exists($(MobileImportFile)) != 'true' "
+           Text="MobileImportFile: $(MobileImportFile) does not exist." />
+    <Error Condition=" Exists($(DesktopImportFile)) != 'true' "
+           Text="DesktopImportFile: $(DesktopImportFile) does not exist." />
+    <Error Condition=" Exists($(DisplayImportFile)) != 'true' "
+           Text="DisplayImportFile: $(DisplayImportFile) does not exist." />
+    <Error Condition=" Exists($(WindowingImportFile)) != 'true' "
+           Text="WindowingImportFile: $(WindowingImportFile) does not exist." />
+    <Error Condition=" Exists($(RenderingImportFile)) != 'true' "
+           Text="RenderingImportFile: $(RenderingImportFile) does not exist." />
+    <Error Condition=" Exists($(GdiImportFile)) != 'true' "
+           Text="GdiImportFile: $(GdiImportFile) does not exist." />
+    <Error Condition=" Exists($(SkiaImportFile)) != 'true' "
+           Text="SkiaImportFile: $(SkiaImportFile) does not exist." />-->
+    <!--<Error Condition=" Exists($(ShinProjectFile)) != 'true' "
+           Text="ShinProjectFile: $(ShinProjectFile) does not exist." />-->
+  </Target>
+
+  <Target Name="CheckShieldSetup" AfterTargets="SetupShield">
+    <Message Text="$~%%%%%% Checking Shield Setup for $(MSBuildProjectName) %%%%%%~$" Importance="high" />
+    <!--And ($(SuppressCommonPropsImportError) != 'true'-->
+    <Error Condition=" '$(SetupCompleted)' != 'true' "
+           Text="CheckShieldSetup: $(DefaultMessage)" />
+  </Target>
+
+  <Target Name="CheckEnvironment" AfterTargets="InitializeEnvironment">
+    <Message Text="$~%%%%%% Checking Environment for $(MSBuildProjectName) %%%%%%~$" Importance="high" />
+    <!--And ($(SuppressCommonPropsImportError) != 'true'-->
+    <Error Condition=" '$(GlobalsSet)' != 'true' "
+           Text="CheckEnvironment: $(DefaultMessage)" />
+  </Target>
+</Project>

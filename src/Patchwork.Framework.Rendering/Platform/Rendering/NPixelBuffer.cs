@@ -3,11 +3,14 @@ using System;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Shin.Framework.Extensions;
+using Shin.Framework.Runtime;
+using Shin.Framework.Threading;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public class NPixelBuffer : NMemoryChunk
+    public class NPixelBuffer : NMemoryChunk, IEquatable<NPixelBuffer>
     {
         #region Members
         private int m_height;
@@ -16,20 +19,9 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         #region Properties
-        /// <inheritdoc />
-        public INHandle Handle
-        {
-            get { return m_handle; }
-        }
-
         public int Height
         {
             get { return m_height; }
-        }
-
-        public int RowBytes
-        {
-            get { return m_rowBytes; }
         }
 
         public int Width
@@ -51,10 +43,18 @@ namespace Patchwork.Framework.Platform.Rendering
             m_rowBytes = rowBytes;
         }
 
+        public NPixelBuffer(int width, int height, int rowBytes, int length) : base(length)
+        {
+            m_width = width;
+            m_height = height;
+            m_rowBytes = rowBytes;
+        }
+
         #region Methods
         public bool CheckSize(int width, int height)
         {
-            return width == m_width && height == m_height;
+            return (width <= 0 && height <= 0) || 
+                   (width == m_width && height == m_height);
         }
 
         public void EnsureSize(int width, int height)
@@ -66,22 +66,59 @@ namespace Patchwork.Framework.Platform.Rendering
 
         public void Resize(int width, int height)
         {
-            if (m_isReadOnly ^ m_hasLock)
+            if (m_isReadOnly)
                 return;
 
-            var stride = 4 * ((width * 32 + 31) / 32);
-            var length = height * stride;
-            if (length != m_length)
-                Resize(length);
+            m_lock.TryEnter(SynchronizationAccess.Write);
+            var length = 0;
+            try
+            {
+                var stride = 4 * ((width * 32 + 31) / 32);
+                length = height * stride;
+                if (!m_buffer.IsInvalid  && (length == (int)m_buffer.ByteLength))
+                    return;
 
-            m_rowBytes = stride;
-            m_width = width;
-            m_height = height;
+                m_buffer = new SafeMemoryBuffer(length);
+                m_handle = new NHandle(m_buffer.DangerousGetHandle());
+                m_rowBytes = stride;
+                m_width = width;
+                m_height = height;
+                GC.AddMemoryPressure(length);
+            }
+            finally
+            {
+                m_lock.TryExit(SynchronizationAccess.Write);
+            }
+
+            Resize(length);
+        }
+
+        public new static NPixelBuffer Empty
+        {
+            get
+            {
+                return  new NPixelBuffer(1,1);
+            }
+        }
+
+        // Set a pixel's value.
+        public void SetPixel(int x, int y, byte red, byte green, byte blue, byte alpha, ref byte[] pixels)
+        {
+            var index = y * m_rowBytes + x * 4;
+            //pixels = new byte[m_rowBytes];
+            pixels[index++] = blue;
+            pixels[index++] = green;
+            pixels[index++] = red;
+            pixels[index++] = alpha;
         }
 
         public NPixelBuffer Copy()
         {
 
+            if (m_buffer.ByteLength <= 0)
+                return Empty;
+
+            m_lock.TryEnter(SynchronizationAccess.Write);
             try
             {
                 //if (m_hasLock)
@@ -93,39 +130,100 @@ namespace Patchwork.Framework.Platform.Rendering
                 //if (!m_hasLock)
                 //    return null;
 
-                TryLock();
                 //Monitor.Enter(m_lock);
-                lock (m_lock)
-                {
+                //lock (m_lock)
+                //{
                     NPixelBuffer pb;
-                    lock (m_handle)
-                    {
-                        var ptr = Marshal.AllocHGlobal(m_length);
-                        var arry = new byte[m_length];
+                    //lock (m_buffer)
+                    //{
+                        //IntPtr ptr = IntPtr.Zero;
+                        //ptr = Marshal.AllocHGlobal(m_length);
+                        //GC.AddMemoryPressure(m_length);
+                        //var arry = new byte[m_length];
 
-                        Marshal.Copy(m_handle.Pointer, arry, 0, m_length);
-                        Marshal.Copy(arry, 0, ptr, m_length);
-                        pb = new NPixelBuffer(ptr, m_width, m_height, m_rowBytes, m_length);
-                        pb.m_isReadOnly = false;
-                    }
+                        //Marshal.Copy(m_handle.Pointer, arry, 0, m_length);
+                        //Marshal.Copy(arry, 0, ptr, m_length);
+                        if (m_buffer.ByteLength <= 0)
+                            return Empty;
 
-                    //Monitor.Exit(m_lock);
-                    return pb;
-                }
+                        var tmpBuffer = new NPixelBuffer(m_width, m_height, m_rowBytes, (int)m_buffer.ByteLength);
+                //unsafe
+                //{
+                //    var ptr = (byte*)(IntPtr)(m_handle as NHandle);
+                //    var des = (byte*)(IntPtr)(tmpBuffer.Handle as NHandle);
+                //    Buffer.MemoryCopy(ptr,
+                //                      des,
+                //                      m_buffer.ByteLength,
+                //                      m_buffer.ByteLength);
+                //}
+                //tmpBuffer = new NPixelBuffer(m_width, m_height, m_rowBytes, (int)m_buffer.ByteLength);
+                tmpBuffer.SetContent(GetContent().ToArray());
+                //tmpBuffer.Contents = arry;
+                //tmpBuffer.m_isReadOnly = false;
+                //}
+
+                //Monitor.Exit(m_lock);
+                return tmpBuffer;
+                //}
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.LogException(ex);
+                throw;
             }
             finally
             {
-                if (m_hasLock)
-                {
+                m_lock.TryExit(SynchronizationAccess.Write);
+                //if (m_hasWriteLock)
+                //{
                     //if (m_spin.IsHeldByCurrentThread)
                     //    m_spin.Exit();
                     //Monitor.Exit(m_lock);
                     //m_semaphore.Release();
-                    m_lockSlim.ExitWriteLock();
-                    m_hasLock = false;
-                }
+                //    m_lockSlim.ExitWriteLock();
+                //    m_hasWriteLock = false;
+                //}
             }
         }
+
+        /// <inheritdoc />
+        protected override void DisposeUnmanagedResources()
+        {
+            base.DisposeUnmanagedResources();
+        }
         #endregion
+
+        /// <inheritdoc />
+        public bool Equals(NPixelBuffer other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other); //&& m_height == other.m_height && m_rowBytes == other.m_rowBytes && m_width == other.m_width;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((NPixelBuffer)obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), m_height, m_rowBytes, m_width);
+        }
+
+        public static bool operator ==(NPixelBuffer left, NPixelBuffer right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(NPixelBuffer left, NPixelBuffer right)
+        {
+            return !Equals(left, right);
+        }
     }
 }

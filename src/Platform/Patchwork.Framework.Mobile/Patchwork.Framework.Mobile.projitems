@@ -10,9 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.Mobile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\INWindow.Mobile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\NWindow.Mobile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Window\WindowStateDataCache.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindow.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDecorations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDefinition.Mobile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.Mobile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />

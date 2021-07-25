@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Netcore\Patchwork.Framework.Windows.NetCore\Patchwork.Framework.Windows.NetCore.csproj" />
-    <ProjectReference Include="..\..\third-party\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj" />
+    <ProjectReference Include="..\..\src\Netcore\NetCore.Windows\NetCore.Windows.csproj" />
   </ItemGroup>
   
 </Project>

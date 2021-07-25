@@ -1,8 +1,7 @@
 ﻿#region Usings
 using System;
-using System.Net.Sockets;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using Shin.Framework;
 using Shin.Framework.Extensions;
 using Shin.Framework.Runtime;
@@ -10,7 +9,7 @@ using Shin.Framework.Runtime;
 
 namespace Patchwork.Framework.Platform
 {
-    public class NHandle : Disposable, INHandle
+    public class NHandle : Disposable, INHandle, IEquatable<NHandle>
     {
         #region Members
         //private readonly IntPtr m_handle;
@@ -30,19 +29,21 @@ namespace Patchwork.Framework.Platform
         {
             get
             {
+                return m_handle.DangerousGetHandle();
+
                 //lock (m_handle)
                 //{
-                    try
-                    {
+                //try
+                //    {
                     //Lock();
-                        return m_handle.Lock().DangerousGetHandle();
+                        
                         //return m_handle.DangerousGetHandle();
  
-                    }
-                    finally
-                    {
-                        m_handle.Unlock();
-                    }
+                    //}
+                    //finally
+                    //{
+                    //    m_handle.Unlock();
+                    //}
                 //}
             }
         }
@@ -63,21 +64,33 @@ namespace Patchwork.Framework.Platform
 
         public NHandle(IntPtr handle, string descriptor)
         {
-            m_handle = new SafeMemoryHandle(handle, false);
+            m_handle = new SafeMemoryHandle(handle);
             m_handleDescriptor = descriptor;
         }
 
-        public NHandle(IntPtr handle) : this(handle, "") { }
+        public NHandle(IntPtr handle) : this(handle, string.Empty) { }
 
         public NHandle() : this(IntPtr.Zero) { }
 
         #region Methods
         /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            //m_handle.Close();
+            m_handle.Dispose();
+            //m_handle.SetHandleAsInvalid();
+            
+            base.DisposeManagedResources();
+        }
+
+        /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
         {
-            //Marshal.FreeHGlobal(m_handle);
+            //if (m_handle.IsClosed)
+            //    Marshal.FreeHGlobal(m_handle.DangerousGetHandle());
             //if (m_handle.IsInvalid)
             //    m_handle.Close();
+            
             base.DisposeUnmanagedResources();
         }
         #endregion
@@ -97,6 +110,36 @@ namespace Patchwork.Framework.Platform
         public static implicit operator NHandle(IntPtr obj)
         {
             return new NHandle(obj);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(NHandle other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return m_handle.Equals(other.m_handle);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj is NHandle other && Equals(other);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return m_handle.GetHashCode();
+        }
+
+        public static bool operator ==(NHandle left, NHandle right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(NHandle left, NHandle right)
+        {
+            return !Equals(left, right);
         }
     }
 }

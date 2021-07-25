@@ -1,0 +1,36 @@
+﻿<Project InitialTargets="InitializePlatform">
+  <PropertyGroup>
+    <TargetPlatform Condition=" '$(TargetPlatform)' == '' ">net5.0</TargetPlatform>
+    <TF Condition=" '$(TF)' == '' "></TF>
+    <TFN Condition=" '$(TFN)' == '' "></TFN>
+    <PlatformId Condition=" '$(PlatformId)' == '' ">None</PlatformId>
+    <PlatformType Condition=" '$(PlatformType)' == '' ">None</PlatformType>
+    <HasWindows>$(TargetPlatform.Contains(`windows`))</HasWindows>
+    <HasAndroid>$(TargetPlatform.Contains(`android`))</HasAndroid>
+    <HasXamarin>$(TargetPlatform.Contains(`xamarin`))</HasXamarin>
+    <PlatformProps>Default.Build.props</PlatformProps>
+  </PropertyGroup>
+  <ItemGroup>
+    <TFArray Include="$(TargetPlatform.Split('-'))" Condition=" '@(TFArray)' == '' " />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(HasWindows)' == 'true'">
+    <PlatformProps>Windows.Build.props</PlatformProps>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(HasAndroid) == 'true'">
+    <PlatformProps>Android.Build.props</PlatformProps>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PlatformPropsPath>$(PrometheusPlatformDirectory)\$(PlatformProps)</PlatformPropsPath>
+  </PropertyGroup>
+  <Import Project="$(PlatformPropsPath)" Condition="Exists('$(PlatformPropsPath)')"/>
+  <PropertyGroup Condition=" '$(TargetPlatform.Contains(`netcore`))' == 'true'">
+    <TFN>netcoreapp3.1</TFN>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <!--<PropertyGroup>
+    <TargetFramework>$(TFN)</TargetFramework>
+  </PropertyGroup>-->
+</Project>

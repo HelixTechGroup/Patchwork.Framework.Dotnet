@@ -150,7 +150,8 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         public void Create(bool initialize = true)
         {
-            if (!m_isCreated) PlatformCreate();
+            if (!m_isCreated) 
+                PlatformCreate();
 
             if (!m_isInitialized && initialize)
                 Initialize();
@@ -410,6 +411,7 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             base.InitializeResources();
             InitializeResourcesShared();
+            InitializeResourcesShared2();
             Core.Window.ProcessMessage += OnProcessMessage;
             SyncDataCache(true);
         }
@@ -466,6 +468,8 @@ namespace Patchwork.Framework.Platform.Windowing
         partial void DisposeUnmanagedResourcesShared();
 
         partial void InitializeResourcesShared();
+
+        partial void InitializeResourcesShared2();
 
         private void WireUpWindowEvents()
         {

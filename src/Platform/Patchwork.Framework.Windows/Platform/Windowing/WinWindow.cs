@@ -265,9 +265,9 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         protected override void PlatformDisable()
         {
-            m_handle.Lock();
+            //m_handle.Lock();
             EnableWindow(m_handle.Pointer, false);
-            m_handle.Unlock();
+            //m_handle.Unlock();
         }
 
         /// <inheritdoc />

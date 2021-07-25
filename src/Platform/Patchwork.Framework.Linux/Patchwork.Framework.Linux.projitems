@@ -16,4 +16,7 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Platform\Interop\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Common.Build.props" />
+  </ItemGroup>
 </Project>

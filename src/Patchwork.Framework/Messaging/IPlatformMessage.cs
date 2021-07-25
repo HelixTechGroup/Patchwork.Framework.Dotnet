@@ -5,7 +5,7 @@ using Shin.Framework.Messaging;
 
 namespace Patchwork.Framework.Messaging
 {
-    public interface IPlatformMessage : IMessage<MessageIds>
+    public interface IPlatformMessage : IPumpMessage<MessageIds>
     {
         #region Properties
         IMessageData RawData { get; }

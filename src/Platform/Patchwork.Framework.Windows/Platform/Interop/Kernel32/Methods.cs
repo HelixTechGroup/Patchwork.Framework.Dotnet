@@ -74,6 +74,9 @@ namespace Patchwork.Framework.Platform.Interop.Kernel32
         [DllImport(LibraryName)]
         public static extern bool SetSystemTime(ref SystemTime lpSystemTime);
 
+        [DllImport(LibraryName)]
+        public static extern IntPtr GlobalFree(IntPtr hMem);
+
         [DllImport(LibraryName, ExactSpelling = true, EntryPoint = "RtlZeroMemory")]
         public static extern void ZeroMemory(IntPtr dest, IntPtr size);
 

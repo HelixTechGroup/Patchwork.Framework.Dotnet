@@ -1,0 +1,61 @@
+﻿<Project>
+  <PropertyGroup>
+    <CoreImportFile>$(SourceDirectory)\$(ProductName)\$(ProductName).projitems</CoreImportFile>
+    <PlatformImportFile>$(PlatformDirectory)\$(ProductName).$(PlatformId)\$(ProductName).$(PlatformId).projitems</PlatformImportFile>
+    <MobileImportFile>$(PlatformDirectory)\$(ProductName).Mobile\$(ProductName).Mobile.projitems</MobileImportFile>
+    <DesktopImportFile>$(PlatformDirectory)\$(ProductName).Desktop\$(ProductName).Desktop.projitems</DesktopImportFile>
+    <DisplayImportFile>$(SourceDirectory)\$(ProductName).Display\$(ProductName).Display.projitems</DisplayImportFile>
+    <WindowingImportFile>$(SourceDirectory)\$(ProductName).Windowing\$(ProductName).Windowing.projitems</WindowingImportFile>
+    <RenderingImportFile>$(SourceDirectory)\$(ProductName).Rendering\$(ProductName).Rendering.projitems</RenderingImportFile>
+    <GdiImportFile>$(PlatformDirectory)\$(ProductName).Gdi\$(ProductName).Gdi.projitems</GdiImportFile>
+    <SkiaImportFile>$(PlatformDirectory)\$(ProductName).Skia\$(ProductName).Skia.projitems</SkiaImportFile>
+  </PropertyGroup>
+
+  <Import Project="$(CoreImportFile)" Label="Shared" />
+
+  <PropertyGroup>
+    <PlatformTypeImport>$(DesktopImportFile)</PlatformTypeImport>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(PlatformType)' == 'mobile'">
+      <PropertyGroup>
+        <PlatformTypeImport>$(MobileImportFile)</PlatformTypeImport>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <ImportGroup>
+    <Import Project="$(PlatformImportFile)" Label="Shared" />
+    <Import Project="$(PlatformTypeImport)" Label="Shared" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Rendering)' == 'true'">
+    <Import Project="$(DisplayImportFile)" Label="Shared" />
+    <Import Project="$(WindowingImportFile)" Label="Shared" />
+    <Import Project="$(RenderingImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Gdi)' == 'true'">
+    <Import Project="$(GdiImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Skia)' == 'true'">
+    <Import Project="$(SkiaImportFile)" Label="Shared" />
+  </ImportGroup>
+
+  <Choose>
+    <When Condition="'$(Rendering)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+      </ItemGroup>
+      <Choose>
+        <When Condition="'$(Gdi)' == 'true'">
+        </When>
+        <When Condition="'$(Skia)' == 'true'">
+          <ItemGroup>
+            <PackageReference Include="SkiaSharp" Version="2.80.2" />
+          </ItemGroup>
+        </When>
+      </Choose>
+    </When>
+  </Choose>
+</Project>

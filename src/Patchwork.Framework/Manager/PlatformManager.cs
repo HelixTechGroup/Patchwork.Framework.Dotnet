@@ -73,7 +73,11 @@ namespace Patchwork.Framework.Manager
                 if (m_supportedMessageIds.All(i => i != (message?.Id)))
                     continue;
 
-                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)).ContinueWith(t => m_tasks.Remove(t)));
+                var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)));
+                //.ContinueWith(t => m_tasks.Remove(t)));
+                foreach (var c in complete)
+                    m_tasks.Remove(c);
             }
 
             RunManager(token);
@@ -308,10 +312,11 @@ namespace Patchwork.Framework.Manager
                           .Where(attribute => attribute.RequiredOS == os.Type)
                           .OrderBy(attribute => attribute.Priority);
 
-            if (platform == null || platform.IsEmpty())
-                throw new InvalidOperationException("No platform found. Are you missing assembly references?");
+            //if (platform == null || platform.IsEmpty())
+            //throw new InvalidOperationException("No platform found. Are you missing assembly references?");
 
-            CreateManager(platform.ToArray());
+            if (platform != null || !platform.IsEmpty())
+                CreateManager(platform.ToArray());
         }
         #endregion
 

@@ -15,7 +15,7 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             m_iocContainer.Register<INRenderDevice>(this);
             m_iocContainer.Register<INWindowRenderer, GdiWindowRenderer>(false);
-            m_supportedRenderers.AddRange(new[] { typeof(INWindowRenderer), typeof(IFrameBufferRenderer)});
+            m_supportedRenderers.AddRange(new[] { typeof(INWindowRenderer), typeof(INFrameBufferRenderer)});
             //Core.IoCContainer.Register<INRenderDevice>(this);
         }
 
@@ -28,21 +28,12 @@ namespace Patchwork.Framework.Platform.Rendering
             //}
         }
 
-        protected override TRenderer PlatformCreateRenderer<TRenderer>()
-        {
-            var renderer = m_iocContainer.Resolve<TRenderer>();
-            //if (typeof(TRenderer).ContainsInterface<INWindowRenderer>())
-            //{
-            //renderer.Render += (sender, rectangle) =>
-                //                  {
-                //                      var pixelBuffer = new NPixelBuffer(rectangle.Width, rectangle.Height);
-                //                      var info = new SKImageInfo(rectangle.Width, rectangle.Height);
-                //                      var surface = SKSurface.Create(info, pixelBuffer.Handle.Pointer);
-                //                  };
-            //}
+        //protected override TRenderer PlatformCreateRenderer<TRenderer>(params object[] parameters)
+        //{
+        //    var renderer = m_iocContainer.Resolve<TRenderer>();
 
-            return renderer;
-        }
+        //    return renderer;
+        //}
         #endregion
 
         /// <inheritdoc />

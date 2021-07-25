@@ -9,7 +9,7 @@ using Android.App;
 using Android.Content;
 using Android.Runtime;
 using Java.Interop;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 
@@ -45,28 +45,28 @@ namespace Patchwork.Framework.Platform
             base.InitializeResources();
         }
 
-        protected override INWindow PlatformCreateWindow()
-        {
-            var def = new NWindowDefinition()
-                      {
-                          AcceptsInput = true,
-                          DesiredSize = new Size(800, 600),
-                          IsRegularWindow = true,
-                          Title = "test",
-                          Type = NWindowType.Normal,
-                          IsMainApplicationWindow = true
-                      };
-            var win = new AndroidWindow(this, def);
-            win.Create(false);
-            m_mainWindow = m_currentWindow = win;
-
-            return win;
-        }
-
         /// <inheritdoc />
-        protected override void PlatformPumpMessages(CancellationToken cancellationToken)
+        protected override void PlatformPumpMessages()
         {
             
         }
+
+        //protected override INWindow PlatformCreateWindow()
+        //{
+        //    var def = new NWindowDefinition()
+        //              {
+        //                  AcceptsInput = true,
+        //                  DesiredSize = new Size(800, 600),
+        //                  IsRegularWindow = true,
+        //                  Title = "test",
+        //                  Type = NWindowType.Normal,
+        //                  IsMainApplicationWindow = true
+        //              };
+        //    var win = new AndroidWindow(this, def);
+        //    win.Create(false);
+        //    m_mainWindow = m_currentWindow = win;
+
+        //    return win;
+        //}
     }
 }

@@ -1,10 +1,11 @@
 ﻿#region Usings
 using System;
+using Shin.Framework.Messaging;
 #endregion
 
 namespace Patchwork.Framework.Messaging
 {
-    public struct PlatformMessage : IPlatformMessage<IMessageData>
+    public struct PlatformMessage : IPlatformMessage<IMessageData>, IEquatable<PlatformMessage>
     {
         #region Members
         private readonly IMessageData m_data;
@@ -44,9 +45,56 @@ namespace Patchwork.Framework.Messaging
             m_data = data;
             m_timeStamp = DateTime.Now.ToUniversalTime();
         }
+
+        /// <inheritdoc />
+        public bool Equals(PlatformMessage other)
+        {
+            //if (ReferenceEquals(null, other)) return false;
+            //if (ReferenceEquals(this, other)) return true;
+            return TimeStamp == other.TimeStamp;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IPlatformMessage other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            //if (ReferenceEquals(this, other)) return true;
+            return TimeStamp == other.TimeStamp;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            //ReferenceEquals(this, obj) ||
+            return obj is PlatformMessage other && Equals(other);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IMessage other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IMessage<MessageIds> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return m_id == other.Id;
+        }
+
+        public static bool operator ==(PlatformMessage left, PlatformMessage right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PlatformMessage left, PlatformMessage right)
+        {
+            return !Equals(left, right);
+        }
     }
 
-    public struct PlatformMessage<TMessageData> : IPlatformMessage<TMessageData> where TMessageData : IMessageData
+    public struct PlatformMessage<TMessageData> : IPlatformMessage<TMessageData>, IEquatable<PlatformMessage<TMessageData>> where TMessageData : IMessageData
     {
         #region Members
         private readonly TMessageData m_data;
@@ -85,6 +133,61 @@ namespace Patchwork.Framework.Messaging
             m_id = id;
             m_data = data;
             m_timeStamp = DateTime.Now.ToUniversalTime();
+        }
+
+        /// <inheritdoc />
+        public bool Equals(PlatformMessage<TMessageData> other)
+        {
+            //if (ReferenceEquals(null, other)) return false;
+            //if (ReferenceEquals(this, other)) return true;
+            return TimeStamp == other.TimeStamp;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IPlatformMessage<TMessageData> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            //if (ReferenceEquals(this, other)) return true;
+            return TimeStamp == other.TimeStamp;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IMessage other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return true;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IMessage<MessageIds> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return m_id == other.Id;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            //ReferenceEquals(this, obj) ||
+            return obj is PlatformMessage<TMessageData> other && Equals(other);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(IPlatformMessage other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            //if (ReferenceEquals(this, other)) return true;
+            return TimeStamp == other.TimeStamp;
+        }
+
+        public static bool operator ==(PlatformMessage<TMessageData> left, PlatformMessage right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PlatformMessage<TMessageData> left, PlatformMessage right)
+        {
+            return !Equals(left, right);
         }
     }
 }

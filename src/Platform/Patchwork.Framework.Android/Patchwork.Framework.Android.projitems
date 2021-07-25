@@ -9,17 +9,24 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ActivityEvent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ActivityEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\ActivityEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\ActivityEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Environment\AndroidOSInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkLaunchActivity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkApplication.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PatchworkActivity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ActivityStatusTracker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PatchworkViewTreeObserverListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\ActivityStatusTracker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\PatchworkViewTreeObserverListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidThreadDispatcher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\AndroidWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PatchworkViewListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\AndroidThreadDispatcher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\AndroidWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\PatchworkViewListener.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Windowing\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Common.Build.props" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ using Android.Views;
 using Android.Widget;
 using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform.Window;
+using Patchwork.Framework.Platform.Windowing;
 
 namespace Patchwork.Framework
 {
@@ -41,7 +41,7 @@ namespace Patchwork.Framework
         {
             m_view = Activator.CreateInstance(typeof(TView), this) as TView;
             SetContentView(m_view);
-            m_window = Core.Application.CurrentWindow;
+            m_window = Core.Window.CurrentWindow ?? Core.Window.CreateWindow();
             Title = m_window.Title;
             Core.MessagePump.PushWindowMessage(WindowMessageIds.Created, m_window);
         }
@@ -50,7 +50,7 @@ namespace Patchwork.Framework
         protected override void OnStart()
         {
             base.OnStart();
-            m_window = Core.Application.CurrentWindow;
+            //m_window = Core.Window.CurrentWindow ?? Core.Window.CreateWindow();
             m_window.Initialize();            
         }
 

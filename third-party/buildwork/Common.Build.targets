@@ -1,0 +1,220 @@
+<Project>
+  <PropertyGroup>
+    <SectionSymbol>*</SectionSymbol> 
+  </PropertyGroup>
+
+  <Import Project="$(PrometheusPlatformDirectory)\*.targets"/>
+
+  <Target Name="SetupShield" DependsOnTargets="InitializeEnvironment;InitializePlatform;InitializeFramework" BeforeTargets="Build">
+    <Message Text="$~- --Setting up Shield for $(MSBuildProjectName)-- -~$" Importance="high" />
+    <!--<CallTarget Targets=""/>-->
+    <Message Text="| $(SectionSymbol) ---------------------------------------" Importance="high" />
+    <Message Text="| $(SectionSymbol) Import String: $(SharedImports)" Importance="high" />
+    <PropertyGroup>
+      <SetupCompleted>True</SetupCompleted>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="InitializeFramework" DependsOnTargets="InitializeEnvironment;InitializePlatform">
+    <Message Text="$~====== Initializing Framework for $(MSBuildProjectName) ======~$" Importance="high" />
+    <CallTarget Targets="PrintProps;PrintImports;RunNuGetRestore;" />
+    <!--<XmlPeek XmlInputPath="$(MSBuildProjectFullPath)" Query="/p:Project/p:Target/@Name"
+             Namespaces="&lt;Namespace Prefix='p' Uri='http://schemas.microsoft.com/developer/msbuild/2003' /&gt;">
+      <Output TaskParameter="Result" ItemName="All" />
+    </XmlPeek>
+    <ItemGroup>
+      <In Include="PrintProjectImports" />
+      <Out Include="@(In)" Exclude="@(All)" />
+      <Run Include="@(In)" Exclude="@(Out)" />
+    </ItemGroup>
+    <Message Text="| $(SectionSymbol) > !@(Run)!" />-->
+    <!--Condition="Exists(PrintProjectImports)"-->
+    <CallTarget Targets="PrintImports" />
+    <!--<OnError ExecuteTargets="ImportsNotExist" />-->
+  </Target>
+
+  <Target Name="InitializeEnvironment">
+    <Message Text="$~====== Initializing Environment for $(MSBuildProjectName) ======~$" Importance="high" />
+    <CallTarget Targets="PrintRootDirectory;PrintGlobals;" />
+    <!--<Targets Project="'$(MSBuildProjectFullPath)'" Run="PrintProjectImports">
+      <Output TaskParameter="All" ItemName="All" />
+      <Output TaskParameter="Run" ItemName="Run" />
+    </Targets>
+    <Message Text="All Targets: @(All)" />
+    <Message Text="Run Targets: @(Run)" />-->
+  </Target>
+
+  <Target Name="InitializePlatform" DependsOnTargets="InitializeEnvironment">
+    <Message Text="$~====== Initializing Platform for $(MSBuildProjectName) ======~$" Importance="high" />
+    <ItemGroup>
+      <TFArray Include="$(TargetPlatform.Split('-'))" />
+    </ItemGroup>
+    <CallTarget Targets="PrintPlatform;PrintPlatformProps;" />
+  </Target>
+
+  <Target Name="PrintPlatform">
+    <PropertyGroup>
+      <SectionSymbol>@</SectionSymbol>
+    </PropertyGroup>
+    <Message Text="$~------ Getting Platform for $(MSBuildProjectName) ------~$" Importance="high" />
+    <PropertyGroup>
+      <TF>%(TFArray.Identity)</TF>
+      <TmpId>@(TFArray->'%(Identity)')</TmpId>
+    </PropertyGroup>
+    <PropertyGroup>
+      <HasWindows>$(TargetPlatform.Contains(`windows`))</HasWindows>
+      <HasAndroid>$(TargetPlatform.Contains(`android`))</HasAndroid>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(HasWindows)' == 'true'">
+      <PlatformProps>Windows.Build.props</PlatformProps>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(HasAndroid)' == 'true'">
+      <PlatformProps>Android.Build.props</PlatformProps>
+    </PropertyGroup>
+    <PropertyGroup>
+      <PlatformTargetName>$(PlatformProps.Replace('.', '-'))</PlatformTargetName>
+      <!--<PlatformTargetName>$(PlatformProps.Split('.'))</PlatformTargetName>-->
+    </PropertyGroup>
+    <CallTarget Targets="$(PlatformTargetName)" />
+    <PropertyGroup Condition="'$(TargetPlatform.Contains(`netcore`))' == 'true'">
+      <TFN>netcoreapp3.1</TFN>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+    <CallTarget Targets="ExtraPlatformProps" Condition="Exists(ExtraPlatformProps)" />
+
+    <Error Condition="$(PlatformId) == '' Or $(PlatformId) == 'none'" Text="!! PlatformId is None or Null !!!"/>
+
+    <Message Text="| $(SectionSymbol) TFArray: %(TFArray.Identity)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TF: $(TF)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TFN: $(TFN)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TempId: $(TempId)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetPlatform: $(TargetPlatform)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetFramework: $(TargetFramework)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetFrameworks: $(TargetFrameworks)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetPlatform contains windows: $(TargetPlatform.Contains(`windows`))" Importance="high"/>
+    <Message Text="| $(SectionSymbol) TargetPlatform contains android: $(TargetPlatform.Contains(`android`))" Importance="high" />
+    <Message Text="| $(SectionSymbol) HasWindows: $(HasWindows)" Importance="high" />
+    <Message Text="| $(SectionSymbol) HasAndroid: $(HasAndroid)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformProps: $(PlatformProps)" Importance="high" />
+  </Target>
+
+  <Target Name="PrintGlobals">
+    <PropertyGroup>
+      <SectionSymbol>%</SectionSymbol>
+    </PropertyGroup>
+    <PropertyGroup>
+      <Product>$(ProductName)</Product>
+      <AssemblyName>$(ProductName)</AssemblyName>
+      <Company>$(CompanyName)</Company>
+      <Authors>$(AuthorName)</Authors>
+      <Owners>$(CompanyName)</Owners>
+      <Copyright>copyright © $(CompanyName) 2017-2020</Copyright>
+      <Version>$(ProductVersion)</Version>
+      <FileVersion>$(ProductVersion)</FileVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(SolutionDir) != ''">
+      <SourceDirectory>$(SolutionDir)src</SourceDirectory>
+      <OutputDirectory>$(SolutionDir)build\$(AssemblyName)\$(Configuration)\$(MSBuildProjectName)</OutputDirectory>
+      <PlatformDirectory>$(SourceDirectory)\Platform</PlatformDirectory>
+      <ThirdPartyDirectory>$(SolutionDir)third-party</ThirdPartyDirectory>
+      <!--<PrometheusDirectory>$(ThirdPartyDirectory)\Prometheus</PrometheusDirectory>-->
+      <NuspecDirectory>$(SolutionDir)nuspecs</NuspecDirectory>
+      <ShieldCheckTargets>$(PrometheusDirectory)\Check.Build.targets</ShieldCheckTargets>
+      <ShieldCommonTargets>$(PrometheusDirectory)\Common.Build.targets</ShieldCommonTargets>
+      <ShieldCommonProps>$(PrometheusDirectory)\Common.Build.props</ShieldCommonProps>
+      <ShieldPlatformProps>$(PrometheusDirectory)\Platform.Build.props</ShieldPlatformProps>
+      <OutputPath>$(OutputDirectory)</OutputPath>
+    </PropertyGroup>
+    <Message Text="$~----- Setting Global Variables for $(MSBuildProjectName) ------~$" Importance="high" />
+    <Message Text="| $(SectionSymbol) ProductName: $(ProductName)" Importance="high" />
+    <Message Text="| $(SectionSymbol) AssemblyName: $(AssemblyName)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetFramework: $(TargetFramework)" Importance="high" />
+    <Message Text="| $(SectionSymbol) IsSharedProject: $(IsSharedProject)" Importance="high" />
+    <Message Text="| $(SectionSymbol) IsTestProject: $(IsTestProject)" Importance="high" />
+    <Message Text="| $(SectionSymbol) IsLibraryProject: $(IsLibraryProject)" Importance="high" />
+    <Message Text="| $(SectionSymbol) MSBuildProjectExtension: $(MSBuildProjectExtension)" Importance="high" />
+    <Message Text="| $(SectionSymbol) MSBuildThisFileDirectory: $(MSBuildThisFileDirectory)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformDir: $(PlatformDirectory)" Importance="high" />
+    <Message Text="| $(SectionSymbol) OutputDirectory: $(OutputDirectory)" Importance="high" />
+    <PropertyGroup>
+      <GlobalsSet>True</GlobalsSet>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="PrintRootDirectory">
+    <Message Text="$~----- Getting Project Parent Directory for $(MSBuildProjectName) ------~$" Importance="high" />
+    <ItemGroup>
+      <MSBuildProjectParentDirectory Include="$(MSBuildProjectDirectory)\..\" />
+    </ItemGroup>
+    <PropertyGroup Condition="$(SolutionDir) == ''">
+      <RootPath>$(MSBuildProjectParentDirectory.FullPath)</RootPath>
+      <SolutionDir>$(RootPath.FullPath)</SolutionDir>
+    </PropertyGroup>
+    <Message Text="| $(SectionSymbol) RootPath: $(RootPath)" Importance="high" />
+    <Message Text="| $(SectionSymbol) SolutionDir: $(SolutionDir)" Importance="high" />
+  </Target>
+
+  <Target Name="PrintProps">
+    <PropertyGroup>
+      <SectionSymbol>#</SectionSymbol>
+    </PropertyGroup>
+    <Message Text="$~----- Importing Props for $(MSBuildProjectName) ------~$" Importance="high" />
+    <Message Text="| $(SectionSymbol) CommonTargets: $(ShieldCommonTargets)" Importance="high" />
+    <Message Text="| $(SectionSymbol) CommonProps: $(ShieldCommonProps)" Importance="high" />
+    <Message Text="| $(SectionSymbol) CommonPlatformProps: $(ShieldPlatformProps)" Importance="high" />
+    <Message Text="|------------------------------------------" Importance="high"/>
+    <Message Text="| $(SectionSymbol) CoreImportFile: $(CoreImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformImportFile: $(PlatformImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) MobileImportFile: $(MobileImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) DesktopImportFile: $(DesktopImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) DisplayImportFile: $(DisplayImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) WindowingImportFile: $(WindowingImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) RenderingImportFile: $(RenderingImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) GdiImportFile: $(GdiImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) SkiaImportFile: $(SkiaImportFile)" Importance="high" />
+  </Target>
+
+  <Target Name="RunNuGetRestore">
+    <Message Text="$~----- Restoring NuGet Packages for $(MSBuildProjectName) ------~$" Importance="high" />
+
+    <!-- You're going to be super temped to combine this with BuildTIMSNET -->
+    <!-- However you cannot because of bugs in the context; see the common -->
+    <!-- "Restore" target in ComputersUnlimited.Build.All.msbuild          -->
+    <!--Properties="PostBuildEvent="-->
+    <!--<MSBuild Projects="$(MSBuildProjectDirectory)\$(MSBuildProjectName)$(MSBuildProjectExtension)" Targets="Restore" BuildInParallel="true" />-->
+    <!--<MSBuild Projects="$(SolutionDir)\$(SolutionName).sln" Targets="GenerateRestoreGraphFile" Properties="" />-->
+    <!--<MSBuild Projects="$(SolutionDir)\NuGet.Restore.targets" Targets="RestorePackages2" />-->
+    <Exec ContinueOnError="true" ConsoleToMSBuild="true" Command="$(NuspecDirectory)\nuget.exe restore $(SolutionDir)\$(SolutionName).sln" />
+  </Target>
+
+  <Target Name="PrintPlatformProps">
+    <PropertyGroup>
+      <SectionSymbol>%*</SectionSymbol>
+      <OsProps>$(ProductName).$(PlatformId)\Common.Build.props</OsProps>
+    </PropertyGroup>
+    <Message Importance="high" Text="$~~~~~~~ Importing Platform $(PlatformId) ~~~~~~~$" />
+    <Message Text="| $(SectionSymbol) PlatformId: $(PlatformId)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformType: $(PlatformType)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetFramework: $(TargetFramework)" Importance="high" />
+    <Message Text="| $(SectionSymbol) TargetFrameworkVersion: $(TargetFrameworkVersion)" Importance="high" />
+    <Message Text="| $(SectionSymbol) SupportedOSPlatformVersion: $(SupportedOSPlatformVersion)" Importance=" high" />
+    <Message Text="| $(SectionSymbol) OsProps: $(OsProps)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformProps: $(PlatformProps)" Importance="high" />
+  </Target>
+
+  <Target Name="PrintImports">
+    <PropertyGroup>
+      <SectionSymbol>**</SectionSymbol>
+      <CurrentImport>%(Imports.Identity)</CurrentImport>
+    </PropertyGroup>
+    <Message Importance="high" Text="$~~~~~~~ | $(SectionSymbol) Importing Support projitems ~~~~~~~$" />
+  </Target>
+
+  <Target Name="ImportsNotExist">
+    <Message Text="| $(SectionSymbol) > !!!PrintProjectImports!!!" />
+  </Target>
+
+  <!--<Target Name="PrintProjectImports">
+    <Message Importance="high" Text="$~~~~~~~ | $(SectionSymbol) Importing Support projitems ~~~~~~~$" />
+  </Target>-->
+</Project>

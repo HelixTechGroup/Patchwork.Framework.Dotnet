@@ -1,0 +1,12 @@
+﻿<Project>
+  <Target Name="Default-Build-props">
+    <PropertyGroup>
+      <TFN>net5.0</TFN>
+      <PlatformId>None</PlatformId>
+      <PlatformType>None</PlatformType>
+      <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+    <Message Text="| $(SectionSymbol) > Setting PlatformId for Default::$(PlatformId)" Importance="high" />
+    <Message Text="| $(SectionSymbol) > TargetFramework: $(TargetFramework)" Importance="high" />
+  </Target>
+</Project>
