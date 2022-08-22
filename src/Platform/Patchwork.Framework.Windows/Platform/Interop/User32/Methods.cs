@@ -7,6 +7,14 @@ using System.Text;
 
 namespace Patchwork.Framework.Platform.Interop.User32
 {
+    public enum DPI_AWARENESS_CONTEXT : int
+    {
+        DPI_AWARENESS_CONTEXT_UNAWARE = 16,
+        DPI_AWARENESS_CONTEXT_SYSTEM_AWARE = 17,
+        DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE = 18,
+        DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = 34
+    }
+
     public static class Methods
     {
         #region Members
@@ -14,6 +22,12 @@ namespace Patchwork.Framework.Platform.Interop.User32
         #endregion
 
         #region Methods
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern bool SetProcessDPIAware();
+
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern bool SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT dpiFlag);
+
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern IntPtr LoadIcon(IntPtr hInstance, string lpIconName);
 
@@ -717,6 +731,13 @@ namespace Patchwork.Framework.Platform.Interop.User32
         #endregion
 
         #region Message Functions
+        [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
+        public static extern uint MsgWaitForMultipleObjectsEx(uint nCount,
+                                                       IntPtr[] pHandles,
+                                                       uint dwMilliseconds,
+                                                       uint dwWakeMask,
+                                                       uint dwFlags);
+
         [DllImport(LibraryName, CharSet = Properties.BuildCharSet)]
         public static extern bool PeekMessage(out Message lpMsg,
                                               IntPtr hWnd,

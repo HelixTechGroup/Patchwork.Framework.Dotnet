@@ -17,7 +17,7 @@ namespace Patchwork.Framework
     public class PatchworkLaunchActivity : PatchworkActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
-        {
+{
             base.OnCreate(savedInstanceState);
             var token = (Application.Context as PatchworkApplication)?.Token.Token ?? CancellationToken.None;
             var win = Core.Window.CurrentWindow ?? Core.Window.CreateWindow();

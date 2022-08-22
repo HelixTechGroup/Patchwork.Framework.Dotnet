@@ -5,16 +5,26 @@
     <RepositoryHttpUrl>https://github.com/HelixTechGroup/Patchwork.Framework.Dotnet</RepositoryHttpUrl>
     <UseGitHub>True</UseGitHub>
     <PlatformDirectory>$(SourceDirectory)\Platform</PlatformDirectory>
-    <IsFrameworkProject Condition="'$(IsFrameworkProject)' == ''">False</IsFrameworkProject>
+    <!--<IsFrameworkProject Condition="'$(IsFrameworkProject)' != 'true'">False</IsFrameworkProject>-->
+    <IsLibraryProject Condition="'$(IsFrameworkProject)' == 'true'">True</IsLibraryProject>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="obj\\**\*" />
-    <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
+    <!--<Compile Remove="obj\\**\*" />-->
+    <!--<PackageReference Update="@(PackageReference)" PrivateAssets="All" />-->
   </ItemGroup>
   <PropertyGroup>
     <CompanyName>HelixTechGroup,llc</CompanyName>
     <AuthorName>Bryan M. Longacre</AuthorName>
     <ProductVersion>0.0.1</ProductVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ProductName>Patchwork.Framework</ProductName>
+    <Description>Patchwork.Framework</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--<Rendering Condition=" '$(Rendering)' == '' ">False</Rendering>
+    <Gdi Condition=" '$(Gdi)' == '' ">False</Gdi>
+    <Skia Condition=" '$(Skia)' == '' ">False</Skia>-->
+    <!--<ProjectImports>$(SolutionDir)Imports.Build.props</ProjectImports>-->
   </PropertyGroup>
 
   <!--<ItemGroup>

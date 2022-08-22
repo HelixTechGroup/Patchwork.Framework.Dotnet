@@ -6,6 +6,9 @@ namespace Patchwork.Framework.Platform.Rendering
 {
     public class SkiaRenderAdapter : NRenderAdapter
     {
+        /// <inheritdoc />
+        public SkiaRenderAdapter(INRenderDevice device, INResourceFactory factory) : base(device, factory) { }
+
         #region Methods
         /// <inheritdoc />
         protected override void PlatformFlush()

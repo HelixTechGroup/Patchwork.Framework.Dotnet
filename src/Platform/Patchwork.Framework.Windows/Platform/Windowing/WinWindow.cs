@@ -5,10 +5,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using Patchwork.Framework.Platform.Interop;
+using Patchwork.Framework.Platform.Interop.DwmApi;
 using Patchwork.Framework.Platform.Interop.User32;
-using Shin.Framework.Extensions;
+using Patchwork.Framework.Platform.Rendering;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
+using static Patchwork.Framework.Platform.Interop.DwmApi.DwmApiMethods;
 #endregion
 
 namespace Patchwork.Framework.Platform.Windowing
@@ -23,7 +25,7 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             // Ensure that the delegate doesn't get garbage collected by storing it as a field.
             m_wndProc = WindowProc;
-            m_windowClass = "ShieldWindow-" + Guid.NewGuid();
+            m_windowClass = "PWFrameworkWindow-" + Guid.NewGuid();
         }
 
         #region Methods
@@ -116,6 +118,7 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override void InitializeResources()
         {
             base.InitializeResources();
+            UpdateWindow(m_handle.Pointer);
             //m_renderer.Initialize();
         }
 
@@ -152,39 +155,43 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override void PlatformCreate()
         {
             m_isMainApplicationWindow = m_cache.Definition.IsMainApplicationWindow;
-            var x = m_cache.Position.X;
-            var y = m_cache.Position.Y;
+            var x = m_cache.Definition.DesiredPosition.X;
+            var y = m_cache.Definition.DesiredPosition.Y;
             WindowStyles style = 0;
             WindowExStyles styleEx = 0;
 
-            if (m_cache.Size.Width > 0 && m_cache.Size.Height > 0)
+            //SetProcessDPIAware();
+            //ShCoreMethods.SetProcessDpiAwareness(ProcessDpiAwareness.Process_Per_Monitor_DPI_Aware);
+            SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
+            if (m_cache.Definition.DesiredSize.Width > 0 &&
+                m_cache.Definition.DesiredSize.Height > 0)
             {
                 var screenWidth = GetSystemMetrics(SystemMetrics.SM_CXSCREEN);
                 var screenHeight = GetSystemMetrics(SystemMetrics.SM_CYSCREEN);
 
-                // Place the window in the middle of the screen.WS_EX_APPWINDOW
+                // Place the window in the middle of the screenEF.WS_EX_APPWINDOW
                 x = (screenWidth - m_cache.Size.Width) / 2;
                 y = (screenHeight - m_cache.Size.Height) / 2;
             }
 
             if (m_cache.Definition.SupportedDecorations.HasFlag(NWindowDecorations.CloseButton))
-                style = WindowStyles.WS_OVERLAPPEDWINDOW;
+                style = WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU;
             else
                 style = WindowStyles.WS_POPUP | WindowStyles.WS_BORDER | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU;
 
             styleEx = WindowExStyles.WS_EX_APPWINDOW | WindowExStyles.WS_EX_WINDOWEDGE;
-            style |= WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS;
+            style |= WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_VISIBLE;
 
             int windowWidth;
             int windowHeight;
 
-            if (m_cache.Size.Width > 0 && m_cache.Size.Height > 0)
+            if (m_cache.Definition.DesiredSize.Width > 0 && m_cache.Definition.DesiredSize.Height > 0)
             {
-                var rect = new Rectangle(0, 0, m_cache.Size.Width, m_cache.Size.Height);
+                var rect = new Rectangle(0, 0, m_cache.Definition.DesiredSize.Width, m_cache.Definition.DesiredSize.Height);
 
                 // Adjust according to window styles
-                AdjustWindowRectEx(
-                                   ref rect,
+                AdjustWindowRectEx(ref rect,
                                    style,
                                    false,
                                    styleEx);
@@ -198,16 +205,17 @@ namespace Patchwork.Framework.Platform.Windowing
             var hInstance = GetModuleHandle(null);
 
             var wndClassEx = new WindowClassEx
-            {
-                Size = (uint)Marshal.SizeOf<WindowClassEx>(),
-                Styles = WindowClassStyles.CS_OWNDC | 
-                         WindowClassStyles.CS_HREDRAW |
-                         WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
-                WindowProc = m_wndProc,
-                InstanceHandle = hInstance,
-                ClassName = m_windowClass,
-                BackgroundBrushHandle = IntPtr.Zero //(IntPtr)SystemColor.COLOR_WINDOW
-            };
+                             {
+                                 Size = (uint)Marshal.SizeOf<WindowClassEx>(),
+                                 Styles = WindowClassStyles.CS_OWNDC,
+                                 //Styles = WindowClassStyles.CS_OWNDC | 
+                                 //         WindowClassStyles.CS_HREDRAW |
+                                 //         WindowClassStyles.CS_VREDRAW, // Unique DC helps with performance when using Gpu based rendering
+                                 WindowProc = m_wndProc,
+                                 InstanceHandle = hInstance,
+                                 ClassName = m_windowClass,
+                                 BackgroundBrushHandle = IntPtr.Zero //(IntPtr)SystemColor.COLOR_WINDOW
+                             };
 
             var atom = RegisterClassEx(ref wndClassEx);
             if (atom == 0)
@@ -235,6 +243,8 @@ namespace Patchwork.Framework.Platform.Windowing
             }
 
             m_handle = new NHandle(hwnd);
+            UpdateWindow(m_handle.Pointer);
+
             /// = windowWidth;
             //m_height = windowHeight;
             //m_renderer = new WindowsDesktopWindowRenderer(this, null);            
@@ -362,8 +372,24 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         protected override Size PlatformGetWindowSize()
         {
-            GetWindowRect(m_handle.Pointer, out var rect);
-            return new Size(rect.Right, rect.Bottom);
+            DwmIsCompositionEnabled(out var enabled);
+            //if (!enabled)
+            {
+                GetWindowRect(m_handle.Pointer, out var rect);
+                //return new Size(rect.Right, rect.Bottom);
+            }
+
+            DwmApiHelpers.DwmGetWindowAttribute(m_handle.Pointer,
+                                                DwmWindowAttributeType.DWMWA_EXTENDED_FRAME_BOUNDS,
+                                                out var dwmRect);
+
+            var size = new Size((int)(dwmRect.Width), (int)(dwmRect.Height));
+            //var dev = Core.Renderer.GetDevice<GdiDevice>();
+            //if (dev.IsInitialized)
+            //    size = new Size((int)(dwmRect.Width/dev.DpiScale.X), (int)(dwmRect.Height / dev.DpiScale.Y));
+
+            return size;
+
             //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INDesktopWindowRenderer)m_renderer).DpiScaling);
         }
 
@@ -451,8 +477,10 @@ namespace Patchwork.Framework.Platform.Windowing
         {
             var shouldActivate = false;
             if (m_cache.Definition.AcceptsInput)
+            {
                 shouldActivate = m_cache.Definition.ActivationPolicy == NWindowActivationPolicy.Always ||
                                  m_isFirstTimeVisible && m_cache.Definition.ActivationPolicy == NWindowActivationPolicy.FirstShown;
+            }
 
             var showWindowCommand = shouldActivate ? ShowWindowCommands.SW_SHOW : ShowWindowCommands.SW_SHOWNOACTIVATE;
             if (m_isFirstTimeVisible)
@@ -476,6 +504,7 @@ namespace Patchwork.Framework.Platform.Windowing
         /// <inheritdoc />
         protected override void PlatformSyncDataCache()
         {
+            
             m_cache.ClientSize = PlatformGetClientSize();
             m_cache.MaxClientSize = PlatformGetMaxClientSize();
             m_cache.ClientArea = PlatformGetClientArea();

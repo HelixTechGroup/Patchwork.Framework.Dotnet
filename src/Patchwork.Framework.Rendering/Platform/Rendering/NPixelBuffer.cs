@@ -1,6 +1,8 @@
 ﻿#region Usings
 using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Shin.Framework.Extensions;
@@ -29,6 +31,14 @@ namespace Patchwork.Framework.Platform.Rendering
             get { return m_width; }
         }
         #endregion
+        public NPixelBuffer(int width, int height, ICollection<byte> contents) : base(contents)
+        {
+            //EnsureSize(width, height);
+            //SetContent(contents.ToArray());
+            m_width = width; 
+            m_height = height;
+        }
+
 
         public NPixelBuffer(int width, int height)
         {
@@ -186,6 +196,95 @@ namespace Patchwork.Framework.Platform.Rendering
             }
         }
 
+        public static NFrameBuffer GenerateBuffer(int width, int height)
+        {
+            var b = new NFrameBuffer(width, height);
+            var tmpb = new byte[b.PixelBuffer.Length];
+            // Set the pixel colors.
+            double[,] values = new double[width, height];
+            for (int ix = 0; ix < width; ix++)
+            {
+                double x = 0 + ix;
+                for (int iz = 0; iz < height; iz++)
+                {
+                    double z = 0 + iz;
+                    values[ix, iz] = F(x, z);
+                }
+            }
+
+            for (int ix = 0; ix < width; ix++)
+            {
+                for (int iz = 0; iz < height; iz++)
+                {
+                    byte red, green, blue;
+                    MapRainbowColor(values[ix, iz],
+                                    0,
+                                    height,
+                                    out red,
+                                    out green,
+                                    out blue);
+                    b.PixelBuffer.SetPixel(ix, iz, red, green, blue, 255, ref tmpb);
+                }
+            }
+
+            b.PixelBuffer.SetContent(tmpb);
+            return b;
+        }
+
+        private static void MapRainbowColor(double value,
+                                     double min_value,
+                                     double max_value,
+                                     out byte red,
+                                     out byte green,
+                                     out byte blue)
+        {
+            // Convert into a value between 0 and 1023.
+            int int_value = (int)(1023 * (value - min_value) / (max_value - min_value));
+
+            // Map different color bands.
+            if (int_value < 256)
+            {
+                // Red to yellow. (255, 0, 0) to (255, 255, 0).
+                red = 255;
+                green = (byte)int_value;
+                blue = 0;
+            }
+            else if (int_value < 512)
+            {
+                // Yellow to green. (255, 255, 0) to (0, 255, 0).
+                int_value -= 256;
+                red = (byte)(255 - int_value);
+                green = 255;
+                blue = 0;
+            }
+            else if (int_value < 768)
+            {
+                // Green to aqua. (0, 255, 0) to (0, 255, 255).
+                int_value -= 512;
+                red = 0;
+                green = 255;
+                blue = (byte)int_value;
+            }
+            else
+            {
+                // Aqua to blue. (0, 255, 255) to (0, 0, 255).
+                int_value -= 768;
+                red = 0;
+                green = (byte)(255 - int_value);
+                blue = 255;
+            }
+        }
+
+        // The function that defines the surface we are drawing.
+        private static double F(double x, double z)
+        {
+            const double two_pi = 2 * 3.14159265;
+            double r2 = x * x + z * z;
+            double r = Math.Sqrt(r2);
+            double theta = Math.Atan2(z, x);
+            return Math.Exp(-r2) * Math.Sin(two_pi * r) * Math.Cos(3 * theta);
+        }
+
         /// <inheritdoc />
         protected override void DisposeUnmanagedResources()
         {
@@ -198,7 +297,10 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return base.Equals(other); //&& m_height == other.m_height && m_rowBytes == other.m_rowBytes && m_width == other.m_width;
+            //if (Contents.SequenceCompareTo(other.Contents) == 0)
+            if (Contents.SequenceEqual(other.Contents))
+                return true;
+            return base.Equals(other) && m_height == other.m_height && m_rowBytes == other.m_rowBytes && m_width == other.m_width;
         }
 
         /// <inheritdoc />

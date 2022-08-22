@@ -34,9 +34,9 @@ namespace Patchwork.Framework.Platform
         #endregion
 
         #region Methods
-        object Create();
+        T Create<T>(params object[] parameters) where T : INResource;
 
-        void Destroy(object instance);
+        void Destroy<T>(T instance) where T : INResource;
         #endregion
     }
 }

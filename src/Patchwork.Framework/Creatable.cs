@@ -39,6 +39,8 @@ namespace Patchwork.Framework
             CreateResources();
             m_isCreated = true;
             Created.Raise(this, EventArgs.Empty);
+
+            Initialize();
         }
 
         protected virtual void CreateResources() { }

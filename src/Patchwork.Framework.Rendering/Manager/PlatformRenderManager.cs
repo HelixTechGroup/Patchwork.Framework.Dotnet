@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Patchwork.Framework.Extensions;
@@ -9,10 +11,13 @@ using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Rendering;
 using Patchwork.Framework.Platform.Threading;
 using Patchwork.Framework.Platform.Windowing;
+
+using Shield.Framework.IoC.Native.DependencyInjection;
 using Shield.Framework.Threading;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
+using Shin.Framework.Threading;
 #endregion
 
 namespace Patchwork.Framework.Manager
@@ -38,98 +43,227 @@ namespace Patchwork.Framework.Manager
 
         #region Members
         //protected IList<INRenderer> m_renderers;
+        protected IPlatformWindowManager m_windowManager;
         #endregion
 
         public PlatformRenderManager()
         {
             //m_renderers = new ConcurrentList<INRenderer>();
 
-            WindowCreated += OnWindowCreated;
-            WindowDestroyed += OnWindowDestroyed;
+            WireUpApplicationWindowEvents();
+        }
+        #region Methods
+        /// <inheritdoc />
+        public TDevice GetDevice<TDevice>(params object[] parameters) where TDevice : INRenderDevice
+        {
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Read))
+            //    Wait();
 
+            //m_lockSlim.EnterUpgradeableReadLock();//TryEnter(SynchronizationAccess.Read);
+            //if (!m_lockSlim.IsUpgradeableReadLockHeld)
+            //    Throw.Exception().InvalidOperationException();
+
+            //if (Interlocked.CompareExchange(ref m_hasLock, 1, 0) == 0)
+            //{
+            try
+            {
+                    //lock (m_lock)
+                    //{
+                        m_hasLock = true;
+                        var devs = Core.IoCContainer.ResolveAll<TDevice>();
+                        return devs.First();
+                    //}
+                }
+                finally
+
+                {
+                    //if (m_hasLock)
+                    //{
+                    //    m_lockSlim.ExitUpgradeableReadLock();
+                    //    m_hasLock = false;
+                    //}
+                }
+           // };
+            
         }
 
-        #region Methods
         public bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer
         {
-            var devs = Core.IoCContainer.ResolveAll<INRenderDevice>();
-            if (m_isInitialized)
-                foreach (var d in devs)
-                    d.Initialize();
 
-            return devs.Any(device => device.SupportedRenderers.ContainsType<TRenderer>());
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Read))
+            //Throw.Exception().InvalidOperationException();
+
+            //m_hasLock = m_lockSlim.TryEnter(SynchronizationAccess.Read);
+            m_lockSlim.EnterUpgradeableReadLock(); //TryEnter(SynchronizationAccess.Read);
+            if (!m_lockSlim.IsUpgradeableReadLockHeld)
+                Throw.Exception().InvalidOperationException();
+
+            try
+            {
+                //lock (m_lock)
+                //{
+                    var devs = Core.IoCContainer.ResolveAll<INRenderDevice>();
+                    if (m_isInitialized)
+                        foreach (var d in devs)
+                            d.Initialize();
+
+                    return devs.Any(device => device.SupportedRenderers.ContainsType<TRenderer>());
+                //}
+            }
+            finally
+
+            {
+                if (m_hasLock)
+                {
+                    m_lockSlim.ExitUpgradeableReadLock();
+                    m_hasLock = false;
+                }
+            }
         }
 
         public TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer
         {
             Throw.If(!IsRendererSupported<TRenderer>()).InvalidOperationException();
-            var renderer = Core.IoCContainer.ResolveAll<INRenderDevice>()
-                      .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
-                      .OrderBy(d => d.Priority)
-                      .First().GetRenderer<TRenderer>(parameters);
 
-            if (m_isInitialized)
-                renderer.Initialize();
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Read))
+            //    Wait();
 
-            return renderer;
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+            //    Throw.Exception().InvalidOperationException();
+
+            //m_lockSlim.EnterUpgradeableReadLock(); //TryEnter(SynchronizationAccess.Read);
+            //if (!m_lockSlim.IsUpgradeableReadLockHeld)
+            //    Throw.Exception().InvalidOperationException();
+
+            //m_hasLock = true;
+
+            try
+            {
+                //lock(m_lock)
+                //{
+                    var renderer = Core.IoCContainer.ResolveAll<INRenderDevice>()
+                                       .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
+                                       .OrderBy(d => d.Priority)
+                                       .First().GetRenderer<TRenderer>(parameters);
+
+                    if (m_isInitialized)
+                        renderer.Initialize();
+
+                    return renderer;
+               //}
+            }
+            finally
+
+            {
+                //if (m_hasLock)
+                //{
+                //    m_lockSlim.ExitUpgradeableReadLock();
+                //    m_hasLock = false;
+                //}
+            }
         }
 
         public TRenderer[] GetRenderers<TRenderer>(params object[] parameters) where TRenderer : INRenderer
         {
-            Throw.If(!IsRendererSupported<TRenderer>()).InvalidOperationException();
-            var renderers = Core.IoCContainer.ResolveAll<INRenderDevice>()
-                           .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
-                           .OrderBy(d => d.Priority)
-                           .Select(r => r.GetRenderer<TRenderer>(parameters));
+            /*Throw.If(*/
+            if (!IsRendererSupported<TRenderer>())
+                return Array.Empty<TRenderer>();
 
-            if (m_isInitialized)
-                foreach (var renderer in renderers)
-                    renderer.Initialize();
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Read))
+            //    Wait();
 
-            //var renderers = m_renderers;
-            //m_renderers = m_renderers.AddRange(nRenderers
-            //                                    .Select(r => r as INRenderer))
-            //                       .OrderBy(r => r.Stage)
-            //                       .ThenBy(r => r.Priority)
-            //                       .ToList();
-            return renderers.ToArray();
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Read))
+            //    Throw.Exception().InvalidOperationException();
+
+            //m_lockSlim.EnterUpgradeableReadLock(); //TryEnter(SynchronizationAccess.Read);
+            //if (!m_lockSlim.IsUpgradeableReadLockHeld)
+            //    Throw.Exception().InvalidOperationException();
+
+            //m_hasLock = true;
+
+            try
+            {
+                //lock(m_lock)
+                //{
+                    var renderers = Core.IoCContainer.ResolveAll<INRenderDevice>()
+                                        .Where(d => d.SupportedRenderers.ContainsType<TRenderer>())
+                                        .OrderBy(d => d.Priority)
+                                        .Select(d => d.GetRenderer<TRenderer>(parameters))
+                                        .DistinctBy(r => r.GetType());
+
+                    var nRenderers = renderers as TRenderer[] ?? renderers.ToArray();
+                    if (m_isInitialized)
+                        foreach (var renderer in nRenderers)
+                            renderer.Initialize();
+
+                    //var renderers = m_renderers;
+                    //m_renderers = m_renderers.AddRange(nRenderers
+                    //                                    .Select(r => r as INRenderer))
+                    //                       .OrderBy(r => r.Stage)
+                    //                       .ThenBy(r => r.Priority)
+                    //                       .ToList();
+                    return nRenderers.ToArray();
+                //}
+            }
+            finally
+
+            {
+                //if (m_hasLock)
+                //{
+                //    m_lockSlim.ExitUpgradeableReadLock();
+                //    m_hasLock = false;
+                //}
+            }
         }
 
         protected virtual void OnWindowCreated(object sender, INWindow window)
         {
             var win = window;
-            if (!window.IsRenderable)
-                return;
+                    if (!window.IsRenderable)
+                        return;
 
             if (!window.IsInitialized)
-                window.Initialize();
+            {
+                Core.Logger.LogError(@$"PlatformRenderManager:
+/r/nWindow:{win.Handle.ToString} 
+/r/nWindow Initialized:{win.IsInitialized}
+/r/nDevice Initialized:{m_isInitialized}");
+                return;
+            }
+                    //    window.Initialize();
 
-            //foreach (var dev in Core.IoCContainer.ResolveAll<INRenderDevice>())
-            //{
-                var renderer = GetRenderers<INWindowRenderer>(window);
-                //m_renderers.AddRange(renderer);
-                //}
+                    foreach (var dev in Core.IoCContainer.ResolveAll<INRenderDevice>())
+                    {
+                        dev.Context?.Create(window);
+                    }
+
+                    var renderer = GetRenderers<INWindowRenderer>(window);
+                    foreach(var r in renderer)
+                    {
+                        r.Initialize();
+                        if (!r.OwnsRenderLoop)
+                            r.Render();
+                    }
+
         }
 
         protected virtual void OnWindowDestroyed(object sender, INWindow window)
         {
             var win = window;
-            if (!window.IsRenderable)
-                return;
+                    if (!window.IsRenderable)
+                        return;
 
             //if (window.IsMainApplicationWindow) 
             //    return;
 
             //lock(m_renderers)
             //{
-            
+
             var renderers = GetRenderers<INWindowRenderer>(window);
-            //foreach (var ren in renderers)
-            //{
-            //    m_renderers.Remove(ren);
-            //    ren.Dispose();
-            //}
-            //}
+            foreach (var ren in renderers)
+            {
+                ren.Dispose();
+            }
         }
 
         /// <inheritdoc />
@@ -142,7 +276,7 @@ namespace Patchwork.Framework.Manager
 
                 var devs = Core.IoCContainer.ResolveAll<INRenderDevice>();
                 if (devs.All(d => d.GetType() != m.RenderDeviceType))
-                    Core.IoCContainer.Register(m.RenderDeviceType);
+                    Core.IoCContainer.Register(m.RenderDeviceType, true);
             }
         }
 
@@ -171,8 +305,10 @@ namespace Patchwork.Framework.Manager
             m_supportedMessageIds = new[] {MessageIds.Rendering, MessageIds.Window, MessageIds.Quit};
 
             foreach (var device in Core.IoCContainer.ResolveAll<INRenderDevice>())
-                Core.Dispatcher.InvokeAsync(() => device.Initialize());
+                Core.Dispatcher.InvokeAsync(() =>  device.Initialize());
 
+            Core.Window.WindowDestroyed += WindowDestroyed;
+            Core.Window.WindowCreated += WindowCreated;
             //foreach (var renderer in m_renderers)
             //    Core.Dispatcher.InvokeAsync(() => renderer.Initialize());
         }

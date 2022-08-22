@@ -1,4 +1,5 @@
 ﻿#region Usings
+using System;
 using Shin.Framework;
 #endregion
 
@@ -7,10 +8,10 @@ namespace Patchwork.Framework.Platform.Rendering
     public abstract class NRenderAdapter : Initializable, INRenderAdapter
     {
         #region Members
-        private INRenderAdapterConfiguration m_configuration;
-        private INRenderDevice m_device;
-        private INResourceFactory m_resourceFactory;
-        private INScreen m_screen;
+        protected INRenderAdapterConfiguration m_configuration;
+        protected INRenderDevice m_device;
+        protected INResourceFactory m_resourceFactory;
+        protected INScreen m_screen;
         #endregion
 
         #region Properties
@@ -39,6 +40,12 @@ namespace Patchwork.Framework.Platform.Rendering
         }
         #endregion
 
+        protected NRenderAdapter(INRenderDevice device, INResourceFactory factory)
+        {
+            m_device = device;
+            m_resourceFactory = factory;
+        }
+
         #region Methods
         /// <inheritdoc />
         public void SwapBuffers()
@@ -52,9 +59,31 @@ namespace Patchwork.Framework.Platform.Rendering
             PlatformFlush();
         }
 
+        /// <inheritdoc />
+        public TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource
+        {
+            return m_resourceFactory.Create<TResource>(parameters);
+        }
+
         protected abstract void PlatformFlush();
 
         protected abstract void PlatformSwapBuffers();
+
+        /// <inheritdoc />
+        protected override void InitializeResources()
+        {
+            base.InitializeResources();
+
+            m_resourceFactory.Initialize();
+        }
+
+        /// <inheritdoc />
+        protected override void DisposeManagedResources()
+        {
+            m_resourceFactory.Dispose();
+
+            base.DisposeManagedResources();
+        }
         #endregion
     }
 }

@@ -1,15 +1,18 @@
 #region Usings
+using Patchwork.Framework;
 using Patchwork.Framework.Platform;
 using Shin.Framework;
 #endregion
 
 namespace System.Drawing
 {
-    public abstract class NResource<TNative> : Initializable, ICloneable, INResource<TNative>
+    public abstract class NResource<TNative> : Creatable, INResource<TNative>
     {
         #region Members
         protected string m_name;
         protected TNative m_resource;
+        protected INHandle m_handle;
+        private bool m_isCreated;
         #endregion
 
         #region Properties
@@ -41,9 +44,14 @@ namespace System.Drawing
         }
 
         #region Methods
-        public object Clone()
+        object ICloneable.Clone()
         {
             return PlatformClone();
+        }
+
+        public TNative Clone()
+        {
+            return (TNative)PlatformClone();
         }
 
         protected abstract object PlatformClone();
@@ -53,5 +61,11 @@ namespace System.Drawing
             m_resource = resource;
         }
         #endregion
+
+        /// <inheritdoc />
+        public INHandle Handle
+        {
+            get { return m_handle; }
+        }
     }
 }

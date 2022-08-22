@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -50,6 +52,18 @@ namespace Patchwork.Framework.Platform.Rendering
             m_height = height;
             m_width = width;
             m_pixelBuffer = new NPixelBuffer(m_width, m_height);
+        }
+
+        public void SetPixelBuffer(int width, int height, ICollection<byte> collection)
+        {
+            m_height = height;
+            m_width = width;
+            m_pixelBuffer = new NPixelBuffer(m_width, m_height, collection);
+        }
+
+        public void SetPixelBuffer(ICollection<byte> collection)
+        {
+            m_pixelBuffer = new NPixelBuffer(m_width, m_height, collection);
         }
 
         public void SetPixelBuffer(NPixelBuffer buffer)

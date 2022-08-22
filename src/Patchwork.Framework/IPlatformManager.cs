@@ -10,7 +10,9 @@ namespace Patchwork.Framework
 {
     public delegate void ProcessMessageHandler<TMessage>(TMessage message) where TMessage : IPlatformMessage;
 
-    public interface IPlatformManager<TAssembly, TMessage> : IPlatformManager where TAssembly : PlatformAttribute where TMessage : IPlatformMessage
+    public interface IPlatformManager<TAssembly, TMessage> : IPlatformManager 
+        where TAssembly : PlatformAttribute 
+        where TMessage : IPlatformMessage
     {
         #region Events
         

@@ -15,7 +15,7 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         #region Methods
-        void Initialize(INWindow window, INRenderDevice renderDevice);
+        //void Initialize(INWindow window, INRenderDevice renderDevice);
 
 
         #endregion

@@ -18,6 +18,8 @@ namespace Patchwork.Framework
         #endregion
 
         #region Methods
+        TDevice GetDevice<TDevice>(params object[] parameters) where TDevice : INRenderDevice;
+
         bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer;
 
         TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;

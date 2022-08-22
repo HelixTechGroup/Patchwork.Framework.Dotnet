@@ -28,7 +28,7 @@ namespace Patchwork.Framework.Platform.Rendering
         protected bool m_isRendering;
         protected bool m_isEnabled;
         protected bool m_checkEnabled;
-        protected bool m_handleRenderLoop = true;
+        protected bool m_ownsRenderLoop = false;
         protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         protected RenderPriority m_priority = RenderPriority.Normal;
         protected RenderStage m_level = RenderStage.Application;
@@ -82,9 +82,9 @@ namespace Patchwork.Framework.Platform.Rendering
             }
         }
 
-        public bool HandleRenderLoop
+        public bool OwnsRenderLoop
         {
-            get { return m_handleRenderLoop; }
+            get { return m_ownsRenderLoop; }
         }
         #endregion
 
@@ -129,7 +129,7 @@ namespace Patchwork.Framework.Platform.Rendering
             m_hasLock = true;
             try
             {
-                //lock(m_lock)
+                lock(m_lock)
                 {
                     CheckEnabled();
 

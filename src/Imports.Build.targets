@@ -1,4 +1,4 @@
-<Project InitialTargets="PrintImports" Condition="'$(PlatformId)' != 'none' And '$(IsFrameworkProject)' == 'true'">
+<Project InitialTargets="PrintImportTargets" Condition="('$(PlatformId)' != 'none' Or '$(PlatformId)' != '') And '$(IsFrameworkProject)' == 'true'">
   <PropertyGroup>
     <HasSkia>$(TargetPlatform.Contains(`skia`))</HasSkia>
     <HasGdi>$(TargetPlatform.Contains(`gdi`))</HasGdi>
@@ -16,7 +16,7 @@
     <Gdi Condition="'$(PlatformId)' == 'windows'">True</Gdi>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IsFrameworkProject)' == 'true'">
+  <PropertyGroup Condition="'$(IsFrameworkProject)' == 'true' And ('$(PlatformId)' != 'none' And '$(PlatformId)' != '')">
     <CoreImportFile>$(SourceDirectory)\$(ProductName)\$(ProductName).projitems</CoreImportFile>
     <PlatformImportFile>$(PlatformDirectory)\$(ProductName).$(PlatformId)\$(ProductName).$(PlatformId).projitems</PlatformImportFile>
     <MobileImportFile>$(PlatformDirectory)\$(ProductName).Mobile\$(ProductName).Mobile.projitems</MobileImportFile>
@@ -26,6 +26,7 @@
     <RenderingImportFile>$(SourceDirectory)\$(ProductName).Rendering\$(ProductName).Rendering.projitems</RenderingImportFile>
     <GdiImportFile>$(PlatformDirectory)\$(ProductName).Gdi\$(ProductName).Gdi.projitems</GdiImportFile>
     <SkiaImportFile>$(PlatformDirectory)\$(ProductName).Skia\$(ProductName).Skia.projitems</SkiaImportFile>
+    <DirectXImportFile>$(PlatformDirectory)\$(ProductName).DirectX\$(ProductName).DirectX.projitems</DirectXImportFile>
     <!--<ShinProjectFile>$(ThirdPartyDirectory)\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj</ShinProjectFile>-->
   </PropertyGroup>
 
@@ -34,62 +35,65 @@
       Include="$(ShinProjectFile)" />
   </ItemGroup>-->
 
-  <!--<PropertyGroup>
-    <SharedImports>$(CoreImportFile);$(PlatformImportFile)</SharedImports>
-  </PropertyGroup>-->
-  <ItemGroup>
+  <PropertyGroup>
+    <SharedImports Condition="Exists('$(CoreImportFile)')">$(CoreImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(PlatformImportFile)')">$(SharedImports);$(PlatformImportFile)</SharedImports>
+  </PropertyGroup>
+  <!--<ItemGroup>
     <Imports Include="$(CoreImportFile)" />
     <Imports Include="$(PlatformImportFile)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
-  <PropertyGroup>
+  <!--<PropertyGroup>
     <IString>@(Imports->'%(Identity)')</IString>
-  </PropertyGroup>
+  </PropertyGroup>-->
   <!--<Import Project="$(IString)" />-->
-  <!--<PropertyGroup Condition="'$(PlatformType)' == 'desktop'">
-    <SharedImports>$(SharedImports);$(DesktopImportFile)</SharedImports>
+  <PropertyGroup Condition="'$(PlatformType)' == 'desktop'">
+    <SharedImports Condition="Exists('$(DesktopImportFile)')">$(SharedImports);$(DesktopImportFile)</SharedImports>
   </PropertyGroup>
   <PropertyGroup Condition="'$(PlatformType)' == 'mobile'">
-    <SharedImports>$(SharedImports);$(MobileImportFile)</SharedImports>
-  </PropertyGroup>-->
+    <SharedImports Condition="Exists('$(MobileImportFile)')">$(SharedImports);$(MobileImportFile)</SharedImports>
+  </PropertyGroup>
 
-  <ItemGroup Condition="'$(PlatformType)' == 'desktop'">
+  <!--<ItemGroup Condition="'$(PlatformType)' == 'desktop'">
     <Imports Include="$(DesktopImportFile)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PlatformType)' == 'mobile'">
     <Imports Include="$(MobileImportFile)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
-  <!--<PropertyGroup Condition="'$(Rendering)' == 'true'">
-    <SharedImports>$(SharedImports);$(DisplayImportFile);$(WindowingImportFile);$(RenderingImportFile)</SharedImports>
-  </PropertyGroup>-->
+  <PropertyGroup Condition="'$(Rendering)' == 'true'">
+    <SharedImports Condition="Exists('$(DisplayImportFile)')">$(SharedImports);$(DisplayImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(WindowingImportFile)')">$(SharedImports);$(WindowingImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(RenderingImportFile)')">$(SharedImports);$(RenderingImportFile)</SharedImports>
+  </PropertyGroup>
 
-  <ItemGroup Condition="'$(Rendering)' == 'true'">
+  <!--<ItemGroup Condition="'$(Rendering)' == 'true'">
     <Imports Include="$(DisplayImportFile)" />
     <Imports Include="$(WindowingImportFile)" />
     <Imports Include="$(RenderingImportFile)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <!--<PropertyGroup Condition="'$(Gdi)' == 'true'">
-    <SharedImports>$(SharedImports);$(GdiImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(GdiImportFile)')">$(SharedImports);$(GdiImportFile)</SharedImports>
   </PropertyGroup>-->
 
-  <ItemGroup Condition="'$(Gdi)' == 'true'">
+  <!--<ItemGroup Condition="'$(Gdi)' == 'true'">
     <Imports Include="$(GdiImportFile)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <!--<PropertyGroup Condition="'$(Skia)' == 'true'">
-    <SharedImports>$(SharedImports);$(SkiaImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(SkiaImportFile)')">$(SharedImports);$(SkiaImportFile)</SharedImports>
   </PropertyGroup>-->
 
-  <ItemGroup Condition="'$(Skia)' == 'true'">
+  <!--<ItemGroup Condition="'$(Skia)' == 'true'">
     <Imports Include="$(SkiaImportFile)" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <!--<PropertyGroup>
     <SharedImports>$(%(Imports))</SharedImports>
-  </PropertyGroup>
-  <Import Project="$(SharedImports)" Label="Shared" />-->
+  </PropertyGroup>-->
+
   <!--<Choose>
     <When Condition="'$(Rendering)' == 'true'">
       <ItemGroup>
@@ -140,6 +144,9 @@
     <Import Project="$(SkiaImportFile)" Label="Shared" />
   </ImportGroup>-->
 
+  <ItemGroup>
+    <PackageReference Include="Shin.Framework" Version="0.1.3-preview" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(Rendering)' == 'true'">
       <ItemGroup>
@@ -158,11 +165,14 @@
     </When>
   </Choose>
 
+  <!--<Import Project="$(SharedImports)" Label="Shared" />-->
+
+  <!--<Import Project="$(Imports)" Label="Shared"/>-->
   <!--<PropertyGroup>
     <PropsImported>True</PropsImported>
   </PropertyGroup>-->
 
-  <Target Name="PrintImports" Outputs="@(Imports)">
+  <Target Name="PrintImportTargets" Outputs="@(Imports)">
     <Error Condition="$(PlatformId) == 'none'" Text="!!!Imports.Build.props - PlatformId == None!!!"/>
     <!--<Message Text="| $(SectionSymbol) PlatformId: $(PlatformId)"/>-->
     <PropertyGroup>
@@ -221,6 +231,10 @@
     <!--<PropertyGroup>
       <SharedImports>@(Imports->'%(Identity)')</SharedImports>
     </PropertyGroup>-->
+
+    <Message Text="| $(SectionString)" Importance="high" />
+    <Message Text="| []==~ $(MSBuildThisFile) ~==[]" Importance="high" />
+    <Message Text="| $(HeaderString)" Importance="high" />
 
     <Message Text="| $(SectionSymbol) IsFrameworkProject: $(IsFrameworkProject)" Importance="high" />
     <Message Text="| $(SectionSymbol) PlatformType: $(PlatformType)" Importance="high" />

@@ -57,8 +57,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\GdiPlus\StringUnit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\GdiPlus\Stubs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\GdiPlus\Unit.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiHdcManager.cs" />
+    <Compile Include="..\..\Platform\Patchwork.Framework.Gdi\Platform\Rendering\GdiAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\GdiWindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\GdiSurface.cs" />
   </ItemGroup>
 </Project>

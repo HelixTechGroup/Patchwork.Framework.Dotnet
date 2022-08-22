@@ -1,8 +1,10 @@
 ﻿#region Usings
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading;
 using Patchwork.Framework.Messaging;
+using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 #endregion
 
@@ -22,9 +24,13 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Properties
         INRenderAdapter Adapter { get; }
 
+        INRenderContext Context { get; }
+
         Priority Priority { get; }
 
         IEnumerable<Type> SupportedRenderers { get; }
+
+        PointF DpiScale { get; }
         #endregion
 
         #region Methods
@@ -115,5 +121,17 @@ namespace Patchwork.Framework.Platform.Rendering
     public interface INRenderDeviceGamingSupport { }
 
     public interface INRenderDevice<TAdapter> : INRenderDevice
-        where TAdapter : INRenderAdapter { }
+        where TAdapter : INRenderAdapter
+    {
+        new TAdapter Adapter { get; }
+    }
+
+    public interface INRenderDevice<TAdapter, TContext> : INRenderDevice
+        where TAdapter : INRenderAdapter
+        where TContext : class, INRenderContext
+    {
+        new TAdapter Adapter { get; }
+
+        TContext Context { get; }
+    }
 }

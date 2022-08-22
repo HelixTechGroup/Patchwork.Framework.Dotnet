@@ -179,6 +179,43 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
             
         }
 
+        public static int SetBitsToBitmap(IntPtr hdc,
+                                          int width,
+                                          int height,
+                                          IntPtr bits,
+                                          out BitmapInfo bmi,
+                                          IntPtr bmp = default,
+                                          int xSrc = 0,
+                                          int ySrc = 0,
+                                          int xDest = 0,
+                                          int yDest = 0,
+                                          bool isRgba = true,
+                                          bool isImageTopDown = true)
+        {
+            var bi = new BitmapInfoHeader
+                     {
+                         Size = (uint)Marshal.SizeOf<BitmapInfoHeader>(),
+                         Width = width,
+                         Height = isImageTopDown ? -height : height,
+                         CompressionMode = BitmapCompressionMode.BI_RGB,
+                         BitCount = isRgba ? (ushort)32 : (ushort)24,
+                         Planes = 1
+                     };
+            bmi = new BitmapInfo();
+            bmi.Header = bi;
+
+            if (bmp == IntPtr.Zero)
+            {
+                var sdc = GetDC(IntPtr.Zero);
+                bmp = CreateCompatibleBitmap(sdc, width, height);
+                ReleaseDC(IntPtr.Zero, sdc);
+            }
+
+
+            return SetBitmapBits(bmp, 0, bits);
+
+        }
+
         //public static unsafe int SetRgbBitsToDevice(IntPtr hdc, int width, int height, byte[] bits, int xSrc = 0,
         //    int ySrc = 0, int xDest = 0, int yDest = 0, bool isRgba = true, bool isImageTopDown = true)
         //{

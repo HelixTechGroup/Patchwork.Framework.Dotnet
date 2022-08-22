@@ -22,9 +22,10 @@ namespace Patchwork.Framework.Extensions
 
         public static void PushRenderOsMessage(this IPlatformMessagePump pump,
                                                INWindow window,
-                                               Point requestedPosition)
+                                               IRenderMessageData data)
         {
-
+            //FixMe
+            pump.PushRenderMessage(data);
         }
 
         public static void PushFrameBuffer(this IPlatformMessagePump pump, INRenderer renderer, NFrameBuffer frameBuffer)

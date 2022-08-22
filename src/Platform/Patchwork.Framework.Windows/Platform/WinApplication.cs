@@ -14,6 +14,7 @@ using Shin.Framework.Collections.Concurrent;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 using FileAttributes = Patchwork.Framework.Platform.Interop.Kernel32.FileAttributes;
+using static System.Net.WebRequestMethods;
 #endregion
 
 namespace Patchwork.Framework.Platform
@@ -99,6 +100,9 @@ namespace Patchwork.Framework.Platform
         /// <inheritdoc />
         public override void CloseConsole()
         {
+            if (m_stdIn == null || m_stdOut == null)
+                return;
+
             m_stdOut.Close();
             m_stdIn.Close();
             if (!FreeConsole())
@@ -141,21 +145,29 @@ namespace Patchwork.Framework.Platform
 
         protected override void PlatformPumpMessages()
         {
-            do
-            {
-                //AddCancellationToken(cancellationToken);
-                if (!HasMessages(out var msg))
-                    return;
-                //break;
-
-                if (msg.Value == (uint)WindowsMessageIds.QUIT)
+            //do
+            //{
+                //var wCode = MsgWaitForMultipleObjectsEx(0, null, 1000, 0x0100, 0);
+                //if (wCode == 0 || wCode == 258)
                 {
-                    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
-                    m_tokenSource.Cancel();
-                }
+                    while (HasMessages(out var msg))
+                    {
+                        if (msg.Value == (uint)WindowsMessageIds.QUIT)
+                        {
+                            Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                            m_tokenSource.Cancel();
+                        }
 
-                ProcessMessage(ref msg);
-            } while (!m_tokenSource.IsCancellationRequested);
+                        ProcessMessage(ref msg);
+                    }
+                }
+                //else
+                //    Core.Logger.LogInfo(@$"MsgWaitForMultipleObjectsEx: {wCode}");
+                //AddCancellationToken(cancellationToken);
+                //if (!HasMessages(out var msg))
+                //    return;
+                //break;
+            //} while (!m_tokenSource.IsCancellationRequested);
         }
 
         private IntPtr WindowProc(IntPtr hWnd, WindowsMessageIds msg, IntPtr wParam, IntPtr lParam)

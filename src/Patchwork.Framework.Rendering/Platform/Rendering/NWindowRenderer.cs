@@ -61,18 +61,18 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         #region Methods
-        public void Initialize(INWindow window, INRenderDevice renderDevice)
-        {
-            Throw.IfNull(window);
-            Throw.IfNull(renderDevice);
-            Throw.If(!window.IsRenderable).InvalidOperationException();
-            Throw.If(!renderDevice.SupportedRenderers.Contains(GetType())).InvalidOperationException();
+        //public void Initialize(INWindow window, INRenderDevice renderDevice)
+        //{
+        //    Throw.IfNull(window);
+        //    Throw.IfNull(renderDevice);
+        //    Throw.If(!window.IsRenderable).InvalidOperationException();
+        //    Throw.If(!renderDevice.SupportedRenderers.Contains(GetType())).InvalidOperationException();
 
-            m_window = window;
-            m_device = renderDevice;
+        //    m_window = window;
+        //    m_device = renderDevice;
 
-            Initialize();
-        }
+        //    Initialize();
+        //}
 
         /// <inheritdoc />
         protected override bool CheckEnabled()

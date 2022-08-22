@@ -10,6 +10,7 @@ namespace Patchwork.Framework.Platform.Rendering
         INRenderAdapterConfiguration Configuration { get; }
 
         INRenderDevice Device { get; }
+
         INResourceFactory ResourceFactory { get; }
 
         INScreen Screen { get; }
@@ -20,6 +21,8 @@ namespace Patchwork.Framework.Platform.Rendering
 
         void Flush();
         #endregion
+
+        TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource;
 
         //IRenderCommandList GetCommandList();
 

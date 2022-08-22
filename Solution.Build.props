@@ -3,9 +3,9 @@
     <ProductName>Patchwork.Framework</ProductName>
     <Description>Patchwork.Framework</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Rendering Condition=" '$(Rendering)' == '' ">False</Rendering>
+    <!--<Rendering Condition=" '$(Rendering)' == '' ">False</Rendering>
     <Gdi Condition=" '$(Gdi)' == '' ">False</Gdi>
-    <Skia Condition=" '$(Skia)' == '' ">False</Skia>
+    <Skia Condition=" '$(Skia)' == '' ">False</Skia>-->
     <!--<ProjectImports>$(SolutionDir)Imports.Build.props</ProjectImports>-->
   </PropertyGroup>
 

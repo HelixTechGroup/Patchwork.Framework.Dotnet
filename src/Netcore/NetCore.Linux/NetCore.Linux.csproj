@@ -1,13 +1,13 @@
-﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.0.1">
+﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.2.0-preview">
   <PropertyGroup>
     <IsLibraryProject>True</IsLibraryProject>
     <PackageId>Patchwork.Framework.NetCore.Linux</PackageId>
     <TargetPlatform>netcore-linux-skia</TargetPlatform>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <!--<TargetFramework>netcoreapp3.1</TargetFramework>-->
     <IsFrameworkProject>True</IsFrameworkProject>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Shin.Framework" Version="0.0.1" />
+  <!--<ItemGroup>
+    <PackageReference Include="Shin.Framework" Version="0.1.1-preview" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
     <PackageReference Include="SkiaSharp" Version="2.80.2" />
@@ -15,9 +15,9 @@
   <Import Project="$(SourceDirectory)\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
   <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems" Label="Shared" />
   <Import Project="$(SourceDirectory)\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems" Label="Shared" />
-  <Import Project="$(SourceDirectory)\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems" Label="Shared" />
+  <Import Project="$(SourceDirectory)\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems" Label="Shared" />-->
   <!--<Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems"
           Label="Shared" />-->
-  <Import Project="$(SourceDirectory)\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems" Label="Shared" />
-  <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems" Label="Shared" />
+  <!--<Import Project="$(SourceDirectory)\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems" Label="Shared" />
+  <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems" Label="Shared" />-->
 </Project>

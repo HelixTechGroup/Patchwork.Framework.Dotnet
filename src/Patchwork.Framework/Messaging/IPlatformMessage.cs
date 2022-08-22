@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Collections.Generic;
 using Shin.Framework.Messaging;
 #endregion
 
@@ -9,7 +10,10 @@ namespace Patchwork.Framework.Messaging
     {
         #region Properties
         IMessageData RawData { get; }
+
         DateTime TimeStamp { get; }
+
+        //IEnumerable<string> ProcessedBy { get;  }  
         #endregion
     }
 

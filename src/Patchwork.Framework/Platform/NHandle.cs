@@ -18,6 +18,14 @@ namespace Patchwork.Framework.Platform
         #endregion
 
         #region Properties
+        public new bool IsDisposed
+        {
+            get
+            {
+                return m_isDisposed || m_handle.IsClosed || m_handle.IsInvalid;
+            }
+        }
+
         /// <inheritdoc />
         public string HandleDescriptor
         {

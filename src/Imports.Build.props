@@ -1,0 +1,268 @@
+<Project InitialTargets="PrintImports" Condition="('$(PlatformId)' != 'none' Or '$(PlatformId)' != '') And '$(IsFrameworkProject)' == 'true'">
+  <PropertyGroup>
+    <HasSkia>$(TargetPlatform.Contains(`skia`))</HasSkia>
+    <HasGdi>$(TargetPlatform.Contains(`gdi`))</HasGdi>
+    <HasConsole>$(TargetPlatform.Contains(`console`))</HasConsole>
+    <PlatformDirectory>$(SourceDirectory)\Platform</PlatformDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(HasConsole)' == 'true'">
+    <Rendering>False</Rendering>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(HasGdi)' == 'true'">
+    <Gdi Condition="'$(PlatformId)' == 'windows'">True</Gdi>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(HasSkia)' == 'true'">
+    <Skia>True</Skia>
+    <Gdi Condition="'$(PlatformId)' == 'windows'">True</Gdi>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsFrameworkProject)' == 'true' And ('$(PlatformId)' != 'none' Or '$(PlatformId)' != '')">
+    <CoreImportFile>$(SourceDirectory)\$(ProductName)\$(ProductName).projitems</CoreImportFile>
+    <PlatformImportFile>$(PlatformDirectory)\$(ProductName).$(PlatformId)\$(ProductName).$(PlatformId).projitems</PlatformImportFile>
+    <MobileImportFile>$(PlatformDirectory)\$(ProductName).Mobile\$(ProductName).Mobile.projitems</MobileImportFile>
+    <DesktopImportFile>$(PlatformDirectory)\$(ProductName).Desktop\$(ProductName).Desktop.projitems</DesktopImportFile>
+    <DisplayImportFile>$(SourceDirectory)\$(ProductName).Display\$(ProductName).Display.projitems</DisplayImportFile>
+    <WindowingImportFile>$(SourceDirectory)\$(ProductName).Windowing\$(ProductName).Windowing.projitems</WindowingImportFile>
+    <RenderingImportFile>$(SourceDirectory)\$(ProductName).Rendering\$(ProductName).Rendering.projitems</RenderingImportFile>
+    <GdiImportFile>$(PlatformDirectory)\$(ProductName).Gdi\$(ProductName).Gdi.projitems</GdiImportFile>
+    <SkiaImportFile>$(PlatformDirectory)\$(ProductName).Skia\$(ProductName).Skia.projitems</SkiaImportFile>
+    <DirectXImportFile>$(PlatformDirectory)\$(ProductName).DirectX\$(ProductName).DirectX.projitems</DirectXImportFile>
+    <!--<ShinProjectFile>$(ThirdPartyDirectory)\shin\src\NetCore\Shin.Framework.NetCore\Shin.Framework.NetCore.csproj</ShinProjectFile>-->
+  </PropertyGroup>
+
+  <!--<ItemGroup>
+    <ProjectReference
+      Include="$(ShinProjectFile)" />
+  </ItemGroup>-->
+
+  <PropertyGroup>
+    <SharedImports Condition="Exists('$(CoreImportFile)')">$(CoreImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(PlatformImportFile)')">$(SharedImports);$(PlatformImportFile)</SharedImports>
+  </PropertyGroup>
+  <!--<ItemGroup>
+    <Imports Include="$(CoreImportFile)" />
+    <Imports Include="$(PlatformImportFile)" />
+  </ItemGroup>-->
+
+  <!--<PropertyGroup>
+    <IString>@(Imports->'%(Identity)')</IString>
+  </PropertyGroup>-->
+  <!--<Import Project="$(IString)" />-->
+  <PropertyGroup Condition="'$(PlatformType)' == 'desktop'">
+    <SharedImports Condition="Exists('$(DesktopImportFile)')">$(SharedImports);$(DesktopImportFile)</SharedImports>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PlatformType)' == 'mobile'">
+    <SharedImports Condition="Exists('$(MobileImportFile)')">$(SharedImports);$(MobileImportFile)</SharedImports>
+  </PropertyGroup>
+
+  <!--<ItemGroup Condition="'$(PlatformType)' == 'desktop'">
+    <Imports Include="$(DesktopImportFile)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PlatformType)' == 'mobile'">
+    <Imports Include="$(MobileImportFile)" />
+  </ItemGroup>-->
+
+  <PropertyGroup Condition="'$(Rendering)' == 'true'">
+    <SharedImports Condition="Exists('$(DisplayImportFile)')">$(SharedImports);$(DisplayImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(WindowingImportFile)')">$(SharedImports);$(WindowingImportFile)</SharedImports>
+    <SharedImports Condition="Exists('$(RenderingImportFile)')">$(SharedImports);$(RenderingImportFile)</SharedImports>
+  </PropertyGroup>
+
+  <!--<ItemGroup Condition="'$(Rendering)' == 'true'">
+    <Imports Include="$(DisplayImportFile)" />
+    <Imports Include="$(WindowingImportFile)" />
+    <Imports Include="$(RenderingImportFile)" />
+  </ItemGroup>-->
+
+  <!--<PropertyGroup Condition="'$(Gdi)' == 'true'">
+    <SharedImports Condition="Exists('$(GdiImportFile)')">$(SharedImports);$(GdiImportFile)</SharedImports>
+  </PropertyGroup>-->
+
+  <!--<ItemGroup Condition="'$(Gdi)' == 'true'">
+    <Imports Include="$(GdiImportFile)" />
+  </ItemGroup>-->
+
+  <!--<PropertyGroup Condition="'$(Skia)' == 'true'">
+    <SharedImports Condition="Exists('$(SkiaImportFile)')">$(SharedImports);$(SkiaImportFile)</SharedImports>
+  </PropertyGroup>-->
+
+  <!--<ItemGroup Condition="'$(Skia)' == 'true'">
+    <Imports Include="$(SkiaImportFile)" />
+  </ItemGroup>-->
+
+  <!--<PropertyGroup>
+    <SharedImports>$(%(Imports))</SharedImports>
+  </PropertyGroup>-->
+
+  <!--<Choose>
+    <When Condition="'$(Rendering)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+      </ItemGroup>
+      <Choose>
+        <When Condition="'$(Gdi)' == 'true'">
+        </When>
+        <When Condition="'$(Skia)' == 'true'">
+          <ItemGroup>
+            <PackageReference Include="SkiaSharp" Version="2.80.2"/>
+          </ItemGroup>
+        </When>
+      </Choose>
+    </When>
+  </Choose>-->
+
+  <!--<Import Project="$(CoreImportFile)" Label="Shared" />
+
+  <PropertyGroup>
+    <PlatformTypeImport>$(DesktopImportFile)</PlatformTypeImport>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(PlatformType)' == 'mobile'">
+      <PropertyGroup>
+        <PlatformTypeImport>$(MobileImportFile)</PlatformTypeImport>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  
+  <ImportGroup>
+    <Import Project="$(PlatformImportFile)"
+            Label="Shared" 
+            Condition="Exists('$(PlatformImportFile)')"/>
+    <Import Project="$(PlatformTypeImport)" Label="Shared" />
+  </ImportGroup>
+
+  <ImportGroup Condition="'$(Rendering)' == 'true'">
+    <Import Project="$(DisplayImportFile)" Label="Shared" />
+    <Import Project="$(WindowingImportFile)" Label="Shared" />
+    <Import Project="$(RenderingImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Gdi)' == 'true'">
+    <Import Project="$(GdiImportFile)" Label="Shared" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Rendering)' == 'true' And '$(Skia)' == 'true'">
+    <Import Project="$(SkiaImportFile)" Label="Shared" />
+  </ImportGroup>-->
+
+  <ItemGroup>
+    <PackageReference Include="Shin.Framework" Version="0.1.1-preview" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="'$(Rendering)' == 'true'">
+      <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+      </ItemGroup>
+      <Choose>
+        <!--<When Condition="'$(Gdi)' == 'true'">
+        </When>-->
+        <When Condition="'$(Skia)' == 'true'">
+          <ItemGroup>
+            <PackageReference Include="SkiaSharp" Version="2.80.2"/>
+          </ItemGroup>
+        </When>
+      </Choose>
+    </When>
+  </Choose>
+
+  <!--<Import Project="$(SharedImports)" Label="Shared" />-->
+
+  <!--<Import Project="$(Imports)" Label="Shared"/>-->
+  <!--<PropertyGroup>
+    <PropsImported>True</PropsImported>
+  </PropertyGroup>-->
+
+  <Target Name="PrintImports" Outputs="@(Imports)">
+    <Error Condition="$(PlatformId) == 'none'" Text="!!!Imports.Build.props - PlatformId == None!!!"/>
+    <!--<Message Text="| $(SectionSymbol) PlatformId: $(PlatformId)"/>-->
+    <PropertyGroup>
+      <!--<CurrentImport>%(Imports.Identity)</CurrentImport>
+      <HasSkia>$(TargetPlatform.Contains(`skia`))</HasSkia>
+      <HasGdi>$(TargetPlatform.Contains(`gdi`))</HasGdi>-->
+      <HasConsole>$(TargetPlatform.Contains(`console`))</HasConsole>
+    </PropertyGroup>
+    <!--<PropertyGroup Condition="'$(HasConsole)' == 'true'">
+      <Rendering>!$(TargetPlatform.Contains(`console`))</Rendering>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(HasGdi)' == 'true'">
+      <Gdi Condition="'$(HasWindows)' == 'true'">True</Gdi>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Rendering)' == 'true' And '$(HasSkia)' == 'true'">
+      <Skia>True</Skia>
+      <Gdi>$(HasWindows)</Gdi>
+    </PropertyGroup>-->
+
+    <!--<PropertyGroup>
+      <CoreImportFile>$(SourceDirectory)\$(ProductName)\$(ProductName).projitems</CoreImportFile>
+      <PlatformImportFile>$(PlatformDirectory)\$(ProductName).$(PlatformId)\$(ProductName).$(PlatformId).projitems</PlatformImportFile>
+      <MobileImportFile>$(PlatformDirectory)\$(ProductName).Mobile\$(ProductName).Mobile.projitems</MobileImportFile>
+      <DesktopImportFile>$(PlatformDirectory)\$(ProductName).Desktop\$(ProductName).Desktop.projitems</DesktopImportFile>
+      <DisplayImportFile>$(SourceDirectory)\$(ProductName).Display\$(ProductName).Display.projitems</DisplayImportFile>
+      <WindowingImportFile>$(SourceDirectory)\$(ProductName).Windowing\$(ProductName).Windowing.projitems</WindowingImportFile>
+      <RenderingImportFile>$(SourceDirectory)\$(ProductName).Rendering\$(ProductName).Rendering.projitems</RenderingImportFile>
+      <GdiImportFile>$(PlatformDirectory)\$(ProductName).Gdi\$(ProductName).Gdi.projitems</GdiImportFile>
+      <SkiaImportFile>$(PlatformDirectory)\$(ProductName).Skia\$(ProductName).Skia.projitems</SkiaImportFile>
+    </PropertyGroup>-->
+    <!--<ItemGroup>
+      <Imports Include="$(CoreImportFile)" />
+      <Imports Include="$(PlatformImportFile)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(PlatformType)' == 'desktop'">
+      <Imports Include="$(DesktopImportFile)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(PlatformType)' == 'mobile'">
+      <Imports Include="$(MobileImportFile)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Rendering)' == 'true'">
+      <Imports Include="$(DisplayImportFile)" />
+      <Imports Include="$(WindowingImportFile)" />
+      <Imports Include="$(RenderingImportFile)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Gdi)' == 'true'">
+      <Imports Include="$(GdiImportFile)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Skia)' == 'true'">
+      <Imports Include="$(SkiaImportFile)" />
+    </ItemGroup>-->
+
+    <!--<PropertyGroup>
+      <SharedImports>@(Imports->'%(Identity)')</SharedImports>
+    </PropertyGroup>-->
+
+    <Message Text="| $(SectionString)" Importance="high" />
+    <Message Text="| []==~ $(MSBuildThisFile) ~==[]" Importance="high" />
+    <Message Text="| $(HeaderString)" Importance="high" />
+
+    <Message Text="| $(SectionSymbol) IsFrameworkProject: $(IsFrameworkProject)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformType: $(PlatformType)" Importance="high" />
+    <Message Text="| $(SectionSymbol) Rendering: $(Rendering)" Importance="high" />
+    <Message Text="| $(SectionSymbol) Gdi: $(Gdi)" Importance="high" />
+    <Message Text="| $(SectionSymbol) Skia: $(Skia)" Importance="high" />
+    <Message Text="| $(SectionSymbol) HasGdi: $(HasGdi)" Importance="high" />
+    <Message Text="| $(SectionSymbol) HasSkia: $(HasSkia)" Importance="high" />
+    <Message Text="| $(SectionSymbol) HasConsole: $(HasConsole)" Importance="high" />
+    <Message Text="| $(SectionSymbol) ---------------------------------------" Importance="high" />
+    <Message Text="| $(SectionSymbol) SharedImports:$(SharedImports)" Importance="high" />
+    <Message Text="| $(SectionSymbol) Imports: @(Imports->'%(Identity)')" Importance="high" />
+    <Message Text="| $(SectionSymbol) Project: %(Imports.Identity)" Importance="high" />
+    <Message Text="| $(SectionSymbol) ---------------------------------------" Importance="high" />
+    <Message Text="| $(SectionSymbol) CoreImportFile: $(CoreImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) PlatformImportFile: $(PlatformImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) MobileImportFile: $(MobileImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) DesktopImportFile: $(DesktopImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) DisplayImportFile: $(DisplayImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) WindowingImportFile: $(WindowingImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) RenderingImportFile: $(RenderingImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) GdiImportFile: $(GdiImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) SkiaImportFile: $(SkiaImportFile)" Importance="high" />
+    <Message Text="| $(SectionSymbol) IString: $(IString)" Importance="high" />
+    <!--<CallTarget Targets="RunNuGetRestore" />-->
+    <PropertyGroup>
+      <!--<SharedImports>@(Imports->'%(Identity)')</SharedImports>-->
+      <PropsImported>True</PropsImported>
+    </PropertyGroup>
+  </Target>
+</Project>

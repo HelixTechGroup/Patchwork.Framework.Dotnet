@@ -83,7 +83,7 @@ namespace Patchwork.Framework.Messaging
         /// <inheritdoc />
         public bool Push(IPlatformMessage message)
         {
-            /*Core.Dispatcher.InvokeAsync(() => */Push(message as IPumpMessage)/*).ConfigureAwait(false)*/;
+            Core.Dispatcher.InvokeAsync(() => Push(message as IPumpMessage)).ConfigureAwait(false);
             return true;
         }
 

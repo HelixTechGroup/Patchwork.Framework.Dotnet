@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmFlip3DPolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmNCRenderingPolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\DwmApi\DwmWindowAttributeType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\ShCore\ProcessDpiAwareness.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\User32\Events.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Utilities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\Kernel32\DesiredAccess.cs" />

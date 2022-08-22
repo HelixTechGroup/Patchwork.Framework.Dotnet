@@ -6,9 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
+using Patchwork.Framework.Platform.Rendering;
+
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
+using Shin.Framework.Threading;
 #endregion
 
 namespace Patchwork.Framework.Manager
@@ -22,6 +25,11 @@ namespace Patchwork.Framework.Manager
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
         protected IList<Task> m_tasks;
+        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        protected static readonly object m_lock = new object();
+        protected static bool m_hasLock;
+        protected readonly int m_lockTimeout = 50;
+        private bool m_isWaiting;
 
         /// <inheritdoc />
         public event Action Shutdown;
@@ -73,14 +81,15 @@ namespace Patchwork.Framework.Manager
                 if (m_supportedMessageIds.All(i => i != (message?.Id)))
                     continue;
 
-                var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                RunManager(token);              
+
                 m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)));
-                //.ContinueWith(t => m_tasks.Remove(t)));
+
+                var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
                 foreach (var c in complete)
                     m_tasks.Remove(c);
-            }
-
-            RunManager(token);
+                //.ContinueWith(t => m_tasks.Remove(t)));
+            }          
 
             //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
             m_isPumping = false;
@@ -91,22 +100,54 @@ namespace Patchwork.Framework.Manager
             if (!m_isInitialized)
                 Throw.Exception<InvalidOperationException>();
 
-            WaitManager();
-            var whenAll = Task.WhenAll(m_tasks);
-            Task.WhenAll(whenAll).ConfigureAwait(false);
+            if (m_isWaiting)
+                return;
 
-            for (;;)
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write, 10, 75, 100))
+            //{
+            //    for(var i = 0; i < m_tasks.Count; i++)
+            //    {
+            //        Thread.l
+            //    }
+            //}   //Throw.Exception().InvalidOperationException();
+
+            //m_hasLock = true;
+
+            try
             {
-                while (!whenAll.IsCompleted)
+                lock(m_lock)
                 {
-                    Console.Write(".");
-                    Thread.Sleep(500);
+                    m_isWaiting = true;
+                    WaitManager();
+                    var whenAll = Task.WhenAll(m_tasks);
+                    whenAll.ConfigureAwait(false);
+                    //Task.WhenAll(whenAll).ConfigureAwait(false);
+
+                    for (;;)
+                    {
+                        while (!whenAll.IsCompleted)
+                        {
+                            //WaitManager();
+                            Console.Write(".");
+                            Thread.Sleep(500);
+                        }
+
+                        break;
+                    }
+
+                    m_tasks.Clear();
                 }
-
-                break;
             }
+            finally
 
-            m_tasks.Clear();
+            {
+                m_isWaiting = false;
+                //if (m_hasLock)
+                //{
+                //    m_lockSlim.TryExit()
+                //    m_hasLock = false;
+                //}
+            }
         }
 
         public void Run(CancellationToken token)
@@ -158,6 +199,7 @@ namespace Patchwork.Framework.Manager
 
             m_isRunning = true;
             Pump(token);
+            Wait();
             m_isRunning = false;
         }
 
@@ -186,7 +228,9 @@ namespace Patchwork.Framework.Manager
             if (!m_isInitialized)
                 return;
 
-            if (message.Id == MessageIds.Rendering || message.Id == MessageIds.Window)
+            if (message.Id == MessageIds.Rendering)
+                m_pump.Push(message);
+            else if (message.Id == MessageIds.Window)
                 m_pump.Push(message);
 
             //if (m_supportedMessageIds.Any(i => i == (message?.Id)))

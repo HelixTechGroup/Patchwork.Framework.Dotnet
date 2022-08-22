@@ -1,5 +1,8 @@
 ﻿#region Usings
 using System;
+using Patchwork.Framework.Platform.Windowing;
+
+using Shin.Framework.Extensions;
 using Shin.Framework.IoC.DependencyInjection;
 using SkiaSharp;
 #endregion
@@ -12,6 +15,9 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void RegisterRenderers()
         {
+            m_iocContainer.Register<INRenderDevice>(this);
+            m_iocContainer.Register<INRenderAdapter, GdiAdapter>();
+            m_iocContainer.Register<INResourceFactory, GdiResourceFactory>();
             m_iocContainer.Register<INWindowRenderer, SkiaWindowRenderer>(false);
             m_supportedRenderers.Add(typeof(INWindowRenderer));
         }
@@ -20,6 +26,12 @@ namespace Patchwork.Framework.Platform.Rendering
         protected override void PlatformSetFrameBuffer(NFrameBuffer buffer)
         {
             
+        }
+
+        /// <inheritdoc />
+        protected override void PlatformGetDpi(INWindow window)
+        {
+            throw new NotImplementedException();
         }
 
         //protected override TRenderer PlatformCreateRenderer<TRenderer>()

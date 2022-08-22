@@ -131,6 +131,15 @@ namespace Patchwork.Framework.Platform
         {
             m_handle = new NHandle();
             m_buffer = new SafeMemoryBuffer(true);
+            m_buffer = new SafeMemoryBuffer(1);
+            //m_buffer.Initialize(1);
+
+        }
+
+        public NMemoryChunk(ICollection<byte> collection) : this()
+        {
+            m_buffer = new SafeMemoryBuffer(collection.Count); 
+            SetContent(collection as byte[]);
         }
 
         #region Methods
@@ -310,7 +319,7 @@ namespace Patchwork.Framework.Platform
             return !Equals(left, right);
         }
 
-        public virtual void SetContent(byte[] value)
+        public void SetContent(byte[] value)
         {
             //lock (m_buffer)
             //{

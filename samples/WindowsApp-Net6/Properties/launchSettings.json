@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WindowsApp-Net6": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

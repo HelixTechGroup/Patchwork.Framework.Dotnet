@@ -223,6 +223,9 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
         public static extern bool SetWindowExtEx(IntPtr hDC, int nExtentX, int nExtentY, Size[] prevSize);
 
         [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetBrushOrgEx(IntPtr hDC, int x, int y, Point[] prevPoint);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
         public static extern int CreatePen(int nPenStyle, int nWidth, int nColor);
 
 
@@ -446,7 +449,7 @@ namespace Patchwork.Framework.Platform.Interop.Gdi32
                                              int nHeightSrc,
                                              BitBltFlags dwRop);
 
-        [DllImport(LibraryName, ExactSpelling = true)]
+        [DllImport(LibraryName, SetLastError = false, ExactSpelling = true)]
         public static extern int SetStretchBltMode(IntPtr hdc, StretchBltMode iStretchMode);
 
         [DllImport(LibraryName, ExactSpelling = true)]

@@ -75,7 +75,12 @@ namespace Patchwork.Framework.Platform.Windowing
                 case WindowsMessageIds.SIZE:
                     changed = true;
                     //InvalidateDataCache();
-                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
+                    //Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
+                    uint xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
+                    int x = unchecked((short)xy);
+                    int y = unchecked((short)(xy >> 16));
+                    var nSize = new Size(x, y);
+                    Core.MessagePump.PushWindowResizedMessage(this, nSize);
                     switch ((WindowSizeFlag)message.WParam)
                     {
                         case WindowSizeFlag.SIZE_MAXIMIZED:
@@ -125,7 +130,9 @@ namespace Patchwork.Framework.Platform.Windowing
                     break;
                 case WindowsMessageIds.DESTROY:
                     if (m_isMainApplicationWindow)
-                        PostMessage(m_parent.Handle.Pointer, WindowsMessageIds.CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        PostMessage(m_parent.Handle.Pointer, WindowsMessageIds.QUIT, IntPtr.Zero, IntPtr.Zero);
+
+                    m_inModalSizeLoop = false;
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, this);
                     break;
                 case WindowsMessageIds.ENABLE:
@@ -138,6 +145,7 @@ namespace Patchwork.Framework.Platform.Windowing
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
                 case WindowsMessageIds.PAINT:
+                    //Core.MessagePump.PushRenderOsMessage(this,);
                     //Render();
                     break;
                 case WindowsMessageIds.ERASEBKGND:

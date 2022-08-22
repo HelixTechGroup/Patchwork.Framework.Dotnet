@@ -1,4 +1,4 @@
-﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.0.1" InitialTargets="PrintProjectReport">
+﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.1.0" InitialTargets="PrintProjectReport">
   <PropertyGroup>
     <PackageId>$(ProductName).Net5.Android</PackageId>
     <TargetPlatform>net5.0-android-skia</TargetPlatform>

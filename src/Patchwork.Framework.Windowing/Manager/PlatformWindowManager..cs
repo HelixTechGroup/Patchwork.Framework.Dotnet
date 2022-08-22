@@ -61,6 +61,7 @@ namespace Patchwork.Framework.Manager
             Throw.If(!m_isInitialized).InvalidOperationException();
             var win = Core.IoCContainer.Resolve<INWindow>(null, Core.Application, definition);
             win.Create();
+            m_currentWindow = win;
 
             return win;
         }

@@ -44,6 +44,7 @@ namespace Patchwork.Framework
         //private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
         private static Task m_runTask;
         private static IList<Task> m_tasks;
+        private static object m_lock = new object();
         #endregion
 
         #region Properties
@@ -129,49 +130,65 @@ namespace Patchwork.Framework
             Startup?.Invoke();
             IsRunning = true;
             Logger.LogDebug("Pumping Messages.");
-            var mans = IoCContainer.ResolveAll<IPlatformManager>();
             PreRunResourcesShared(m_tokenSource.Token);
             //m.Pump(m_tokenSource.Token);
 
-            var timer = new System.Timers.Timer();
-            timer.AutoReset = true;
-            timer.Interval = 33;
-            timer.Enabled = true;
-            timer.Elapsed += ((sender, args) =>
-                                                    {
-                                                        var mans = IoCContainer.ResolveAll<IPlatformManager>();
-                                                        foreach (var m in mans)
-                                                            Task.Factory.StartNew(() => m.RunOnce(m_tokenSource.Token), m_tokenSource.Token);
-                                                    });
+            //var timer = new System.Timers.Timer();
+            //timer.AutoReset = true;
+            //timer.Interval = 66;
+            //timer.Enabled = true;
+            //timer.Elapsed += ((sender, args) =>
+            //                                        {
+            //                                            var mans = IoCContainer.ResolveAll<IPlatformManager>();
+            //                                            foreach (var m in mans)
+            //                                                /*Task.Factory.StartNew(() =>*/ m.RunOnce(m_tokenSource.Token) /*, m_tokenSource.Token)*/;
+            //                                        });
             while (!m_tokenSource.IsCancellationRequested)
             {
-                timer.Start();
+                //timer.Start();
+                //timer.AutoReset = true;
                 while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 {
                     var msg = e as IPlatformMessage;
-                    var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                    if (msg?.Id == MessageIds.Quit)
+                        m_tokenSource.Cancel();            
+
                     m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg), m_tokenSource.Token));
-                                    //.ContinueWith(t => m_tasks.Remove(t)));
+                    //.ContinueWith(t => m_tasks.Remove(t)));
+
+                    lock (m_lock)
+                    {
+                        var mans = IoCContainer.ResolveAll<IPlatformManager>();
+                        foreach (var m in mans)
+                        {
+                            if (m_tokenSource.IsCancellationRequested)
+                                break;
+
+                            Task.Run(() => m.RunOnce(m_tokenSource.Token));
+                        }
+                    }
+
+                    var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
                     foreach (var c in complete)
                         m_tasks.Remove(c);
-
-                    if (msg?.Id == MessageIds.Quit)
-                        m_tokenSource.Cancel();
-
-                    timer.Stop();
                 }
-                //foreach (var m in mans)
-                //    m.RunOnce(m_tokenSource.Token);
+
+                //timer.Stop();
             }
 
             //foreach (var m in mans)
             //    m.Wait();
 
             var whenAll = Task.WhenAll(m_tasks);
-            Task.WhenAll(whenAll).ConfigureAwait(false);
+            Task.Run(async() => await whenAll, m_tokenSource.Token);
 
             for (;;)
             {
+
+                
+                if (m_tokenSource.IsCancellationRequested)
+                    break;
+
                 while (!whenAll.IsCompleted)
                 {
                     Console.Write(".");
@@ -188,17 +205,22 @@ namespace Patchwork.Framework
             Shutdown?.Invoke();
         }
 
-        public static void RunAsync(CancellationToken token)
+        public static async void RunAsync(CancellationToken token)
         {
             m_runTask = new Task(() => { Run(token); }); //Task.Run(() => { Run(token); });
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
+            return;
         }
 
         public static void Pump()
         {
-            while (MessagePump.Poll(out var e, m_tokenSource.Token))
+            MessagePump.Pop(out var e);
+            if (e is null)
+                return; 
+
+            //while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t =>
                                                                                                        {
                                                                                                            m_tasks.Remove(t); 
@@ -272,7 +294,7 @@ namespace Patchwork.Framework
                                  //var i = a.ManagerType.GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
                                  //m_managers[i[0]] = new Lazy<IPlatformManager>(m_container.Resolve(a.ManagerType) as IPlatformManager);
                              });
-
+            t.Start();
             var t1 = new Task(() =>
                               {
                                   foreach (var m in tmpManagers)
@@ -280,8 +302,6 @@ namespace Patchwork.Framework
                                   //var i = m.GetType().GetInterfaces().Where(t => (t.IsInterface && t.ContainsInterface<IPlatformManager>())).ToArray();
                                   //m_managers[i[0]] = new Lazy<IPlatformManager>(m);
                               });
-
-            t.Start();
             t1.Start();
 
             Task.WaitAll(t, t1);
@@ -345,7 +365,7 @@ namespace Patchwork.Framework
 
         public static TManager AddManager<TManager>() where TManager : IPlatformManager, new()
         {
-            IoCContainer.Register<TManager>();
+            IoCContainer.Register<TManager>(true);
             var instance = IoCContainer.Resolve<TManager>();
             instance.Create();
             if (IsInitialized)
@@ -356,7 +376,7 @@ namespace Patchwork.Framework
 
         public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager
         {
-            IoCContainer.Register(instance);
+            IoCContainer.Register(instance, true);
             //m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
 
             if (!instance.IsCreated)
@@ -472,7 +492,7 @@ namespace Patchwork.Framework
                         m_tokenSource.Cancel();
                     break;
                 case MessageIds.Rendering:
-                    Logger.LogDebug("Stop me");
+                    Logger.LogDebug("Core loop - Render");
                     break; 
             }
         }

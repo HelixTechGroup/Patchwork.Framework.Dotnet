@@ -28,8 +28,8 @@ namespace Patchwork.Framework.Platform.Rendering
         //protected readonly int m_lockTimeout = 100;
         //protected static readonly Mutex m_mutex = new Mutex(true);
         //protected static readonly SemaphoreSlim m_semaphore = new SemaphoreSlim(0);
-        protected NFrameBuffer m_buffer;
-        protected NFrameBuffer m_oldBuffer;
+        protected static NFrameBuffer m_buffer;
+        protected static NFrameBuffer m_oldBuffer;
         protected SKSurface m_surface;
         //protected SKCanvas m_canvas;
         protected SKImage m_map;
@@ -52,6 +52,7 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             base.InitializeResources();
             m_buffer = m_oldBuffer = new NFrameBuffer();
+            m_bufferChanged = true;
             //CreateSurface();
         }
 
@@ -113,8 +114,9 @@ namespace Patchwork.Framework.Platform.Rendering
                 //m_pixMap = new SKPixmap(info, m_buffer.PixelBuffer.Handle.Pointer, m_buffer.PixelBuffer.RowBytes);
                 //m_pixMap = m_map.PeekPixels();
 
+                var surface = SKSurface.Create(info);
                 //var surface = SKSurface.Create(m_pixMap);
-                var surface = SKSurface.Create(info, m_buffer.PixelBuffer.Handle.Pointer);
+                //var surface = SKSurface.Create(info, m_buffer.PixelBuffer.Handle.Pointer);
                 //Throw.If(surface is null).InvalidOperationException();
 
                 m_surface = surface;
@@ -128,15 +130,22 @@ namespace Patchwork.Framework.Platform.Rendering
 
         protected void SetBuffer()
         {
-            if (!m_bufferChanged)
-                return;
+            //if (!m_bufferChanged)
+            //    return;
 
             m_lockSlim.TryEnter(SynchronizationAccess.Write);
             try
             {
-                Core.MessagePump.PushFrameBuffer(this, m_buffer);
-                m_oldBuffer?.Dispose();
-                m_oldBuffer = m_buffer;
+                //if (!m_buffer.Equals(m_oldBuffer))
+                //{
+                var tmpMap = m_surface.PeekPixels();
+                var tmpbuffer = new NFrameBuffer(tmpMap.Width, tmpMap.Height);
+                var tmp = tmpMap.GetPixelSpan();
+                tmpbuffer.SetPixelBuffer(tmp.ToArray());
+                    Core.MessagePump.PushFrameBuffer(this, tmpbuffer);
+                    m_oldBuffer?.Dispose();
+                    m_oldBuffer = m_buffer;
+                //}
                 m_bufferChanged = false;
             }
             finally
@@ -207,11 +216,13 @@ namespace Patchwork.Framework.Platform.Rendering
 
                 if (check)
                 {
-                    m_buffer.SetPixelBuffer(snap.GetPixels()/*m_pixMap.GetPixels()*/,
-                                            snap.Width,
-                                            snap.Height,
-                                            snap.RowBytes,
-                                            snap.BytesSize);
+                    //m_buffer.SetPixelBuffer(snap.GetPixels()/*m_pixMap.GetPixels()*/,
+                    //                        snap.Width,
+                    //                        snap.Height,
+                    //                        snap.RowBytes,
+                    //                        snap.BytesSize);
+                    var rec = m_window.ClientArea;
+                    m_buffer = NPixelBuffer.GenerateBuffer(rec.Width, rec.Height);
 
                     //if (m_oldBuffer != m_buffer)
                     //{
@@ -266,7 +277,7 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void OnSizeChanged(object sender, PropertyChangedEventArgs<Size> e)
         {
-            
+            m_bufferChanged = true;
         }
 
         /// <inheritdoc />
@@ -275,12 +286,16 @@ namespace Patchwork.Framework.Platform.Rendering
             //if (m_isInitialized)
             //    Render();
 
+            m_bufferChanged = true;
             return true;
         }
 
         /// <inheritdoc />
         protected override void PlatformRender()
         {
+            //if (!m_bufferChanged)
+            //    return;
+
             Core.Logger.LogDebug("---Skia Rendering Messages.");
             m_hasRendered = false;
             //try
@@ -311,11 +326,11 @@ namespace Patchwork.Framework.Platform.Rendering
                 //lock (m_window)
                 //{ 
                 // the rectangle
-                var rect = SKRect.Create(m_window.ClientArea.X.ToFloat() / 2,
-                                                    m_window.ClientArea.Y.ToFloat() / 2,
-                                                    m_window.ClientArea.Width.ToFloat() / 2,
-                                                    m_window.ClientArea.Height.ToFloat() / 2);
-                        //var rect = SKRect.Create(0, 0, 300, 300);
+                //var rect = SKRect.Create(m_window.ClientArea.X.ToFloat() / 2,
+                                                    //m_window.ClientArea.Y.ToFloat() / 2,
+                                                    //m_window.ClientArea.Width.ToFloat() / 2,
+                                                    //m_window.ClientArea.Height.ToFloat() / 2);
+                        var rect = SKRect.Create(0, 0, 300, 300);
 
                         //var info = new SKImageInfo(m_window.ClientSize.Width, m_window.ClientSize.Height);
                         //using var surface = SKSurface.Create(info, m_buffer.PixelBuffer.Handle.Pointer);
@@ -334,14 +349,16 @@ namespace Patchwork.Framework.Platform.Rendering
 
             //lock (m_buffer)
             //{
-                lock (m_buffer)
-                { 
+                //lock (m_buffer)
+                //{ 
                     m_surface.Canvas.Clear(Color.BlueViolet.ToSKColor());
                     // draw fill
                     m_surface.Canvas.DrawRect(rect, paint);
+                    //m_surface.
                     //handler(surface);
-                }
+                //}
             //}
+            
                         m_hasRendered = true;
 
                         // the brush (fill with blue)
@@ -378,6 +395,8 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void PlatformRendered()
         {
+            //if (!m_bufferChanged)
+            //    return;
             SetBuffer();
             //ReleaseSurface();
             //Validate();
@@ -386,12 +405,15 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void PlatformRendering()
         {
+            if (!m_bufferChanged)
+                return;
             CreateSurface();
         }
 
         /// <inheritdoc />
         protected override bool PlatformValidate()
         {
+            m_bufferChanged = false;
             return true;
         }
 

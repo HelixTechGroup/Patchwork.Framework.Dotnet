@@ -17,6 +17,9 @@ namespace Patchwork.Framework.Platform.Interop.ShCore
                                                       MonitorDpiType dpiType,
                                                       out uint dpiX,
                                                       out uint dpiY);
+
+        [DllImport(LibraryName, ExactSpelling = true)]
+        public static extern bool SetProcessDpiAwareness(ProcessDpiAwareness awareness);
         #endregion
     }
 }
