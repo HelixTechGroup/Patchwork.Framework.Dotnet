@@ -416,19 +416,19 @@ namespace Patchwork.Framework.Platform.Rendering
 
                         //CreateHDC(m_window.Handle.Pointer);
                         m_oldBmpPtr = SelectObject(m_memHdc.Pointer, m_surface.Handle.Pointer);
-                        //CheckOperation(m_oldBmpPtr != IntPtr.Zero);
+                //CheckOperation(m_oldBmpPtr != IntPtr.Zero);
 
-                        //CreateHDC(m_window.Handle.Pointer);
+                //CreateHDC(m_window.Handle.Pointer);
 
-                        //        CheckOperation(DeleteObject(m_bmpPtr));
-                        //        m_bmpPtr = CreateCompatibleBitmap(m_hdc, m_window.ClientArea.Width, m_window.ClientArea.Height);
-                        //        CheckOperation(m_bmpPtr != IntPtr.Zero);
+                //        CheckOperation(DeleteObject(m_bmpPtr));
+                //        m_bmpPtr = CreateCompatibleBitmap(m_hdc, m_window.ClientArea.Width, m_window.ClientArea.Height);
+                //        CheckOperation(m_bmpPtr != IntPtr.Zero);
 
-                        //        m_oldBmpPtr = SelectObject(m_memHdc, m_bmpPtr);
-                        //        CheckOperation(m_oldBmpPtr != IntPtr.Zero);
-                        //m_bmpPtr = CreateCompatibleBitmap(m_hdc, m_window.ClientSize.Width, m_window.ClientSize.Height);
-                        //CheckOperation(m_bmpPtr != IntPtr.Zero);
-                        var rec = m_window.ClientArea;
+                //        m_oldBmpPtr = SelectObject(m_memHdc, m_bmpPtr);
+                //        CheckOperation(m_oldBmpPtr != IntPtr.Zero);
+                //m_bmpPtr = CreateCompatibleBitmap(m_hdc, m_window.ClientSize.Width, m_window.ClientSize.Height);
+                //CheckOperation(m_bmpPtr != IntPtr.Zero);
+                var rec = m_surface.RenderArea;//m_window.ClientArea;
 
                         //CheckOperation(m_hdc != IntPtr.Zero);
                                 //m_memHdc = CreateCompatibleDC(m_hdc);
@@ -447,12 +447,12 @@ namespace Patchwork.Framework.Platform.Rendering
                         //                 ,
                         //                 null);
                         SetViewportExtEx(m_hdc.Pointer,
-                                         m_window.ClientArea.Right,
-                                         m_window.ClientArea.Bottom,
+                                         rec.Right,
+                                         rec.Bottom,
                                          null);
                         SetViewportExtEx(m_memHdc.Pointer,
-                                         m_window.ClientArea.Right,
-                                         m_window.ClientArea.Bottom,
+                                         rec.Right,
+                                         rec.Bottom,
                                          null);
                     }
                     catch (Win32Exception winEx)
@@ -728,16 +728,16 @@ namespace Patchwork.Framework.Platform.Rendering
                 case WindowsMessageIds.WINDOWPOSCHANGING:
                 case WindowsMessageIds.ENTERSIZEMOVE:
                 case WindowsMessageIds.EXITSIZEMOVE:
-                    hdc = m_device.Context[m_window].Pointer;
-                    var prvPnts = new [] { Size.Empty };
-                    SetViewportOrgEx(hdc,
-                                     m_window.ClientArea.Left,
-                                     m_window.ClientArea.Top,
-                                     out var pnts);
-                    SetViewportExtEx(hdc,
-                                     m_window.ClientArea.Right,
-                                     m_window.ClientArea.Bottom,
-                                     prvPnts);
+                    //hdc = m_device.Context[m_window].Pointer;
+                    //var prvPnts = new [] { Size.Empty };
+                    //SetViewportOrgEx(hdc,
+                    //                 m_window.ClientArea.Left,
+                    //                 m_window.ClientArea.Top,
+                    //                 out var pnts);
+                    //SetViewportExtEx(hdc,
+                    //                 m_window.ClientArea.Right,
+                    //                 m_window.ClientArea.Bottom,
+                    //                 prvPnts);
                     Invalidate();
                     break;
                 case WindowsMessageIds.TIMER:
