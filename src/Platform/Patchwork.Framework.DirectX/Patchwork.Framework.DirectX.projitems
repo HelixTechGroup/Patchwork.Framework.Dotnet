@@ -9,8 +9,10 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1RenderAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1Adapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1Device.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1ResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1WindowRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\D2D1RenderTarget.cs" />
   </ItemGroup>
 </Project>

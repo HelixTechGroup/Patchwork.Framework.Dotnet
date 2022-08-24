@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\RenderLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\RenderPriority.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.Rendering.cs" />

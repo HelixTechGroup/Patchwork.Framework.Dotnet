@@ -5,7 +5,7 @@ using Patchwork.Framework.Platform.Rendering;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public class D2D1RenderAdapter : NRenderAdapter
+    public class D2D1Adapter : NRenderAdapter
     {
         /// <inheritdoc />
         protected override void PlatformFlush()
@@ -18,5 +18,8 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             throw new NotImplementedException();
         }
+
+        /// <inheritdoc />
+        public D2D1Adapter(INRenderDevice device, INResourceFactory factory) : base(device, factory) { }
     }
 }

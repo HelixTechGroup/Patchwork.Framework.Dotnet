@@ -9,7 +9,7 @@ using SkiaSharp;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public sealed class SkiaRenderDevice : NRenderDevice<SkiaRenderAdapter>
+    public sealed class SkiaDevice : NRenderDevice<SkiaRenderAdapter>
     {
         #region Methods
         /// <inheritdoc />
@@ -52,6 +52,6 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         /// <inheritdoc />
-        public SkiaRenderDevice(IContainer iocContainer) : base(iocContainer) { }
+        public SkiaDevice(IContainer iocContainer) : base(iocContainer) { }
     }
 }
