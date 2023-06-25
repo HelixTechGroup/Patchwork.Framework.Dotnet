@@ -4,7 +4,6 @@ using System.Threading;
 using Patchwork.Framework;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
-using Shield.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework.Logging.Loggers;
 using Shin.Framework.Logging.Native;
 #endregion
@@ -22,6 +21,7 @@ namespace WindowsApp
         private static void Main(string[] args)
         {
             var log = new Logger();
+            log.QueueSize = 1;
             log.Initialize();
             log.AddLogProvider(new ConsoleLogger());
 
@@ -35,6 +35,12 @@ namespace WindowsApp
 
             Core.Window.CreateWindow().Show();
             Core.Run(m_cts.Token);
+            //Core.Logger.LogNone("Press any key to exit.");
+            //while (!Console.KeyAvailable)
+            //{
+            //    Core.Logger.LogNone(".");
+            //    Thread.Sleep(250);
+            //}
 
             Core.Dispose();
             Core.CloseConsole();
@@ -42,19 +48,13 @@ namespace WindowsApp
 
         private static void OnStartup() { }
 
-        private static void OnShutdown()
-        {
-            Core.Logger.LogNone("Press any key to exit.");
-            while (!Console.KeyAvailable)
-            {
-                Core.Logger.LogNone(".");
-                Thread.Sleep(250);
-            }
-        }
+        private static void OnShutdown() { }
 
         private static void OnMessage(IPlatformMessage message)
         {
             Core.Logger.LogDebug("Message type: " + message.Id);
+            //Core.Logger.LogDebug("--Message sub type: " + message.RawData?.MessageId);
+
             switch (message.Id)
             {
                 case MessageIds.Window:

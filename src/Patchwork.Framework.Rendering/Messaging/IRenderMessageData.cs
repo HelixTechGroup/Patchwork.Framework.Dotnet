@@ -10,7 +10,7 @@ namespace Patchwork.Framework.Messaging
     {
         #region Properties
         RenderMessageIds MessageId { get; }
-        INRenderer Render { get; }
+        INRender Render { get; }
         NFrameBuffer FrameBuffer { get; }
         #endregion
 

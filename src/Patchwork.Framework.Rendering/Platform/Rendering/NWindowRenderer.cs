@@ -12,12 +12,11 @@ using Shin.Framework.Extensions;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public abstract partial class  NWindowRenderer : NRenderer, INWindowRenderer, IEquatable<NWindowRenderer>
+    public abstract partial class NWindowRenderer : NRender, INWindowRenderer
     {
         #region Members
         protected float m_aspectRatio;
         protected double m_dpiScaling;
-        protected NWindowDecorations m_supportedDecorations;
         protected INWindow m_window;
         #endregion
 
@@ -35,31 +34,23 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         /// <inheritdoc />
-        public NWindowDecorations SupportedDecorations
-        {
-            get { return m_supportedDecorations; }
-            set { m_supportedDecorations = value; }
-        }
-
-        /// <inheritdoc />
         public INWindow Window
         {
             get { return m_window; }
         }
         #endregion
 
-        protected NWindowRenderer(INRenderDevice renderDevice, INWindow window) : base(renderDevice)
+        protected NWindowRenderer(INRenderDevice renderDevice) : this(renderDevice, Core.Window.CurrentWindow) { }
+
+        protected NWindowRenderer(INRenderDevice device, INWindow window) : base(device)
         {
-            Throw.IfNull(window);
-            Throw.IfNull(renderDevice);
             Throw.If(!window.IsRenderable).InvalidOperationException();
-            Throw.If(!renderDevice.SupportedRenderers.Contains(typeof(INWindowRenderer))).InvalidOperationException();
+            Throw.If(!device.SupportedRenderers.Contains(typeof(INWindowRenderer))).InvalidOperationException();
 
             m_priority = RenderPriority.High;
             m_window = window;
             m_device.ProcessMessage += OnProcessMessage;
         }
-
         #region Methods
         //public void Initialize(INWindow window, INRenderDevice renderDevice)
         //{
@@ -101,11 +92,11 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             base.InitializeResources();
             m_device.ProcessMessage += OnProcessMessage;
-            m_window.AddRenderer(this);
             m_window.SizeChanging += OnSizeChanging;
             m_window.SizeChanged += OnSizeChanged;
             InitializeResourcesShared();
-            Invalidate();
+            //Invalidate();
+            m_window.AddRenderer(this);
         }
 
         partial void InitializeResourcesShared();
@@ -114,10 +105,7 @@ namespace Patchwork.Framework.Platform.Rendering
 
         protected abstract void OnSizeChanged(object sender, PropertyChangedEventArgs<Size> e);
 
-        protected virtual void OnProcessMessage(IPlatformMessage message)
-        {
-
-        }
+        protected abstract void OnProcessMessage(IPlatformMessage message);
 
         protected virtual void OnWindowRender()
         {

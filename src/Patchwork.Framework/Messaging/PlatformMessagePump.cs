@@ -71,6 +71,9 @@ namespace Patchwork.Framework.Messaging
         /// <inheritdoc />
         public override void Pump(CancellationToken ctx)
         {
+            if (m_tokenSource.IsCancellationRequested)
+                return;
+
             AddCancellationToken(ctx);
         }
 

@@ -199,6 +199,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\UxTheme\WindowThemeAttributeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Interop\UxTheme\WindowThemeNcAttributeFlags.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\IWindowsProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\WinWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WindowsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\WinApplication.cs" />
@@ -213,7 +214,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Platform\Rendering\" />
     <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\" />
     <Folder Include="$(MSBuildThisFileDirectory)Platform\Windowing\" />
     <Folder Include="$(MSBuildThisFileDirectory)Services\IO\" />

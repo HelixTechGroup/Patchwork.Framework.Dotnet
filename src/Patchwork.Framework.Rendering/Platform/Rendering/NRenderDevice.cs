@@ -5,21 +5,19 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
+using Patchwork.Framework.Platform.Rendering.Resources;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
 using Shin.Framework.IoC.DependencyInjection;
-using Shield.Framework.IoC.Native.DependencyInjection;
-using Shin.Framework.Messaging;
 using Shin.Framework.Threading;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public abstract class NRenderDevice : Initializable, INRenderDevice
+    public abstract class NRenderDevice : Creatable, INRenderDevice, INRenderDevice.INRenderDevicePump
     {
         #region Events
         /// <inheritdoc />
@@ -31,43 +29,62 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         public event EventHandler<EventArgs> DeviceResetting;
 
+        public event ProcessMessageHandler ProcessMessage;
+
         /// <inheritdoc />
         public event EventHandler<ResourceCreatedEventArgs> ResourceCreated;
 
         /// <inheritdoc />
         public event EventHandler<ResourceDestroyedEventArgs> ResourceDestroyed;
-
-        public event ProcessMessageHandler ProcessMessage;
         #endregion
 
-        protected CancellationToken m_token;
-        protected INRenderAdapter m_adapter;
-        protected Priority m_priority;
-        protected IList<Type> m_supportedRenderers;
-        protected IContainer m_iocContainer;
-        protected bool m_isRunning;
+        #region Members
+        //protected static readonly object m_lock = new object();
+        //protected static readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim();
+        //protected readonly int m_lockTimeout = 50;
+
+        //protected INRenderDeviceConfiguration m_configuration;
+        protected PointF m_dpiScale;
+
+        protected bool m_hasLock;
+
+        //protected IList<Type> m_supportedRenderers;
+        protected IDIContainer m_iocContainer;
         protected bool m_isPumping;
+        protected bool m_isRunning;
+        protected Priority m_priority;
         protected IPlatformMessagePump m_pump;
+        protected IList<INRender> m_renderers;
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
         protected IList<Task> m_tasks;
-        protected IList<INRenderer> m_renderers;
-        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        protected static readonly object m_lock = new object();
-        protected bool m_hasLock;
-        protected readonly int m_lockTimeout = 50;
-        protected INRenderContext m_context;
-        protected PointF m_dpiScale;
+        protected bool m_isRegistered;
+        protected CancellationToken m_token;
 
-        public INRenderAdapter Adapter
+        //private INRenderContext m_context;
+        //private INRenderFactory m_rendererFactory;
+        //private INRenderResourceFactory m_resourceFactory;
+        private PointF m_dpi;
+        private bool m_isWaiting;
+        #endregion
+
+        #region Properties
+        /// <inheritdoc />
+        public INRenderDeviceConfiguration Configuration
         {
-            get { return m_adapter; }
+            get { return m_iocContainer.Resolve<INRenderDeviceConfiguration>(strategy: DIResolutionStrategy.SelfOnly); }
         }
 
         /// <inheritdoc />
         public INRenderContext Context
         {
-            get { return m_context; }
+            get { return m_iocContainer.Resolve<INRenderContext>(strategy: DIResolutionStrategy.SelfOnly); }
+        }
+
+        /// <inheritdoc />
+        public PointF Dpi
+        {
+            get { return m_dpi; }
         }
 
         /// <inheritdoc />
@@ -77,90 +94,144 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         /// <inheritdoc />
+        public INRenderFactory Renderer
+        {
+            get { return m_iocContainer.Resolve<INRenderFactory>(strategy: DIResolutionStrategy.SelfOnly); }
+        }
+
+        /// <inheritdoc />
+        public INRenderResourceFactory Resource
+        {
+            get { return m_iocContainer.Resolve<INRenderResourceFactory>(strategy: DIResolutionStrategy.SelfOnly); }
+        }
+
+        /// <inheritdoc />
         public IEnumerable<Type> SupportedRenderers
         {
-            get { return m_supportedRenderers; }
+            get { return m_iocContainer.Resolve<INRenderFactory>(strategy: DIResolutionStrategy.SelfOnly)?.SupportedTypes ?? new List<Type>(); }
         }
 
         /// <inheritdoc />
-        public PointF DpiScale
+        public IEnumerable<Type> SupportedResources
         {
-            get { return m_dpiScale; }
+            get { return m_iocContainer.Resolve<INRenderResourceFactory>(strategy: DIResolutionStrategy.SelfOnly).SupportedTypes; }
         }
+        #endregion
 
-        protected NRenderDevice(IContainer iocContainer)
+        protected NRenderDevice(IDIChildContainer iocContainer)
         {
-            m_iocContainer = iocContainer.CreateChildContainer();
-            m_pump = new PlatformMessagePump(Core.Logger);
-            m_supportedRenderers = new ConcurrentList<Type>();
-            m_renderers = new ConcurrentList<INRenderer>();
+            m_iocContainer = iocContainer; //.CreateChildContainer();
+            //m_pump = m_iocContainer.Resolve<IPlatformMessagePump>();
+            //m_supportedRenderers = new ConcurrentList<Type>();
+            m_renderers = new ConcurrentList<INRender>();
             ProcessMessage += OnProcessMessage;
-            Core.MessagePump.MessagePopped += OnProcessCoreMessage;
-            m_dpiScale = new PointF(1f, 1f);
-
+            //Core.MessagePump.MessagePopped += OnProcessCoreMessage;
+            m_dpiScale = new PointF(961f, 96f);
+            m_iocContainer.Resolve<IPlatformWindowManager>().WindowCreated += OnWindowCreated;
         }
-
-        protected NRenderDevice() : this(new IoCContainer()) { }
 
         #region Methods
-        protected abstract void RegisterRenderers();
+        //protected abstract void RegisterRenderers();
 
         /// <inheritdoc />
-        public TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer
+        public TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : class, INRender
         {
-            Throw.IfNot<NotSupportedException>(m_supportedRenderers.Contains(typeof(TRenderer)));
+            var factory = m_iocContainer.Resolve<INRenderFactory>(strategy: DIResolutionStrategy.SelfOnly);
+            Throw.IfNot<NotSupportedException>(factory.SupportedTypes.Contains(typeof(TRenderer)));
 
-            if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
-                Wait();
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+            //    Wait();
 
-            if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
-                Throw.Exception().InvalidOperationException();
+            //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+            //    Throw.Exception().InvalidOperationException();
 
-            m_hasLock = true;
+            //m_hasLock = true;
 
             try
             {
-                lock (m_lock)
+                lock(m_lock)
                 {
-                    //PlatformCreateRenderer<TRenderer>(parameters);
-
-                    var tmp = parameters.ToList();
-                    tmp.Insert(0, this);
-                    var rend = m_iocContainer.Resolve<TRenderer>(parameters: tmp.ToArray());
-
-                    if (!m_renderers.Contains(rend))
-                        m_renderers.Add(rend);
-                    else
+                    if (!parameters.Contains(this))
                     {
-                        rend.Dispose();
-                        foreach (var r in m_renderers)
-                        {
-                            if (!Equals(r, rend as INRenderer))
-                                continue;
-
-                            rend = (TRenderer)r;
-                            break;
-
-                        }
-                        //rend = (TRenderer)m_renderers.Where(r => r == rend as INRenderer);
+                        var tmpParam = new ConcurrentList<object>();
+                        tmpParam.Add(this);
+                        tmpParam.AddRange(parameters);
+                        parameters = tmpParam.ToArray();
                     }
 
-                    if (m_isInitialized && !rend.IsInitialized)
-                        rend.Initialize();
+                    return factory.Create<TRenderer>(parameters);
 
-                    return rend;
+                    //PlatformCreateRenderer<TRenderer>(parameters);
+
+                    //var tmp = parameters.ToList();
+                    //tmp.Insert(0, this);
+                    //var rend = m_iocContainer.Resolve<TRenderer>(parameters: tmp.ToArray());
+
+                    //if (!m_renderers.Contains(rend))
+                    //    m_renderers.Add(rend);
+                    //else
+                    //{
+                    //    rend.Dispose();
+                    //    foreach (var r in m_renderers)
+                    //    {
+                    //        if (!Equals(r, rend as INRender))
+                    //            continue;
+
+                    //        rend = (TRenderer)r;
+                    //        break;
+
+                    //    }
+                    //    //rend = (TRenderer)m_renderers.Where(r => r == rend as INRenderer);
+                    //}
+
+                    //if (m_isInitialized)
+                    //    rend.Initialize();
+
+                    //return rend;
                 }
             }
             finally
 
             {
-                if (m_hasLock)
-                {
-                    m_lockSlim.ExitWriteLock();
-                    m_hasLock = false;
-                }
+                //if (m_hasLock)
+                //{
+                //    m_lockSlim.ExitWriteLock();
+                //    m_hasLock = false;
+                //}
             }
             //return PlatformCreateRenderer<TRenderer>();
+        }
+
+        /// <inheritdoc />
+        public TResource GetResource<TResource>(params object[] parameters) where TResource : class, INRenderResource
+        {
+            
+                var factory = m_iocContainer.Resolve<INRenderResourceFactory>(strategy: DIResolutionStrategy.SelfOnly);
+                Throw.IfNot<NotSupportedException>(factory.SupportedTypes.Contains(typeof(TResource)));
+
+                //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+                //    Wait();
+
+                //if (!m_lockSlim.TryEnter(SynchronizationAccess.Write))
+                //    Throw.Exception().InvalidOperationException();
+
+                //m_hasLock = true;
+
+                try
+                {
+                    lock (m_lock)
+                    {
+                        return factory.Create<TResource>(parameters);
+                    }
+                }
+                finally
+                {
+                    //if (m_hasLock)
+                    //{
+                    //    m_lockSlim.ExitWriteLock();
+                    //    m_hasLock = false;
+                    //}
+                }
         }
 
         /// <inheritdoc />
@@ -176,48 +247,61 @@ namespace Patchwork.Framework.Platform.Rendering
             //Wait();
             //Throw.Exception<InvalidOperationException>();
 
-            m_isPumping = true;
-            //Core.Logger.LogDebug("Pumping Manager Messages.");
-            //if (token.IsCancellationRequested)
-            //    return;
-
-            while (m_pump.Poll(out var e, token))
+            lock(m_lock)
             {
-                //var mt = typeof(TMessage);
-                //var t = e.GetType();
-                var message = e as IPlatformMessage;
-                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message), token)
-                                .ContinueWith(t => m_tasks.Remove(t), token));
+                m_isPumping = true;
+                //Core.Logger.LogDebug("Pumping Manager Messages.");
+                //if (token.IsCancellationRequested)
+                //    return;
+
+                while (m_pump.Poll(out var e, token))
+                {
+                    //var mt = typeof(TMessage);
+                    //var t = e.GetType();
+                    var message = e as IPlatformMessage;
+                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message), token)
+                                    .ContinueWith(t => m_tasks.Remove(t), token));
+                }
+
+                RunManager();
+
+                //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+                m_isPumping = false;
             }
-
-            RunManager();
-
-            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
-            m_isPumping = false;
         }
 
         /// <inheritdoc />
         public void Wait()
         {
-            if (!m_isInitialized)
-                return;//Throw.Exception<InvalidOperationException>();
+            if (!m_isInitialized ^ m_isWaiting)
+                return; //Throw.Exception<InvalidOperationException>();
 
-            WaitManager();
-            var whenAll = Task.WhenAll(m_tasks);
-            Task.WhenAll(whenAll).ConfigureAwait(false);
-
-            for (; ; )
+            lock(m_lock)
             {
-                while (whenAll.Status != TaskStatus.RanToCompletion)
+                try
                 {
-                    Console.Write(".");
-                    Thread.Sleep(500);
+                    m_isWaiting = true;
+                    WaitManager();
+                    var whenAll = Task.WhenAll(m_tasks);
+                    Task.WhenAll(whenAll).ConfigureAwait(false);
+
+                    for (;;)
+                    {
+                        while (whenAll.Status != TaskStatus.RanToCompletion)
+                        {
+                            Console.Write(".");
+                            Thread.Sleep(500);
+                        }
+
+                        break;
+                    }
                 }
-
-                break;
+                finally
+                {
+                    m_isWaiting = true;
+                    m_tasks.Clear();
+                }
             }
-
-            m_tasks.Clear();
         }
 
         /// <inheritdoc />
@@ -230,23 +314,27 @@ namespace Patchwork.Framework.Platform.Rendering
             //Wait();
             //Throw.Exception<InvalidOperationException>();
 
-            m_isRunning = true;
-            m_token = token;
-            //Core.Logger.LogDebug("Pumping Manager Messages.");
-            while (!m_token.IsCancellationRequested)
+            lock(m_lock)
             {
-                Pump(m_token);
+                m_isRunning = true;
+                m_token = token;
+                //Core.Logger.LogDebug("Pumping Manager Messages.");
+                while (!m_token.IsCancellationRequested) Pump(m_token);
+
+                //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+                m_isRunning = false;
             }
 
             Wait();
-            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
-            m_isRunning = false;
         }
 
         /// <inheritdoc />
         public void RunAsync(CancellationToken token)
         {
-            m_runTask = new Task(() => { Run(token); }); //Task.Run(() => { Run(token); });
+            m_runTask = new Task(() =>
+                                 {
+                                     Run(token);
+                                 }); //Task.Run(() => { Run(token); });
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
@@ -264,15 +352,46 @@ namespace Patchwork.Framework.Platform.Rendering
             PlatformSetFrameBuffer(buffer);
         }
 
-        protected abstract void PlatformSetFrameBuffer(NFrameBuffer buffer);
+        //protected virtual void OnProcessCoreMessage(object sender, IPumpMessage message)
+        //{
+        //    if (!m_isInitialized)
+        //        return;
 
-        protected virtual void RunManager()
+        //    var p = message as IPlatformMessage;
+        //    if (m_supportedMessageIds.Any(i => i == p?.Id))
+        //        m_pump.Push(message);
+
+
+        //    switch (p.Id)
+        //    {
+        //        case MessageIds.Quit:
+        //            m_pump.Push(message);
+        //            break;
+        //    }
+        //}
+
+        protected virtual void OnProcessMessage(IPlatformMessage message)
         {
-            foreach (var r in m_renderers.Where(r => !r.OwnsRenderLoop))
+            //Core.Logger.LogDebug("Found Messages.");
+            switch (message.Id)
             {
-                r.Render();
+                case MessageIds.Quit:
+                    break;
             }
         }
+
+        protected virtual void RegisterTypes()
+        {
+            m_isRegistered = true;
+        }
+
+        //protected virtual void RunManager()
+        //{
+        //    //foreach (var r in m_renderers/*.Where(r => !r.OwnsRenderLoop)*/)
+        //    //{
+        //    //    r.Render();
+        //    //}
+        //}
 
         protected virtual void WaitManager() { }
 
@@ -287,86 +406,127 @@ namespace Patchwork.Framework.Platform.Rendering
             base.DisposeManagedResources();
         }
 
+        /// <param name="force"></param>
+        /// <inheritdoc />
+        protected override bool CreateResources(bool force)
+        {
+            if (!m_isRegistered)
+                RegisterTypes();
+
+            return true;
+        }
+
         /// <inheritdoc />
         protected override void InitializeResources()
         {
-            if (m_isInitialized)
-                return;
-
             base.InitializeResources();
+
+            if (!m_isRegistered)
+                RegisterTypes();
 
             m_tasks = new ConcurrentList<Task>();
             m_pump = new PlatformMessagePump(Core.Logger);
-            m_supportedMessageIds = new[] { MessageIds.Quit, MessageIds.Rendering };
+            m_supportedMessageIds = new[] {MessageIds.Quit, MessageIds.Rendering};
             m_pump.Initialize();
-            RegisterRenderers();
+
+            if (m_iocContainer.TryResolve<INRenderFactory>(out var renderFactory,
+                                                           strategy: DIResolutionStrategy.SelfOnly))
+                renderFactory?.Initialize();
+
+            if (m_iocContainer.TryResolve<INRenderResourceFactory>(out var renderResourceFactory,
+                                                                   strategy: DIResolutionStrategy.SelfOnly))
+                renderResourceFactory?.Initialize();
+
+            //PlatformCreateDevice();
         }
 
-        protected virtual void OnProcessCoreMessage(object sender, IPumpMessage message)
+        protected void OnWindowCreated(object sender, INWindow window)
         {
-            if (!m_isInitialized)
+            if (!window.IsRenderable)
                 return;
 
-            var p = message as IPlatformMessage;
-            if (m_supportedMessageIds.Any(i => i == p?.Id))
-                m_pump.Push(message);
+            //window.Created += (o, args) =>
+            //{
+            //Create();
 
 
-            switch (p.Id)
-            {
-                case MessageIds.Quit:
-                    m_pump.Push(message);
-                    break;
-            }
+            //if (!m_iocContainer.TryResolve<INRenderContext>(out var renderContext,
+            //                                                strategy: DIResolutionStrategy.SelfOnly))
+            //    return;
+
+            //renderContext?.Create();
+            //renderContext?.Initialize();
+            //renderContext?.Bind(window);
+            //}
         }
 
-        protected virtual void OnProcessMessage(IPlatformMessage message)
+        protected virtual void PlatformCreateDevice(bool force)
         {
-            //Core.Logger.LogDebug("Found Messages.");
-            switch (message.Id)
-            {
-                case MessageIds.Quit:
-                    break;
-            }
+
         }
+
+        protected abstract void PlatformSetFrameBuffer(NFrameBuffer buffer);
+
+        protected abstract void RunManager();
 
         protected abstract void PlatformGetDpi(INWindow window);
+        #endregion
+
+        //protected NRenderDevice() : this(new DIContainer()) { }
 
         //protected abstract TRenderer PlatformCreateRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
-        #endregion
     }
 
-    public abstract class NRenderDevice<TAdapter> : NRenderDevice, INRenderDevice<TAdapter> 
-        where TAdapter : class, INRenderAdapter
-    {
-        #region Members
-        
-        #endregion
+    //public abstract class NRenderDevice<TAdapter> : NRenderDevice, INRenderDevice<TAdapter> 
+    //    where TAdapter : class, INRenderAdapter
+    //{
+    //    #region Members
+    //    protected TAdapter m_adapter;
+    //    #endregion
 
-        #region Properties
-        /// <inheritdoc />
-        public new TAdapter Adapter
-        {
-            get { return m_adapter as TAdapter; }
-        }
-        #endregion
+    //    #region Properties
+    //    /// <inheritdoc />
+    //    public new TAdapter Adapter
+    //    {
+    //        get { return m_adapter; }
+    //    }
+    //    #endregion
 
-        protected NRenderDevice(IContainer iocContainer) : base(iocContainer) { }
+    //    protected NRenderDevice(IDIContainer iocContainer) : base(iocContainer) { }
 
-        #region Methods
-        #endregion
+    //    #region Methods
+    //    /// <inheritdoc />
+    //    protected override void InitializeResources()
+    //    {
+    //        base.InitializeResources();
 
-    }
+    //        m_adapter = m_iocContainer.TryResolve<TAdapter>();
+    //        m_adapter?.Initialize();
+    //    }
+    //    #endregion
 
-    public abstract class NRenderDevice<TAdapter, TContext> : NRenderDevice<TAdapter>, INRenderDevice<TAdapter, TContext>
-        where TAdapter : class, INRenderAdapter
-        where TContext : class, INRenderContext
-    {
-        public new TContext Context
-        {
-            get { return m_context as TContext; }
-        }
+    //}
 
-        protected NRenderDevice(IContainer iocContainer) : base(iocContainer) { }
-    }
+    //public abstract class NRenderDevice<TAdapter, TContext> : NRenderDevice<TAdapter>, INRenderDevice<TAdapter, TContext>
+    //    where TAdapter : class, INRenderAdapter
+    //    where TContext : class, INRenderContext
+    //{
+    //    protected TContext m_context;
+
+    //    public new TContext Context
+    //    {
+    //        get { return m_context; }
+    //    }
+
+    //    protected NRenderDevice(IDIContainer iocContainer) : base(iocContainer) { }
+
+    //    protected override void InitializeResources()
+    //    {
+    //        base.InitializeResources();
+
+    //        m_context = m_iocContainer.TryResolve<TContext>();
+    //        m_context?.Initialize();
+
+    //    }
+    //}
 }

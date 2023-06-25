@@ -144,9 +144,9 @@
     <Import Project="$(SkiaImportFile)" Label="Shared" />
   </ImportGroup>-->
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <PackageReference Include="Shin.Framework" Version="0.1.1-preview" />
-  </ItemGroup>
+  </ItemGroup>-->
   <Choose>
     <When Condition="'$(Rendering)' == 'true'">
       <ItemGroup>

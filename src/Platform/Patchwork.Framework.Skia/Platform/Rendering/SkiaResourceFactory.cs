@@ -20,7 +20,7 @@ namespace Patchwork.Framework.Platform.Rendering {
         #endregion
 
         #region Members
-        protected readonly IContainer m_iocContainer;
+        protected readonly IDIContainer m_iocContainer;
         private ConcurrentList<Type> m_supportedResources;
         #endregion
 
@@ -31,8 +31,8 @@ namespace Patchwork.Framework.Platform.Rendering {
             get { return m_supportedResources; }
         }
         #endregion
-
-        public SkiaResourceFactory(IContainer iocContainer)
+n
+        public SkiaResourceFactory(IDIContainer iocContainer)
         {
             m_iocContainer = iocContainer.CreateChildContainer();
         }

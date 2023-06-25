@@ -1,14 +1,17 @@
 ﻿#region Usings
 using System;
+using System.Collections.Generic;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Rendering;
+using Patchwork.Framework.Platform.Rendering.Resources;
 using Patchwork.Framework.Platform.Windowing;
+using Patchwork.Framework.Runtime;
 #endregion
 
 namespace Patchwork.Framework
 {
-    public interface IPlatformRenderManager : IPlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IRenderMessageData>>
+    public interface IPlatformRenderingManager : IPlatformManager<AssemblyRenderingAttribute, IPlatformMessage<IRenderMessageData>>
     {
         #region Events
         public event EventHandler<INWindow> WindowCreated;
@@ -18,13 +21,21 @@ namespace Patchwork.Framework
         #endregion
 
         #region Methods
-        TDevice GetDevice<TDevice>(params object[] parameters) where TDevice : INRenderDevice;
+        TDevice GetDevice<TDevice>(params object[] parameters) where TDevice : class, INRenderDevice;
 
-        bool IsRendererSupported<TRenderer>() where TRenderer : INRenderer;
+        bool IsRendererSupported<TRenderer>() where TRenderer : class, INRender;
 
-        TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
+        bool IsResourceSupported<TResource>() where TResource : class, INRenderResource;
 
-        TRenderer[] GetRenderers<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
+        IEnumerable<Type> SupportedRenderers { get; }
+
+        IEnumerable<Type> SupportedResources { get; }
+
+        TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : class, INRender;
+
+        TRenderer[] GetRenderers<TRenderer>(params object[] parameters) where TRenderer : class, INRender;
+
+        TResource GetResource<TResource>(params object[] parameters) where TResource : class, INResource;
         #endregion
     }
 }

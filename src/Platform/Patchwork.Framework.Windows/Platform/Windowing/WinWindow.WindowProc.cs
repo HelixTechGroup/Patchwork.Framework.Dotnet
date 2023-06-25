@@ -2,11 +2,15 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Patchwork.Framework.Extensions;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform.Interop.User32;
 using Patchwork.Framework.Platform.Rendering;
+using Patchwork.Framework.Platform.Threading;
 using Shin.Framework.Extensions;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Utilities;
@@ -18,8 +22,12 @@ namespace Patchwork.Framework.Platform.Windowing
     {
         #region Members
         private readonly WindowProc m_wndProc;
-        private bool m_inModalSizeLoop;
-        private bool m_timerRunning;
+        private static bool m_inModalSizeLoop;
+        private static bool m_isMoving;
+        private static bool m_isResizing;
+        private static bool m_timerRunning;
+        private static Point m_lPos = Point.Empty;
+        private static Size m_lSize = Size.Empty;
         #endregion
 
         #region Properties
@@ -33,7 +41,7 @@ namespace Patchwork.Framework.Platform.Windowing
         #region Methods
         private IntPtr WindowProc(IntPtr hwnd, WindowsMessageIds msg, IntPtr wParam, IntPtr lParam)
         {
-            var wMsg = new WindowsMessage
+            var message = new WindowsMessage
                        {
                            Id = msg,
                            WParam = wParam,
@@ -41,13 +49,21 @@ namespace Patchwork.Framework.Platform.Windowing
                            Result = IntPtr.Zero,
                            Hwnd = hwnd
                        };
-
-            return OnMessage(wMsg);
+            //return DefWindowProc(message.Hwnd, message.Id, message.WParam, message.LParam);
+            return OnMessage(message);
         }
 
         private IntPtr OnMessage(WindowsMessage message)
         {
             var changed = false;
+            var handled = false;
+            var result = IntPtr.Zero;
+
+            uint xy = 0;
+            int x, y = 0;
+            var nSize = new Size();
+            var nPos = new Point();
+
             switch (message.Id)
             {
                 case WindowsMessageIds.ACTIVATEAPP:
@@ -73,45 +89,86 @@ namespace Patchwork.Framework.Platform.Windowing
                                                        this);
                     break;
                 case WindowsMessageIds.SIZE:
-                    changed = true;
                     //InvalidateDataCache();
                     //Core.MessagePump.PushWindowMessage(WindowMessageIds.Resized, this);
-                    uint xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
-                    int x = unchecked((short)xy);
-                    int y = unchecked((short)(xy >> 16));
-                    var nSize = new Size(x, y);
-                    Core.MessagePump.PushWindowResizedMessage(this, nSize);
+                    xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
+                    x = unchecked((short)xy & 0xffff);
+                    y = unchecked((short)(xy >> 16) & 0xffff);
+                    nSize = new Size(x, y);
+
+                    if (m_cache.Size == nSize)
+                        break;
+
+                    m_lSize = nSize;
+                    //handled = true;
+                    changed = true;
+
                     switch ((WindowSizeFlag)message.WParam)
                     {
                         case WindowSizeFlag.SIZE_MAXIMIZED:
-                            changed = true;
+                            //changed = true;
                             Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Maximized);
                             //Core.MessagePump.PushWindowMessage(WindowMessageIds.Restored, this);
                             break;
                         case WindowSizeFlag.SIZE_RESTORED:
-                            changed = true;
+                            //changed = true;
                             Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Restored);
                             break;
                         case WindowSizeFlag.SIZE_MINIMIZED:
-                            changed = true;
+                            //changed = true;
                             Core.MessagePump.PushWindowStateChangedMessage(this, NWindowState.Minimized);
                             break;
                     }
+                    //Core.MessagePump.PushWindowResizedMessage(this, nSize);
                     break;
                 case WindowsMessageIds.SIZING:
+                    //xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
+                    //x = unchecked((short)xy & 0xffff);
+                    //y = unchecked((short)(xy >> 16) & 0xffff);
+                    var rec2 = Marshal.PtrToStructure<Rectangle>(message.LParam);
+                    nSize = new Size(rec2.Width, rec2.Height);
+
+                    if (m_cache.Size == nSize || m_cache.PreviousSize == nSize)
+                        break;
+
+                    m_lSize = nSize;
+                    //handled = true;
                     changed = true;
-                    //InvalidateDataCache();
-                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Resizing, this);
+                    m_isResizing = true;
+                    Core.MessagePump.PushWindowResizingMessage(this, nSize);
                     break;
                 case WindowsMessageIds.MOVE:
+                    xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
+                    x = unchecked((short)xy & 0xffff);
+                    y = unchecked((short)(xy >> 16) & 0xffff);
+                    nPos = new Point(x, y);
+
+                    if (m_cache.Position == nPos)
+                        break;
+
                     changed = true;
-                    //InvalidateDataCache();
-                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
+                    m_lPos = nPos;
+                    //handled = true;
+
+                    //Core.Dispatcher.InvokeAsync(() => Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this));
                     break;
                 case WindowsMessageIds.MOVING:
+                    //xy = unchecked(IntPtr.Size == 8 ? (uint)message.LParam.ToInt64() : (uint)message.LParam.ToInt32());
+                    //x = unchecked((short)xy & 0xffff);
+                    //y = unchecked((short)(xy >> 16) & 0xffff);
+                    var rec = Marshal.PtrToStructure<Rectangle>(message.LParam);
+                    nPos = new Point(rec.Location.X, rec.Location.X);
+
+                    if (m_cache.Position == nPos ^ m_cache.PreviousPosition == nPos)
+                        break;
+
                     changed = true;
-                    //InvalidateDataCache();
-                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Moving, this);
+                    m_isMoving = true;
+                    //handled = true;
+                    //result = new IntPtr(1);
+
+                    //Core.Dispatcher.InvokeAsync(Core.Pump);
+                    Core.MessagePump.PushWindowMovingMessage(this, nPos);
                     break;
                 case WindowsMessageIds.WINDOWPOSCHANGING:
                     //InvalidateDataCache();
@@ -129,11 +186,13 @@ namespace Patchwork.Framework.Platform.Windowing
                     Core.MessagePump.PushWindowMessage(WindowMessageIds.Created, this);
                     break;
                 case WindowsMessageIds.DESTROY:
+                    m_inModalSizeLoop = false;
+                    m_isMoving = false;
+                    m_isResizing = false;
+                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, this);
+
                     if (m_isMainApplicationWindow)
                         PostMessage(m_parent.Handle.Pointer, WindowsMessageIds.QUIT, IntPtr.Zero, IntPtr.Zero);
-
-                    m_inModalSizeLoop = false;
-                    Core.MessagePump.PushWindowMessage(WindowMessageIds.Destroyed, this);
                     break;
                 case WindowsMessageIds.ENABLE:
                     Core.MessagePump.PushWindowMessage(message.WParam != IntPtr.Zero
@@ -142,40 +201,72 @@ namespace Patchwork.Framework.Platform.Windowing
                                                        this);
                     break;
                 case WindowsMessageIds.QUIT:
-                    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                    PostMessage(m_parent.Handle.Pointer, WindowsMessageIds.QUIT, IntPtr.Zero, IntPtr.Zero);
+
+                    //handled = true;
+                    //Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
                     break;
                 case WindowsMessageIds.PAINT:
+                    if (!m_isInitialized)
+                        break;
+
+                    //handled = true;
+                    var osRenderers = m_renders;//Core.Renderer.GetRenderers<INOperatingSystemRenderer>(this);
+                    foreach (var r in osRenderers)
+                    {
+                        ((INOperatingSystemRenderer)r)?.OsRender();
+                    }
                     //Core.MessagePump.PushRenderOsMessage(this,);
                     //Render();
                     break;
                 case WindowsMessageIds.ERASEBKGND:
+                    handled = true;
+                    result = new IntPtr(1);
                     //return new IntPtr(1);
-                    //break;
+                    break;
                 case WindowsMessageIds.TIMER:
                     //changed = m_inModalSizeLoop;
                     if (m_inModalSizeLoop)
                     {
-                        InvalidateDataCache();
-                        SyncDataCache(true);
-                        Core.Pump();
+                        //InvalidateDataCache();
+                        //SyncDataCache(true);
+                        //Core.Pump();
                         //Render();
+                        
                     }
                     break;
                 case WindowsMessageIds.ENTERSIZEMOVE:
                     if (m_timerRunning)
                         break;
 
-                    CheckOperation(SetTimer(m_handle.Pointer, new IntPtr(12345), 33, null) != IntPtr.Zero);
+                    CheckOperation(SetTimer(m_parent.Handle.Pointer, new IntPtr(12345), 33, null) != IntPtr.Zero);
                     m_timerRunning = true;
                     m_inModalSizeLoop = true;
+                    changed = true;
+                    //handled = true;
                     break;
                 case WindowsMessageIds.EXITSIZEMOVE:
+                    changed = true;
+                    if (m_isMoving)
+                    {
+                        Core.MessagePump.PushWindowMovedMessage(this, m_lPos);
+                        //Core.MessagePump.PushWindowMessage(WindowMessageIds.Moved, this);
+                        m_isMoving = false;
+                    }
+
+                    if (m_isResizing)
+                    {
+                        Core.MessagePump.PushWindowResizedMessage(this, m_lSize);
+                        m_isResizing = true;
+                    }
+
                     if (!m_timerRunning)
                         break;
-                    
-                    CheckOperation(KillTimer(m_handle.Pointer, new IntPtr(12345)));
+
+                    CheckOperation(KillTimer(m_parent.Handle.Pointer, new IntPtr(12345)));
                     m_timerRunning = false;
                     m_inModalSizeLoop = false;
+                    //handled = true;
                     break;
                 case WindowsMessageIds.SYSCOMMAND:
                     switch ((SysCommand)message.WParam)
@@ -427,7 +518,7 @@ namespace Patchwork.Framework.Platform.Windowing
             if (changed)
                 InvalidateDataCache();
 
-            return DefWindowProc(message.Hwnd, message.Id, message.WParam, message.LParam);
+            return handled ? result : DefWindowProc(message.Hwnd, message.Id, message.WParam, message.LParam);
         }
         #endregion
     }

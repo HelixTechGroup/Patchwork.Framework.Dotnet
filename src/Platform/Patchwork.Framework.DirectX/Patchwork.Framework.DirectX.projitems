@@ -9,10 +9,57 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1Adapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1Device.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1ResourceFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2D1WindowRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\D2D1RenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\Color4Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtenstions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SizeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\D2D1Adapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\D2dRenderContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\D2D1RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\ID2D1RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXDescriptorHeapType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXDeviceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXRendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\D2D1RendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\Resources\D2D1ResourceFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\Resources\D2D1Brush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\Resources\D2D1HwndRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\Resources\D2D1RenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\D2d\Resources\D2D1Resource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXRenderContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx11\D3D11Context.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx11\D3D11RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx11\ID3D11RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Collections\Dx12CommandListSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Collections\Dx12GraphicsCommandListSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Extensions\CpuDescriptorHandleExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12DescriptorHeap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12DescriptorHeapSlot.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12GraphicsCommandList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12Object.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\IDx12GraphicsCommandList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Runtime\Dx12DescriptorHeapAllocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\DX12RenderContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\DX12RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12RenderFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12RenderFrame.Dx12RenderThread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\IDX12RenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12Resource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXFeatureLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12CommandList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12CommandQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Dx12RenderTargetView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Runtime\Dx12Fence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dx12\Resources\Runtime\Dx12ObjectAllocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dxgi\DXGIRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dxgi\Resources\DxgiResourceFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dxgi\IDXGIRenderDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dxgi\Resources\DxgiObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Dxgi\Resources\DxgiSwapChain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\DirectXResourceHeapType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\IDirectXRenderDevice.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\" />
   </ItemGroup>
 </Project>

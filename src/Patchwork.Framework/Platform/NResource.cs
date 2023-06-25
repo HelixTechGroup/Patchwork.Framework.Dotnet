@@ -1,32 +1,44 @@
 #region Usings
+using System;
+using System.Threading;
 using Patchwork.Framework;
 using Patchwork.Framework.Platform;
 using Shin.Framework;
+using Shin.Framework.Extensions;
 #endregion
 
-namespace System.Drawing
+namespace Patchwork.Framework.Platform
 {
+    public abstract class NResource : NResource<object>, INResource
+    {
+    }
+
     public abstract class NResource<TNative> : Creatable, INResource<TNative>
     {
         #region Members
         protected string m_name;
         protected TNative m_resource;
         protected INHandle m_handle;
-        private bool m_isCreated;
         #endregion
 
         #region Properties
+        /// <inheritdoc />
+        public TNative Resource
+        {
+            get { return m_resource; }
+        }
+
+        /// <inheritdoc />
+        public INHandle Handle
+        {
+            get { return m_handle; }
+        }
+
         /// <inheritdoc />
         public string Name
         {
             get { return m_name; }
             set { m_name = value; }
-        }
-
-        /// <inheritdoc />
-        public TNative Resource
-        {
-            get { return m_resource; }
         }
 
         /// <inheritdoc />
@@ -38,23 +50,14 @@ namespace System.Drawing
 
         protected NResource() { }
 
-        internal NResource(TNative native)
+        protected NResource(TNative native)
         {
             m_resource = native;
         }
 
         #region Methods
-        object ICloneable.Clone()
-        {
-            return PlatformClone();
-        }
+        //protected abstract bool PlatformClone(out object clone);
 
-        public TNative Clone()
-        {
-            return (TNative)PlatformClone();
-        }
-
-        protected abstract object PlatformClone();
 
         protected internal void SetNativeResource(TNative resource)
         {
@@ -63,9 +66,27 @@ namespace System.Drawing
         #endregion
 
         /// <inheritdoc />
-        public INHandle Handle
+        object ICloneable.Clone()
         {
-            get { return m_handle; }
+            object result = null;
+        //    PlatformClone(out result);
+        //    Cloned.Raise(this, result);
+            return result;
+        }
+
+        //public event EventHandler<object> Cloned;
+
+        /// <inheritdoc />
+        protected override void DisposeUnmanagedResources()
+        {
+            m_handle?.Dispose();
+            base.DisposeUnmanagedResources();
+        }
+
+        /// <inheritdoc />
+        INResource<TNative> ICloneable<INResource<TNative>>.Clone()
+        {
+            return this;
         }
     }
 }

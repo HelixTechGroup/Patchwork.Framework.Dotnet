@@ -7,6 +7,7 @@ using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Rendering;
 using Patchwork.Framework.Platform.Threading;
 using Patchwork.Framework.Platform.Windowing;
+using Patchwork.Framework.Runtime;
 #endregion
 
 [assembly: AssemblyPlatform(OsType.Windows,
@@ -19,10 +20,14 @@ using Patchwork.Framework.Platform.Windowing;
                              1,
                              "Windows",
                              typeof(WinWindow))]
+//[assembly: AssemblyRendering(OsType.Windows,
+//                             1,
+//                             "Gdi",
+//                             typeof(GdiDevice))]
 [assembly: AssemblyRendering(OsType.Windows,
                              1,
-                             "Gdi",
-                             typeof(GdiDevice))]
+                             "DirectX",
+                             typeof(DirectXRenderDevice))]
 //[assembly: AssemblyRendering(OsType.Windows,
 //                             1,
 //                             "Skia",

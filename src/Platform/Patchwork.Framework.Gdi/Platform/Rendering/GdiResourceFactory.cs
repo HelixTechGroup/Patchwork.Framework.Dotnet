@@ -20,13 +20,13 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Properties
         #endregion
 
-        public GdiResourceFactory(IContainer iocContainer) : base(iocContainer)
+        public GdiResourceFactory(IDIContainer iocContainer) : base(iocContainer)
         { }
 
         /// <inheritdoc />
-        protected override void RegisterResources()
+        public override void RegisterResources()
         {
-            m_supportedResources.Add(typeof(GdiSurface));
+            m_supportedResources.Add(typeof(GdiRenderTarget));
         }
     }
 }

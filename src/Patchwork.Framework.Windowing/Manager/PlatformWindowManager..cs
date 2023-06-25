@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using Patchwork.Framework.Messaging;
-using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Windowing;
+using Patchwork.Framework.Runtime;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
@@ -49,6 +49,12 @@ namespace Patchwork.Framework.Manager
         }
         #endregion
 
+        /// <inheritdoc />
+        public PlatformWindowManager(ILogger logger) : base(logger)
+        {
+            WireUpApplicationWindowEvents();
+        }
+
         #region Methods
         /// <inheritdoc />
         public INWindow CreateWindow()
@@ -59,9 +65,10 @@ namespace Patchwork.Framework.Manager
         public INWindow CreateWindow(NWindowDefinition definition)
         {
             Throw.If(!m_isInitialized).InvalidOperationException();
-            var win = Core.IoCContainer.Resolve<INWindow>(null, Core.Application, definition);
+            var win = Core.IoCContainer.Resolve<INWindow>(parameters: new object[] {Core.Application, definition});
             win.Create();
             m_currentWindow = win;
+            WindowCreated.Raise(this, win);
 
             return win;
         }
@@ -87,10 +94,7 @@ namespace Patchwork.Framework.Manager
         {
             base.CreateManager(managers);
 
-            foreach (var m in managers)
-            {
-                Core.IoCContainer.Register(m.WindowType, false);
-            }
+            foreach (var m in managers) Core.IoCContainer.Register(m.WindowType, false);
         }
 
         /// <inheritdoc />
@@ -106,23 +110,24 @@ namespace Patchwork.Framework.Manager
             m_windows = new ConcurrentList<INWindow>();
             m_supportedMessageIds = new[] {MessageIds.Window, MessageIds.Quit};
             WireUpApplicationWindowEvents();
-
         }
 
         /// <inheritdoc />
         protected override void OnProcessMessage(IPlatformMessage message)
         {
+            m_logger.LogDebug(@"^^--Platform Window Manager Message Handler.\r\n" +
+                              $"MessageId: {message.Id}");
+
             switch (message.Id)
             {
                 case MessageIds.Window:
-                    Core.Logger.LogDebug("Found Windowing Messages.");
                     var data = message.RawData as IWindowMessageData;
                     switch (data?.MessageId)
                     {
                         case WindowMessageIds.None:
                             break;
                         case WindowMessageIds.Created:
-                            WindowCreated.Raise(this, data.Window);
+                            //WindowCreated.Raise(this, data.Window);
                             break;
                         case WindowMessageIds.Destroyed:
                             WindowDestroyed.Raise(this, data.Window);
@@ -131,15 +136,18 @@ namespace Patchwork.Framework.Manager
 
                     break;
                 case MessageIds.Rendering:
+                    m_logger.LogDebug("!!!Window Manager: Received Render Message!!!");
                     //foreach (var window in m_windows)
                     //    window.Render();
-                    //Core.Logger.LogDebug("Render message found.");
+                    //m_logger.LogDebug("Render message found.");
                     break;
             }
 
             if (message.Id != MessageIds.Quit)
+            {
                 foreach (var window in m_windows)
                     window.SyncDataCache();
+            }
 
             base.OnProcessMessage(message);
         }

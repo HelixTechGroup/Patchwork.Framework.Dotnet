@@ -1,4 +1,4 @@
 ﻿namespace Patchwork.Framework.Platform.Rendering
 {
-    public class BufferRenderTarget : NRenderTarget { }
+    //public class BufferRenderTarget : NRenderTarget { }
 }

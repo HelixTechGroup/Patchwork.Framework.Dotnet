@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System.Threading;
+using System.Threading.Tasks;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Shin.Framework;
@@ -25,11 +26,10 @@ namespace Patchwork.Framework
             /// <inheritdoc />
             public override void Pump(CancellationToken ctx)
             {
-                if (m_tokenSource.IsCancellationRequested)
-                    return;
-
                 base.Pump(ctx);
+
                 m_application.PumpMessages(m_tokenSource.Token);
+
             }
 
             /// <inheritdoc />

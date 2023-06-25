@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using Patchwork.Framework.Platform.Rendering.Resources;
 using Shin.Framework;
 #endregion
 
@@ -10,8 +11,9 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Members
         protected INRenderAdapterConfiguration m_configuration;
         protected INRenderDevice m_device;
-        protected INResourceFactory m_resourceFactory;
+        //protected INResourceFactory m_resourceFactory;
         protected INScreen m_screen;
+        //private INRenderContext m_context;
         #endregion
 
         #region Properties
@@ -21,6 +23,12 @@ namespace Patchwork.Framework.Platform.Rendering
             get { return m_configuration; }
         }
 
+        ///// <inheritdoc />
+        //public INRenderContext Context
+        //{
+        //    get { return m_device.Context; }
+        //}
+
         /// <inheritdoc />
         public INRenderDevice Device
         {
@@ -28,9 +36,9 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         /// <inheritdoc />
-        public INResourceFactory ResourceFactory
+        public INRenderResourceFactory Factory
         {
-            get { return m_resourceFactory; }
+            get { return m_device.Resource; }
         }
 
         /// <inheritdoc />
@@ -40,10 +48,11 @@ namespace Patchwork.Framework.Platform.Rendering
         }
         #endregion
 
-        protected NRenderAdapter(INRenderDevice device, INResourceFactory factory)
+        protected NRenderAdapter(INRenderDevice device)
         {
             m_device = device;
-            m_resourceFactory = factory;
+            //m_resourceFactory = factory;
+            //m_context = 
         }
 
         #region Methods
@@ -59,31 +68,15 @@ namespace Patchwork.Framework.Platform.Rendering
             PlatformFlush();
         }
 
-        /// <inheritdoc />
-        public TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource
-        {
-            return m_resourceFactory.Create<TResource>(parameters);
-        }
+        ///// <inheritdoc />
+        //public TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource
+        //{
+        //    return m_resourceFactory.Create<TResource>(parameters);
+        //}
 
         protected abstract void PlatformFlush();
 
         protected abstract void PlatformSwapBuffers();
-
-        /// <inheritdoc />
-        protected override void InitializeResources()
-        {
-            base.InitializeResources();
-
-            m_resourceFactory.Initialize();
-        }
-
-        /// <inheritdoc />
-        protected override void DisposeManagedResources()
-        {
-            m_resourceFactory.Dispose();
-
-            base.DisposeManagedResources();
-        }
         #endregion
     }
 }

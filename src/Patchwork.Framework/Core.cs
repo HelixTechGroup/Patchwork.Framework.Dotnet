@@ -5,18 +5,19 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Patchwork.Framework.Environment;
 using Patchwork.Framework.Manager;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Threading;
-using Shield.Framework.IoC.Native.DependencyInjection;
+using Patchwork.Framework.Runtime;
+using Patchwork.Framework.Threading.Runtime;
 using Shield.Framework.Threading;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
 using Shin.Framework.IoC.DependencyInjection;
+using Shin.Framework.IoC.Native.DependencyInjection;
 using Shin.Framework.Logging.Native;
 using SysEnv = System.Environment;
 #endregion
@@ -37,14 +38,17 @@ namespace Patchwork.Framework
         #endregion
 
         #region Members
-        //private static PlatformManager m_platform;
-        private static CancellationTokenSource m_tokenSource;
+        private static readonly object m_lock = new object();
+
         //private static  CancellationToken m_token;
-        //private static IContainer m_container;
+        //private static IDIContainer m_container;
         //private static ConcurrentDictionary<Type, Lazy<IPlatformManager>> m_managers;
         private static Task m_runTask;
+
         private static IList<Task> m_tasks;
-        private static object m_lock = new object();
+
+        //private static PlatformManager m_platform;
+        private static CancellationTokenSource m_tokenSource;
         #endregion
 
         #region Properties
@@ -54,7 +58,7 @@ namespace Patchwork.Framework
 
         public static IPlatformEnvironment Environment { get; private set; }
 
-        public static IContainer IoCContainer { get; private set; }
+        public static IDIContainer IoCContainer { get; private set; }
 
         public static bool IsCreated { get; private set; }
 
@@ -84,7 +88,7 @@ namespace Patchwork.Framework
                 return;
 
             m_tasks = new ConcurrentList<Task>();
-
+            m_tokenSource = new CancellationTokenSource();
             //Application.CreateConsole();
             //m_container.CreateChildContainer();            
             Application.Initialize();
@@ -96,8 +100,25 @@ namespace Patchwork.Framework
             AddManager<PlatformWindowManager>();
             AddManager<PlatformRenderManager>();
             var mans = IoCContainer.ResolveAll<IPlatformManager>();
+            var mTasks = new ConcurrentList<Task>();
+
             foreach (var m in mans)
-                m.Initialize();
+            {
+                if (m_tokenSource.IsCancellationRequested)
+                    break;
+
+                if(m.GetType().CustomAttributes
+                 .Any(a => a.AttributeType == typeof(RunsOnMainThreadAttribute))
+                )
+                    mTasks.Add(Dispatcher.InvokeAsync(() => m.Initialize()));
+                else
+                {
+                    mTasks.Add(Task.Run(() => m.Initialize(),
+                                        m_tokenSource.Token));
+                }
+            }
+
+            Task.WaitAll(mTasks.ToArray());
 
             IsInitialized = true;
         }
@@ -147,56 +168,71 @@ namespace Patchwork.Framework
             {
                 //timer.Start();
                 //timer.AutoReset = true;
+                var pTasks = new ConcurrentList<Task>();
                 while (MessagePump.Poll(out var e, m_tokenSource.Token))
                 {
                     var msg = e as IPlatformMessage;
                     if (msg?.Id == MessageIds.Quit)
-                        m_tokenSource.Cancel();            
+                        m_tokenSource.Cancel();
 
-                    m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg), m_tokenSource.Token));
+
+                    pTasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg)));
                     //.ContinueWith(t => m_tasks.Remove(t)));
 
-                    lock (m_lock)
-                    {
-                        var mans = IoCContainer.ResolveAll<IPlatformManager>();
-                        foreach (var m in mans)
-                        {
-                            if (m_tokenSource.IsCancellationRequested)
-                                break;
+                    //var complete = m_tasks.Where(t => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                    //foreach (var c in complete)
+                    //    m_tasks.Remove(c);
 
-                            Task.Run(() => m.RunOnce(m_tokenSource.Token));
+                }
+
+                Task.WaitAll(pTasks.ToArray());
+
+                //lock(m_lock)
+                {
+                    var mans = IoCContainer.ResolveAll<IPlatformManager>();
+                    var mTasks = new ConcurrentList<Task>();
+                    foreach (var m in mans)
+                    {
+                        if (m_tokenSource.IsCancellationRequested)
+                            break;
+
+                        if (m.GetType().CustomAttributes
+                             .Any(a => a.AttributeType == typeof(RunsOnMainThreadAttribute))
+                           )
+                            mTasks.Add(Dispatcher.InvokeAsync(() => m.RunOnce(m_tokenSource.Token)));
+                        else
+                        {
+                            mTasks.Add(Task.Run(() => m.RunOnce(m_tokenSource.Token), 
+                                m_tokenSource.Token));
                         }
                     }
 
-                    var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
-                    foreach (var c in complete)
-                        m_tasks.Remove(c);
-                }
+                    Task.WaitAll(mTasks.ToArray());
 
-                //timer.Stop();
+                    //timer.Stop();
+                }
             }
 
             //foreach (var m in mans)
             //    m.Wait();
 
-            var whenAll = Task.WhenAll(m_tasks);
-            Task.Run(async() => await whenAll, m_tokenSource.Token);
+            //var whenAll = Task.WhenAll(m_tasks);
+            //whenAll.ConfigureAwait(false);
+            //Task.Run(async() => await whenAll, m_tokenSource.Token);
 
-            for (;;)
-            {
+            //for (;;)
+            //{
+            //    if (m_tokenSource.IsCancellationRequested)
+            //        break;
 
-                
-                if (m_tokenSource.IsCancellationRequested)
-                    break;
+            //    while (!whenAll.IsCompleted)
+            //    {
+            //        Console.Write(".");
+            //        Thread.Sleep(500);
+            //    }
 
-                while (!whenAll.IsCompleted)
-                {
-                    Console.Write(".");
-                    Thread.Sleep(500);
-                }
-
-                break;
-            }
+            //    break;
+            //}
 
             PostRunResourcesShared(m_tokenSource.Token);
             Logger.LogDebug("Exit Pumping Messages.");
@@ -207,54 +243,88 @@ namespace Patchwork.Framework
 
         public static async void RunAsync(CancellationToken token)
         {
-            m_runTask = new Task(() => { Run(token); }); //Task.Run(() => { Run(token); });
+            m_runTask = new Task(() =>
+                                 {
+                                     Run(token);
+                                 }); //Task.Run(() => { Run(token); });
             //.ContinueWith((t) => { Dispose(); })
             //m_runTask.ConfigureAwait(false);
             m_runTask.Start();
-            return;
         }
 
         public static void Pump()
         {
-            MessagePump.Pop(out var e);
-            if (e is null)
-                return; 
+            lock(m_lock)
+            {
+                var pTasks = new ConcurrentList<Task>();
+                var mTasks = new ConcurrentList<Task>();
+
+                if (MessagePump.Peek(out var pm))
+                {
+                    MessagePump.Pop(out var e);
+                    if (e is not null)
+                    {
+                        var msg = e as IPlatformMessage;
+                        if (msg?.Id == MessageIds.Quit)
+                            m_tokenSource.Cancel();
+
+                        pTasks.Add(Task.Run(() => ProcessMessage?.Invoke(msg)));
+                        //.ContinueWith(t => m_tasks.Remove(t)));
+                    }
+                }
+
+                //Task.WaitAll(pTasks.ToArray());
+
+                //var mans = IoCContainer.ResolveAll<IPlatformManager>();
+                //foreach (var m in mans)
+                //    //if (m_tokenSource.IsCancellationRequested)
+                //    //    break;
+                //    mTasks.Add(Task.Run(() => 
+                //    m.RunOnce(m_tokenSource.Token)));
+
+                //Task.WaitAll(mTasks.ToArray());
+
+                //var complete = m_tasks.Where(t => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                //foreach (var task in complete)
+                //    m_tasks.Remove(task);
+            }
 
             //while (MessagePump.Poll(out var e, m_tokenSource.Token))
-                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t =>
-                                                                                                       {
-                                                                                                           m_tasks.Remove(t); 
-                                                                                                           ((e as IPlatformMessage)?
-                                                                                                           .RawData as IDispose)?
-                                                                                                              .Dispose();
-                                                                                                       }));
+            //m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(e as IPlatformMessage)).ContinueWith(t =>
+            //                                                                                       {
+            //                                                                                           m_tasks.Remove(t); 
+            //                                                                                           ((e as IPlatformMessage)?
+            //                                                                                           .RawData as IDispose)?
+            //                                                                                              .Dispose();
+            //                                                                                       }));
         }
 
         public static void Create()
         {
-            Create(new Logger(), new IoCContainer());
+            Create(new Logger(), new ShinDIContainer());
         }
 
         public static void Create(ILogger logger)
         {
-            Create(logger, new IoCContainer());
+            Create(logger, new ShinDIContainer());
         }
 
-        public static void Create(IContainer iocContainer)
+        public static void Create(IDIContainer iocContainer)
         {
             Create(new Logger(), iocContainer);
         }
 
-        public static void Create(IContainer iocContainer, params IPlatformManager[] managers)
+        public static void Create(IDIContainer iocContainer, params IPlatformManager[] managers)
         {
             Create(new Logger(), iocContainer, managers);
         }
 
-        public static void Create(ILogger logger, IContainer iocContainer, params IPlatformManager[] managers)
+        public static void Create(ILogger logger, IDIContainer iocContainer, params IPlatformManager[] managers)
         {
             Logger = logger;
             Logger.Initialize();
             IoCContainer = iocContainer;
+            //IoCContainer.Register(IoCContainer.CreateChildContainer(), false);
             IoCContainer.Register(logger);
             var tmpManagers = managers.ToList();
             var os = GetOsType();
@@ -306,8 +376,25 @@ namespace Patchwork.Framework
 
             Task.WaitAll(t, t1);
 
-            foreach (var m in IoCContainer.ResolveAll<IPlatformManager>())
-                m.Create();
+            var mans = IoCContainer.ResolveAll<IPlatformManager>();
+            var mTasks = new ConcurrentList<Task>();
+            foreach (var m in mans)
+            {
+                if (m_tokenSource.IsCancellationRequested)
+                    break;
+
+                if (m.GetType().CustomAttributes
+                     .Any(a => a.AttributeType == typeof(RunsOnMainThreadAttribute))
+                   )
+                    mTasks.Add(Dispatcher.InvokeAsync(() => m.Create()));
+                else
+                {
+                    mTasks.Add(Task.Run(() => m.Create(),
+                                        m_tokenSource.Token));
+                }
+            }
+
+            Task.WaitAll(mTasks.ToArray());
             //foreach (var manager in tmpManagers)
             //{
             //    var aType = typeof(IPlatformManager);
@@ -363,9 +450,9 @@ namespace Patchwork.Framework
             IsInitialized = false;
         }
 
-        public static TManager AddManager<TManager>() where TManager : IPlatformManager, new()
+        public static TManager AddManager<TManager>() where TManager : class, IPlatformManager
         {
-            IoCContainer.Register<TManager>(true);
+            IoCContainer.Register<TManager>();
             var instance = IoCContainer.Resolve<TManager>();
             instance.Create();
             if (IsInitialized)
@@ -376,12 +463,11 @@ namespace Patchwork.Framework
 
         public static void AddManager<TManager>(TManager instance) where TManager : IPlatformManager
         {
-            IoCContainer.Register(instance, true);
+            IoCContainer.Register(instance);
             //m_managers[typeof(TManager)] = new Lazy<IPlatformManager>(instance);
 
-            if (!instance.IsCreated)
-                instance.Create();
-            if (IsInitialized && !instance.IsInitialized)
+            instance.Create();
+            if (IsInitialized)
                 instance.Initialize();
         }
 
@@ -484,7 +570,7 @@ namespace Patchwork.Framework
 
         private static void OnProcessMessage(IPlatformMessage message)
         {
-            Logger.LogDebug("Found Messages.");
+            //Logger.LogDebug("Found Messages.");
             switch (message.Id)
             {
                 case MessageIds.Quit:
@@ -493,7 +579,7 @@ namespace Patchwork.Framework
                     break;
                 case MessageIds.Rendering:
                     Logger.LogDebug("Core loop - Render");
-                    break; 
+                    break;
             }
         }
         #endregion

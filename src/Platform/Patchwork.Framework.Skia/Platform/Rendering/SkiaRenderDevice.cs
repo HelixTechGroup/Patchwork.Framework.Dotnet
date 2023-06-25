@@ -52,6 +52,6 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         /// <inheritdoc />
-        public SkiaDevice(IContainer iocContainer) : base(iocContainer) { }
+        public SkiaDevice(IDIContainer iocContainer) : base(iocContainer) { }
     }
 }

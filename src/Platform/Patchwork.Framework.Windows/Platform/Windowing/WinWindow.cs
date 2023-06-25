@@ -8,6 +8,7 @@ using Patchwork.Framework.Platform.Interop;
 using Patchwork.Framework.Platform.Interop.DwmApi;
 using Patchwork.Framework.Platform.Interop.User32;
 using Patchwork.Framework.Platform.Rendering;
+using Shin.Framework.Collections.Concurrent;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 using static Patchwork.Framework.Platform.Interop.DwmApi.DwmApiMethods;
@@ -118,7 +119,10 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override void InitializeResources()
         {
             base.InitializeResources();
+
+            //m_renders = new ConcurrentList<INRender>();
             UpdateWindow(m_handle.Pointer);
+            //InvalidateRect(m_handle.Pointer, IntPtr.Zero, false);
             //m_renderer.Initialize();
         }
 
@@ -306,7 +310,7 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override Size PlatformGetClientSize()
         {
             GetClientRect(m_handle.Pointer, out var rect);
-            return new Size(rect.Right, rect.Bottom);
+            return new Size(rect.Right - rect.Left, rect.Bottom - rect.Top);
             //return Size.Round(new SizeF(rect.Right, rect.Bottom) / (float)((INDesktopWindowRenderer)m_renderer).DpiScaling);
         }
 

@@ -22,8 +22,8 @@ using Patchwork.Framework.Platform.Windowing;
 [assembly: AssemblyRendering(OsType.Windows,
                              1,
                              "Gdi",
-                             typeof(GdiRenderDevice))]
+                             typeof(GdiDevice))]
 [assembly: AssemblyRendering(OsType.Windows,
                              1,
                              "Skia",
-                             typeof(SkiaRenderDevice))]
+                             typeof(SkiaDevice))]

@@ -7,7 +7,7 @@ using Shin.Framework;
 
 namespace Patchwork.Framework.Platform
 {
-    public interface INResource<TNType> : INResource, ICloneable<TNType>
+    public interface INResource<TNType> : INResource, ICloneable<INResource<TNType>>
     {
         #region Properties
         new TNType Resource { get; }

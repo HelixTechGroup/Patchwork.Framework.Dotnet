@@ -7,7 +7,7 @@ using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
 using Shin.Framework.Threading;
 using SkiaSharp;
-using IContainer = Shin.Framework.IoC.DependencyInjection.IContainer;
+using IDIContainer = Shin.Framework.IoC.DependencyInjection.IDIContainer;
 using static Patchwork.Framework.Platform.Interop.Kernel32.Methods;
 using static Patchwork.Framework.Platform.Interop.User32.Methods;
 using static Patchwork.Framework.Platform.Interop.Gdi32.Methods;
@@ -19,7 +19,7 @@ using Patchwork.Framework.Platform.Interop.GdiPlus;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public sealed class GdiDevice : NRenderDevice<GdiAdapter, GdiContext>, INFrameBufferDevice
+    public sealed class GdiDevice : NRenderDevice, INFrameBufferDevice
     {
         protected ConcurrentList<NFrameBuffer> m_buffers;
         protected IntPtr m_memHdc;
@@ -32,9 +32,10 @@ namespace Patchwork.Framework.Platform.Rendering
             m_iocContainer.Register<GdiHdcManager>();
             m_iocContainer.Register<INRenderDevice>(this);
             m_iocContainer.Register<INRenderAdapter, GdiAdapter>();
+            m_iocContainer.Register<INRenderContext, GdiContext>();
             m_iocContainer.Register<INResourceFactory, GdiResourceFactory>();
             m_iocContainer.Register<INWindowRenderer, GdiWindowRenderer>(false);
-            m_supportedRenderers.AddRange(new[] { typeof(INWindowRenderer), typeof(INFrameBufferRenderer)});
+            m_supportedRenderers.AddRange(new[] { typeof(INWindowRenderer), typeof(INFrameBufferRenderer), typeof(INOperatingSystemRenderer) });
             //Core.IoCContainer.Register<INRenderDevice>(this);
         }
 
@@ -60,7 +61,7 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         /// <inheritdoc />
-        public GdiDevice(IContainer iocContainer) : base(iocContainer) { }
+        public GdiDevice(IDIContainer iocContainer) : base(iocContainer) { }
 
         /// <inheritdoc />
         protected override void InitializeResources()
@@ -68,10 +69,8 @@ namespace Patchwork.Framework.Platform.Rendering
             base.InitializeResources();
             m_buffers = new ConcurrentList<NFrameBuffer>();
             m_dpiScale = new PointF(1f,1f);
-            m_context = m_iocContainer.Resolve<GdiContext>();
-            m_adapter = m_iocContainer.Resolve<GdiAdapter>();
-            m_context.Initialize();
-            m_adapter.Initialize();
+            //m_context = m_iocContainer.Resolve<GdiContext>();
+            //m_adapter = m_iocContainer.Resolve<GdiAdapter>();
 
             Core.Window.WindowCreated += OnWindowCreated;
         }

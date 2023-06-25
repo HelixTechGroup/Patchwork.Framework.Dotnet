@@ -9,8 +9,8 @@
     <Import_RootNamespace>Patchwork.Framework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Extenstions\ColorExtenstions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extenstions\SKColorExtenstions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtenstions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\SKColorExtenstions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaResourceFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\SkiaRenderDevice.cs" />

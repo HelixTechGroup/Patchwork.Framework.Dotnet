@@ -42,11 +42,11 @@ namespace Patchwork.Framework.Platform.Rendering
         //protected static readonly SemaphoreSlim m_semaphore = new SemaphoreSlim(0);
         //[ThreadStatic]
         //protected static SpinLock m_spin = new SpinLock();
-        protected WindowsProcessHook m_hook;
-        protected WindowsProcessHook m_hook2;
-        protected WindowsProcessHook m_hook3;
+        //protected WindowsProcessHook m_hook;
+        //protected WindowsProcessHook m_hook2;
+        //protected WindowsProcessHook m_hook3;
 
-        protected GdiSurface m_surface;
+        protected GdiRenderTarget m_surface;
         protected static NFrameBuffer m_oldBuffer;
         protected PaintStruct m_paintStruct;
         protected IntPtr m_oldBmpPtr;
@@ -54,17 +54,17 @@ namespace Patchwork.Framework.Platform.Rendering
         private IntPtr m_brush;
         #endregion
 
-        public GdiWindowRenderer(INRenderDevice<GdiAdapter> renderDevice, INWindow window) : base(renderDevice, window)
+        public GdiWindowRenderer(INRenderDevice renderDevice, INWindow window) : base(renderDevice, window)
         {
             m_priority = RenderPriority.Highest;
             m_level = RenderStage.Os;
             m_ownsRenderLoop = true;
-            m_hook = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_GETMESSAGE);
-            m_hook.ProcessMessage += OnGetMsg;
-            m_hook2 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROC);
-            m_hook2.ProcessMessage += OnRetMsg;
-            m_hook3 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROCRET);
-            m_hook3.ProcessMessage += OnProcRet;
+            //m_hook = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_GETMESSAGE);
+            //m_hook.ProcessMessage += OnGetMsg;
+            //m_hook2 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROC);
+            //m_hook2.ProcessMessage += OnRetMsg;
+            //m_hook3 = new WindowsProcessHook(window as IWindowsProcess, WindowHookType.WH_CALLWNDPROCRET);
+            //m_hook3.ProcessMessage += OnProcRet;
 
             //m_eventHook = new WindowsEventHook(window as IWindowsProcess, SWEH_Events.EVENT_OBJECT_LOCATIONCHANGE);
             //m_eventHook.ProcessEvent += OnEventMsg;
@@ -78,12 +78,12 @@ namespace Patchwork.Framework.Platform.Rendering
         {
             base.InitializeResources();
 
-            m_hook.Initialize();
-            m_hook2.Initialize();
-            m_hook3.Initialize();
+            //m_hook.Initialize();
+            //m_hook2.Initialize();
+            //m_hook3.Initialize();
             m_size = m_window.ClientSize;
             m_buffer = m_oldBuffer = m_tmpBuffer = new NFrameBuffer(m_size.Width, m_size.Height);
-            m_surface = m_device.Adapter.CreateResource<GdiSurface>(m_device, m_window);
+            m_surface = m_device.Adapter.CreateResource<GdiRenderTarget>(m_device, m_window);
             //m_surface.Create(m_device, m_window);
             m_brush = CreateSolidBrush(ColorTranslator.ToWin32(Color.Orange));
             //m_eventHook.Initialize();
@@ -127,9 +127,9 @@ namespace Patchwork.Framework.Platform.Rendering
         /// <inheritdoc />
         protected override void DisposeManagedResources()
         {
-            m_hook.Dispose();
-            m_hook2.Dispose();
-            m_hook3.Dispose();
+            //m_hook.Dispose();
+            //m_hook2.Dispose();
+            //m_hook3.Dispose();
             m_surface?.Dispose();
             
             //m_eventHook.Dispose();
@@ -345,7 +345,7 @@ namespace Patchwork.Framework.Platform.Rendering
             DeleteDC(m_memHdc.Pointer);
             m_surface.Dispose();
             if (!m_isOsRender)
-                m_device.Context.Destroy(m_window);
+                m_device.Context.Unbind(m_window);
 
             //m_oldBuffer?.Dispose();
                    // m_oldBuffer = m_buffer.Copy();
@@ -614,7 +614,7 @@ namespace Patchwork.Framework.Platform.Rendering
 
                                 //DestroyHDC(m_window.Handle.Pointer, true);
                                 //CreateHDC(m_window.Handle.Pointer);
-                                m_surface.Create(m_device, m_window);
+                                m_surface.Create(m_window);
                                 e = (int)GetLastError();
                                 Core.Logger.LogDebug($@"Win32 Error Code: {e}");
                                 //m_oldBmpPtr = SelectObject(m_memHdc.Pointer, m_surface.Handle.Pointer);
@@ -634,15 +634,15 @@ namespace Patchwork.Framework.Platform.Rendering
                         {
                             if (wex.NativeErrorCode == 1425 || wex.NativeErrorCode == 6)
                             {
-                                m_device.Context.Destroy(m_window);
+                                m_device.Context.Unbind(m_window);
                                 ReleaseDC(m_window.Handle.Pointer, m_memHdc.Pointer);
 
-                                m_device.Context.Create(m_window);
+                                m_device.Context.Bind(m_window);
                                 m_memHdc = m_device.Context.Clone(m_window);
 
                                 //DestroyHDC(m_window.Handle.Pointer, true);
                                 //CreateHDC(m_window.Handle.Pointer);
-                                m_surface.Create(m_device, m_window);
+                                m_surface.Create(m_window);
                                 //m_oldBmpPtr = SelectObject(m_memHdc.Pointer, m_surface.Handle.Pointer);
                                 //CheckOperation(m_oldBmpPtr != IntPtr.Zero);
 

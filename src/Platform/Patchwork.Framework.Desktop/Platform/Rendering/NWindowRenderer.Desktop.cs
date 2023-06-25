@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using Patchwork.Framework.Platform.Rendering.Resources;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
 using Shin.Framework.ComponentModel;
@@ -47,6 +48,7 @@ namespace Patchwork.Framework.Platform.Rendering
         protected double m_opacity;
         protected int m_titlebarSize;
         protected NWindowTransparency m_transparencySupport;
+        protected NWindowDecorations m_supportedDecorations;
         #endregion
 
         #region Properties
@@ -64,6 +66,13 @@ namespace Patchwork.Framework.Platform.Rendering
         }
 
         /// <inheritdoc />
+        public NWindowDecorations SupportedDecorations
+        {
+            get { return m_supportedDecorations; }
+            set { m_supportedDecorations = value; }
+        }
+
+        /// <inheritdoc />
         public NWindowTransparency TransparencySupport
         {
             get { return m_transparencySupport; }
@@ -72,17 +81,18 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         #region Methods
+        //protected abstract void PlatformSetWindowsDecorations();
 
         /// <inheritdoc />
         public void EnableWindowSystemDecorations()
         {
-            throw new NotImplementedException();
+            //PlatformSetWindowsDecorations();
         }
 
         /// <inheritdoc />
         public void DisableWindowSystemDecorations()
         {
-            throw new NotImplementedException();
+            //PlatformSetWindowsDecorations();
         }
 
         protected virtual void OnStateChanged(object sender, PropertyChangedEventArgs<NWindowState> e)

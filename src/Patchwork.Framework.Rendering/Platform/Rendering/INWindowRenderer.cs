@@ -5,12 +5,11 @@ using Patchwork.Framework.Platform.Windowing;
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public partial interface INWindowRenderer : INRenderer, IEquatable<INWindowRenderer>
+    public partial interface INWindowRenderer : INRender, IEquatable<INWindowRenderer>
     {
         #region Properties
         float AspectRatio { get; }
         double DpiScaling { get; }
-        NWindowDecorations SupportedDecorations { get; set; }
         INWindow Window { get; }
         #endregion
 

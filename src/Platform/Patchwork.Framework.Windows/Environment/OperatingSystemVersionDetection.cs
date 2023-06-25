@@ -472,7 +472,7 @@ namespace Patchwork.Framework.Environment
                     {
                         //The registry read workaround is by Scott Vickery. Thanks a lot for the help!
 
-                        //http://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
+                        //http://msmicrosoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
 
                         // For applications that have been manifested for Windows 8.1 & Windows 10. Applications not manifested for 8.1 or 10 will return the Windows 8 OS version value (6.2). 
                         // By reading the registry, we'll get the exact version - meaning we can even compare against  Win 8 and Win 8.1.

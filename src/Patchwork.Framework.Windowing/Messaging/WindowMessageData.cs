@@ -80,7 +80,7 @@ namespace Patchwork.Framework.Messaging
         public IWindowMessageData SizeChanging(Size requestedSize)
         {
             m_messageId = WindowMessageIds.Resizing;
-            SizeChangingData = new PropertyChangingData<Size>(m_window.Size, requestedSize);
+            SizeChangingData = new PropertyChangingData<Size>(m_window.ClientSize, requestedSize);
             return this;
         }
 
@@ -88,7 +88,7 @@ namespace Patchwork.Framework.Messaging
         {
             m_messageId = WindowMessageIds.Resized;
             var data = m_window.GetDataCache();
-            SizeChangedData = new PropertyChangedData<Size>(m_window.Size, requestedSize, data.PreviousSize);
+            SizeChangedData = new PropertyChangedData<Size>(m_window.ClientSize, requestedSize, data.PreviousClientSize);
             return this;
         }
 

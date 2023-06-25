@@ -62,7 +62,6 @@
             m_mode = m_definition.InitialMode;
             m_isVisibleInTaskbar = m_definition.IsVisibleInTaskbar;
             m_isTopmostWindow = m_definition.IsTopmostWindow;
-            m_isRenderable = m_definition.IsRenderable;
         }
         #endregion
     }

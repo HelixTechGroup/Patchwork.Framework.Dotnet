@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using Patchwork.Framework.Messaging;
+using Patchwork.Framework.Platform.Rendering.Resources;
 using Patchwork.Framework.Platform.Windowing;
 using Shin.Framework;
+using Shin.Framework.IoC.DependencyInjection;
+using Vortice.Direct3D11.Debug;
 #endregion
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public interface INRenderDevice : IInitialize, IDispose
+    public partial interface INRenderDevice : ICreate
     {
         #region Events
         event EventHandler<EventArgs> DeviceLost;
@@ -22,32 +25,32 @@ namespace Patchwork.Framework.Platform.Rendering
         #endregion
 
         #region Properties
-        INRenderAdapter Adapter { get; }
-
-        INRenderContext Context { get; }
-
         Priority Priority { get; }
+
+        INRenderDeviceConfiguration Configuration { get; }
 
         IEnumerable<Type> SupportedRenderers { get; }
 
-        PointF DpiScale { get; }
+        IEnumerable<Type> SupportedResources { get; }
+
+        PointF Dpi { get; }
         #endregion
 
         #region Methods
-        TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : INRenderer;
+        TRenderer GetRenderer<TRenderer>(params object[] parameters) where TRenderer : class, INRender;
 
-        void Pump(CancellationToken token);
+        TResource GetResource<TResource>(params object[] parameters) where TResource : class, INRenderResource;
 
-        void Wait();
+        //void ClearResources();
 
-        void Run(CancellationToken token);
+        //INRenderContext Context { get; }
 
-        void RunAsync(CancellationToken token);
+        INRenderFactory Renderer { get; }
 
-        bool Push(IPlatformMessage message);
+        INRenderResourceFactory Resource { get; }
         #endregion
 
-        void SetFrameBuffer(NFrameBuffer buffer);
+        //void SetFrameBuffer(NFrameBuffer buffer);
 
         //INRenderDeviceAdvancedSupport Advanced { get; }
 
@@ -82,9 +85,30 @@ namespace Patchwork.Framework.Platform.Rendering
 
 
         //IRenderTargetBitmapImpl CreateLayer(Size size);
-    }
 
-    public interface INImage { }
+        internal interface INParentRenderDevice : INRenderDevice
+        {
+            IEnumerable<INChildRenderDevice> Children { get; }
+        }
+
+        internal interface INChildRenderDevice : INRenderDevice
+        {
+            INParentRenderDevice Parent { get; }
+        }
+
+        internal interface INRenderDevicePump
+        {
+            void Pump(CancellationToken token);
+
+            void Wait();
+
+            void Run(CancellationToken token);
+
+            void RunAsync(CancellationToken token);
+
+            bool Push(IPlatformMessage message);
+        }
+    }
 
     public interface INRenderDeviceAdvancedSupport
     {
@@ -120,18 +144,17 @@ namespace Patchwork.Framework.Platform.Rendering
 
     public interface INRenderDeviceGamingSupport { }
 
-    public interface INRenderDevice<TAdapter> : INRenderDevice
-        where TAdapter : INRenderAdapter
-    {
-        new TAdapter Adapter { get; }
-    }
+    //public interface INRenderDevice<TAdapter> : INRenderDevice
+    //    where TAdapter : INRenderAdapter
+    //{
+    //    TAdapter Adapter { get; }
+    //}
 
-    public interface INRenderDevice<TAdapter, TContext> : INRenderDevice
-        where TAdapter : INRenderAdapter
-        where TContext : class, INRenderContext
-    {
-        new TAdapter Adapter { get; }
+    //public interface INRenderDevice<TAdapter, TContext> : INRenderDevice
+    //    where TAdapter : INRenderAdapter
+    //    where TContext : class, INRenderContext
+    //{
 
-        TContext Context { get; }
-    }
+    //    TContext Context { get; }
+    //}
 }

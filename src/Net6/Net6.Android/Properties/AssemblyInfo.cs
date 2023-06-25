@@ -23,7 +23,7 @@ using Patchwork.Framework.Platform.Windowing;
 //                             1,
 //                             "Gdi",
 //                             typeof(GdiRenderDevice))]
-[assembly: AssemblyRendering(OsType.Android,
-                             1,
-                             "Skia",
-                             typeof(SkiaRenderDevice))]
+//[assembly: AssemblyRendering(OsType.Android,
+//                             1,
+//                             "Skia",
+//                             typeof(SkiaRenderDevice))]

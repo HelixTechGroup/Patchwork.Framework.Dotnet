@@ -508,10 +508,16 @@ Throw.If($EXPR$)</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=ECB4E947F505D14186440428C5BC5E13/Text/@EntryValue">protected abstract $type$ PlatformGet$object$();
 
 protected abstract void PlatformSet$object$($type$ value);</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Backbuffer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=DXGI/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Hwnd/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Longacre/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nuspec/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Renderers/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Skia/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Swapchain/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=VDXGI/@EntryIndexedValue">True</s:Boolean>
 	
 	
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Virutal/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Virutal/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Vortice/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

@@ -1,8 +1,11 @@
 ﻿#region Usings
 using System;
+using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using Patchwork.Framework.Messaging;
 using Shin.Framework;
+using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.ComponentModel;
 using Shin.Framework.Extensions;
 #endregion
@@ -40,6 +43,8 @@ namespace Patchwork.Framework.Platform.Windowing
         protected bool m_isCreated;
         protected bool m_isMainApplicationWindow;
         internal IWindowDataCache m_cache;
+        protected int m_throttleLimit = 5;
+        protected ConcurrentDictionary<WindowMessageIds, int> m_throttleList;
         #endregion
 
         #region Properties
@@ -394,6 +399,7 @@ namespace Patchwork.Framework.Platform.Windowing
             Enabled.Dispose();
             Disabled.Dispose();
             TitleChanged.Dispose();
+            Core.Window.ProcessMessage -= OnProcessMessage;
             m_handle = null;
             base.DisposeManagedResources();
         }
@@ -402,7 +408,6 @@ namespace Patchwork.Framework.Platform.Windowing
         protected override void DisposeUnmanagedResources()
         {
             base.DisposeUnmanagedResources();
-            Core.Window.ProcessMessage -= OnProcessMessage;
             DisposeUnmanagedResourcesShared();
         }
 
@@ -412,6 +417,7 @@ namespace Patchwork.Framework.Platform.Windowing
             base.InitializeResources();
             InitializeResourcesShared();
             InitializeResourcesShared2();
+
             Core.Window.ProcessMessage += OnProcessMessage;
             SyncDataCache(true);
         }

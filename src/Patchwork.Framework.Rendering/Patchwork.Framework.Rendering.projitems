@@ -11,7 +11,19 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Core.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PlatformMessagePumpExtensions.Rendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\ICommandDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INFrameBufferDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INContextDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INSwapChainRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderCommandQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INSwapChainDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NDIsposableResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderCommandListType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderDeviceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INOperatingSystemRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IRenderMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\RenderMessageData.cs" />
@@ -20,20 +32,32 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INFrameBufferRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformRenderManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderFence.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderResource.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderDeviceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRendererFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NRenderCommandList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NSwapChain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Runtime\INRenderFence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderResourceFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INSwapChain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INSwapChain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NFrameBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NPixelBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderDevice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderableFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NRenderResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NRenderTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\RenderLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\RenderPriority.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NRenderResourceFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NRenderResourceFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INBrush.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\NBrushType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Runtime\INRenderMemoryBarrier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\Runtime\NRenderResourceAllocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\IWindowDataCache.Rendering.cs" />
@@ -41,16 +65,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowDefinition.Rendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\NWindowRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformRenderManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AssemblyPlatformRenderingAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runtime\AssemblyPlatformRenderingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderAdapterConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\ResourceCreatedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\ResourceDestroyedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRenderCommandList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INRender.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\ResourceCreatedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\ResourceDestroyedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\INRenderCommandList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.Rendering.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Rendering\Resources\Runtime\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Runtime\" />
   </ItemGroup>
 </Project>

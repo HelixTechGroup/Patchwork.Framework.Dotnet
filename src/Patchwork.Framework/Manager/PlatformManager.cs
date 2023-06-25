@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Rendering;
-
+using Patchwork.Framework.Runtime;
 using Shin.Framework;
 using Shin.Framework.Collections.Concurrent;
 using Shin.Framework.Extensions;
@@ -25,11 +25,12 @@ namespace Patchwork.Framework.Manager
         protected Task m_runTask;
         protected MessageIds[] m_supportedMessageIds;
         protected IList<Task> m_tasks;
-        protected readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        protected static readonly object m_lock = new object();
+        protected static readonly ReaderWriterLockSlim m_lockSlim = new ReaderWriterLockSlim();
+        //protected static readonly object m_lock = new object();
         protected static bool m_hasLock;
         protected readonly int m_lockTimeout = 50;
         private bool m_isWaiting;
+        protected readonly ILogger m_logger;
 
         /// <inheritdoc />
         public event Action Shutdown;
@@ -57,6 +58,12 @@ namespace Patchwork.Framework.Manager
             get { return m_supportedMessages; }
         }
 
+        protected PlatformManager(ILogger logger)
+        {
+            m_logger = logger;
+        }
+
+
         /// <inheritdoc />
         public void Pump(CancellationToken token)
         {
@@ -73,25 +80,39 @@ namespace Patchwork.Framework.Manager
                 //Throw.Exception<InvalidOperationException>();
 
             m_isPumping = true;
-            //Core.Logger.LogDebug("Pumping Manager Messages.");
+            //m_logger.LogDebug("Pumping Manager Messages.");
 
             while (m_pump.Poll(out var e, token))
             {
-                var message = e as IPlatformMessage;
-                if (m_supportedMessageIds.All(i => i != (message?.Id)))
-                    continue;
+                lock (m_lock)
+                {
 
-                RunManager(token);              
 
-                m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)));
+                    var message = e as IPlatformMessage;
+                    if (m_supportedMessageIds.All(i => i != (message?.Id)))
+                        continue;
 
-                var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
-                foreach (var c in complete)
-                    m_tasks.Remove(c);
+                    RunManager(token);
+
+                    //var t = Task.Run(() => ProcessMessage?.Invoke(message), token);
+                    //t.ConfigureAwait(false);
+                    //m_tasks.Add(t);
+                    //m_tasks.Add(
+                    Task.Factory.StartNew(
+                                          () => ProcessMessage?.Invoke(message)
+                                        , token);
+                                    //);
+                    //m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)));
+                }
+                /*m_tasks.Add(Task.Run(() => ProcessMessage?.Invoke(message)))*/;
+
+                //var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                //foreach (var c in complete)
+                //    m_tasks.Remove(c);
                 //.ContinueWith(t => m_tasks.Remove(t)));
             }          
 
-            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+            //m_logger.LogDebug("Exit Pumping Manager Messages.");
             m_isPumping = false;
         }
 
@@ -119,21 +140,39 @@ namespace Patchwork.Framework.Manager
                 {
                     m_isWaiting = true;
                     WaitManager();
-                    var whenAll = Task.WhenAll(m_tasks);
-                    whenAll.ConfigureAwait(false);
-                    //Task.WhenAll(whenAll).ConfigureAwait(false);
 
-                    for (;;)
-                    {
-                        while (!whenAll.IsCompleted)
-                        {
-                            //WaitManager();
-                            Console.Write(".");
-                            Thread.Sleep(500);
-                        }
+                    //var complete = m_tasks.Where((t) => (t.Status == TaskStatus.RanToCompletion)).ToArray();
+                    //foreach (var c in complete)
+                    //    m_tasks.Remove(c);
 
-                        break;
-                    }
+                    Task.WaitAll(m_tasks.ToArray());
+                    //Task.WaitAny(m_tasks.ToArray());
+                    //Task.WaitAll(m_tasks.ToArray());
+                    //var whenAll = Task.WhenAll(m_tasks);
+                    //whenAll.Wait();
+                    //whenAll.WaitAsync(CancellationToken.None);
+                    //for (;;)
+                    //{
+                    //while (!whenAll.IsCompleted)
+                    //{
+                    //    //WaitManager();
+                    //    Console.Write(".");
+                    //    Thread.Sleep(500);
+                    //}
+
+                    //while (m_tasks.Count > 0)
+                    //{
+                    //    var tasks = m_tasks;
+                    //    foreach (var task in tasks)
+                    //    {
+                    //        if (task.Status == TaskStatus.RanToCompletion)
+                    //            m_tasks.Remove(task);
+
+                    //    }
+                    //}
+
+                    //break;
+                    //}
 
                     m_tasks.Clear();
                 }
@@ -162,7 +201,7 @@ namespace Patchwork.Framework.Manager
 
             m_isRunning = true;
             //RunManager(token);
-            //Core.Logger.LogDebug("Pumping Manager Messages.");
+            //m_logger.LogDebug("Pumping Manager Messages.");
             while (!token.IsCancellationRequested)
             {
                 Pump(token);
@@ -177,7 +216,7 @@ namespace Patchwork.Framework.Manager
             }
 
             Wait();
-            //Core.Logger.LogDebug("Exit Pumping Manager Messages.");
+            //m_logger.LogDebug("Exit Pumping Manager Messages.");
             m_isRunning = false;
         }
 
@@ -191,16 +230,26 @@ namespace Patchwork.Framework.Manager
         
         public void RunOnce(CancellationToken token)
         {
-            if (!m_isInitialized)
-                Throw.Exception<InvalidOperationException>();
+            //m_lockSlim.TryEnterWriteLock(m_lockTimeout);
+            //m_lockSlim.TryEnter(SynchronizationAccess.Write);
+            try
+            {
+                if (!m_isInitialized)
+                    Throw.Exception<InvalidOperationException>();
 
-            if (m_isRunning)
-                return;
+                if (m_isRunning)
+                    return;
 
-            m_isRunning = true;
-            Pump(token);
-            Wait();
-            m_isRunning = false;
+                m_isRunning = true;
+                Pump(token);
+                Wait();
+            }
+            finally
+            {
+                //m_lockSlim.TryExit(SynchronizationAccess.Write);
+                //m_lockSlim.ExitWriteLock();
+                m_isRunning = false;
+            }
         }
 
         /// <inheritdoc />
@@ -208,12 +257,12 @@ namespace Patchwork.Framework.Manager
         {
             base.InitializeResources();
 
-            if (m_isInitialized)
-                return;
+            //if (m_isInitialized)
+            //    return;
 
             m_tasks = new ConcurrentList<Task>();
             //m_container.CreateChildContainer();  
-            m_pump = new PlatformMessagePump(Core.Logger);
+            m_pump = new PlatformMessagePump(m_logger);
             m_supportedMessageIds = new[] {MessageIds.Quit};
             m_pump.Initialize();
             ProcessMessage += OnProcessMessage;
@@ -246,7 +295,8 @@ namespace Patchwork.Framework.Manager
 
         protected virtual void OnProcessMessage(IPlatformMessage message)
         {
-            //Core.Logger.LogDebug("Found Messages.");
+            //m_logger.LogDebug(@$"==--Platform Manager Message Handler.\r\n" +
+            //                     $"MessageId: {message.Id}");
             switch (message.Id)
             {
                 case MessageIds.Quit:
@@ -277,7 +327,7 @@ namespace Patchwork.Framework.Manager
             base.DisposeManagedResources();
         }
     }
-
+    
     public abstract class PlatformManager<TAssembly, TMessage> : PlatformManager, IPlatformManager<TAssembly, TMessage>
         where TAssembly : PlatformAttribute
         where TMessage : IPlatformMessage
@@ -297,6 +347,8 @@ namespace Patchwork.Framework.Manager
             get { return m_instnace; }
         }
         #endregion
+
+        protected PlatformManager(ILogger logger) : base(logger) { }
 
         #region Methods
         public static void Exec(string namespaceClass, string metodo, List<Parameter> parametros = null)
@@ -342,9 +394,10 @@ namespace Patchwork.Framework.Manager
                     Core.IoCContainer.Register(type, this);
             }
         }
-        
+
+        /// <param name="force"></param>
         /// <inheritdoc />
-        protected override void CreateResources()
+        protected override bool CreateResources(bool force)
         {
             var os = Core.Environment.OS;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -361,6 +414,8 @@ namespace Patchwork.Framework.Manager
 
             if (platform != null || !platform.IsEmpty())
                 CreateManager(platform.ToArray());
+
+            return true;
         }
         #endregion
 

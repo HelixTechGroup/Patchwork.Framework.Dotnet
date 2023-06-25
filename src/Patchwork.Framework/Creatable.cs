@@ -15,6 +15,8 @@ namespace Patchwork.Framework
 
         #region Members
         protected bool m_isCreated;
+        protected bool m_preInitialize;
+        protected bool m_postInitialize;
         #endregion
 
         #region Properties
@@ -26,24 +28,41 @@ namespace Patchwork.Framework
 
         protected Creatable()
         {
+            m_preInitialize = true;
             WireUpCreateEvents();
         }
 
         #region Methods
-        public void Create()
+        public void Create(bool force = false)
         {
-            if (m_isCreated)
+            if (force && m_isCreated)
+            {
+                Dispose();
+                m_isCreated = m_isInitialized = m_isDisposed = false;
+            }
+
+            if (m_isCreated /*^ m_isInitialized*/)
                 return;
 
-            Creating.Raise(this, EventArgs.Empty);
-            CreateResources();
-            m_isCreated = true;
-            Created.Raise(this, EventArgs.Empty);
+            if (m_preInitialize)
+                Initialize();
 
+            lock(m_lock)
+            {
+                Creating.Raise(this, EventArgs.Empty);
+                m_isCreated = CreateResources(force);
+                Throw.If(!m_isCreated).InvalidOperationException();
+                Created.Raise(this, EventArgs.Empty);
+            }
+
+            if (!m_postInitialize) 
+                return;
+
+            m_isInitialized = false;
             Initialize();
         }
 
-        protected virtual void CreateResources() { }
+        protected abstract bool CreateResources(bool force);
 
         protected virtual void OnCreated(object sender, EventArgs e) { }
 
@@ -53,6 +72,7 @@ namespace Patchwork.Framework
         {
             Creating.Dispose();
             Created.Dispose();
+            m_isCreated = m_isInitialized = false;
             base.DisposeManagedResources();
         }
 

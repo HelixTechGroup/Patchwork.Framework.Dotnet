@@ -59,11 +59,12 @@ namespace Patchwork.Framework.Platform
         public virtual void PumpMessages(CancellationToken cancellationToken)
         {
             AddCancellationToken(cancellationToken);
-            if (m_token.IsCancellationRequested)
-                return;
 
-            PlatformPumpMessages();
-            PumpMessagesShared();
+            //while (!m_token.IsCancellationRequested)
+            {
+                PlatformPumpMessages();
+                PumpMessagesShared();
+            }
         }
 
         protected virtual void OnProcessMessage(IPlatformMessage message)
@@ -74,6 +75,8 @@ namespace Patchwork.Framework.Platform
             switch (message.Id)
             {
                 case MessageIds.Quit:
+                    if (!m_token.IsCancellationRequested)
+                        m_tokenSource.Cancel();
                     break;
                 case MessageIds.Window:
                     break;

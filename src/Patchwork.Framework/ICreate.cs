@@ -17,7 +17,7 @@ namespace Patchwork.Framework
         #endregion
 
         #region Methods
-        void Create();
+        void Create(bool force = false);
         #endregion
     }
 }

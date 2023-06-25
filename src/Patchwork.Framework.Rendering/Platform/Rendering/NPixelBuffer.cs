@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Patchwork.Framework.Platform.Runtime;
 using Shin.Framework.Extensions;
 using Shin.Framework.Runtime;
 using Shin.Framework.Threading;

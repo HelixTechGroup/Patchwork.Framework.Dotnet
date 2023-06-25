@@ -152,11 +152,11 @@ namespace Patchwork.Framework.Platform
                 {
                     while (HasMessages(out var msg))
                     {
-                        if (msg.Value == (uint)WindowsMessageIds.QUIT)
-                        {
-                            Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
-                            m_tokenSource.Cancel();
-                        }
+                        //if (msg.Value == (uint)WindowsMessageIds.QUIT)
+                        //{
+                        //    Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                        //    m_tokenSource.Cancel();
+                        //}
 
                         ProcessMessage(ref msg);
                     }
@@ -187,9 +187,13 @@ namespace Patchwork.Framework.Platform
                     DestroyWindow(m_handle.Pointer);
                     break;
                 case WindowsMessageIds.DESTROY:
+                    PostQuitMessage(0);
+                    break;
                 case WindowsMessageIds.QUIT:
                     Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
-                    PostQuitMessage(0);
+                    m_tokenSource.Cancel();
+                    //Core.MessagePump.Push(new PlatformMessage(MessageIds.Quit));
+                    //PostQuitMessage(0);
                     break; 
             }
 

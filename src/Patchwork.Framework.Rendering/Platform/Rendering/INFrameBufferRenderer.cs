@@ -2,7 +2,7 @@
 
 namespace Patchwork.Framework.Platform.Rendering
 {
-    public interface INFrameBufferRenderer : INRenderer
+    public interface INFrameBufferRenderer : INRender
     {
         //NFrameBuffer FrameBuffer { get; set; }
         

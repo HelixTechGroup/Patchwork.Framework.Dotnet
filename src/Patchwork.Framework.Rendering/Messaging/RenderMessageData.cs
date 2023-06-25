@@ -10,7 +10,7 @@ namespace Patchwork.Framework.Messaging
     public class RenderMessageData : Disposable, IRenderMessageData
     {
         #region Members
-        protected readonly INRenderer m_render;
+        protected readonly INRender m_render;
         protected RenderMessageIds m_messageId;
         protected NFrameBuffer m_frameBuffer;
         #endregion
@@ -29,7 +29,7 @@ namespace Patchwork.Framework.Messaging
 
         public PropertyChangingData<Point> PositionChangingData { get; set; }
 
-        public INRenderer Render
+        public INRender Render
         {
             get { return m_render; }
         }
@@ -45,13 +45,13 @@ namespace Patchwork.Framework.Messaging
         public PropertyChangingData<Size> SizeChangingData { get; set; }
         #endregion
 
-        public RenderMessageData(INRenderer renderer)
+        public RenderMessageData(INRender renderer)
         {
             Throw.If(renderer == null).InvalidOperationException();
             m_render = renderer;
         }
 
-        public RenderMessageData(RenderMessageIds messageId, INRenderer renderer) : this(renderer)
+        public RenderMessageData(RenderMessageIds messageId, INRender renderer) : this(renderer)
         {
             m_messageId = messageId;
             PositionChangedData = new PropertyChangedData<Point>(Point.Empty, Point.Empty, Point.Empty);

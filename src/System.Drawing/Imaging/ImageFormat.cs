@@ -53,7 +53,7 @@ namespace System.Drawing.Imaging {
 		private const string WmfGuid = "b96b3cad-0728-11d3-9d7b-0000f81ef32e";
 
 		// lock(this) is bad
-		// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
+		// http://msmicrosoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
 		private static object locker = new object ();
 
 		private static ImageFormat BmpImageFormat;

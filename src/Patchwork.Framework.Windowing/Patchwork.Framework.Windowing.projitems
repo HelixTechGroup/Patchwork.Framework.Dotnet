@@ -14,7 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IWindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageIds.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AssemblyWindowingAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runtime\AssemblyWindowingAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformWindowManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformWindowManager..cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.cs" />
@@ -27,5 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Runtime\" />
   </ItemGroup>
 </Project>

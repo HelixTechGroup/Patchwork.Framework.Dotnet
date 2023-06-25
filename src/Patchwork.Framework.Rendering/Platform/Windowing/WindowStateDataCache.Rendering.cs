@@ -1,6 +1,6 @@
 ﻿namespace Patchwork.Framework.Platform.Windowing
 {
-    internal partial struct WindowStateDataCache : IWindowDataCache
+    internal partial struct WindowStateDataCache
     {
         #region Members
         private bool m_isRenderable;
@@ -21,6 +21,11 @@
         public bool PreviouslyRenderable
         {
             get { return m_previousRenderable; }
+        }
+
+        partial void SetDefinitionDataShared2()
+        {
+            m_isRenderable = m_definition.IsRenderable;
         }
         #endregion
     }

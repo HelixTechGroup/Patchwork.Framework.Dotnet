@@ -10,7 +10,7 @@ namespace Patchwork.Framework.Extensions
     public static partial class PlatformMessagePumpExtensions
     {
         #region Methods
-        public static void PushRenderMessage(this IPlatformMessagePump pump, RenderMessageIds messageId, INRenderer renderer)
+        public static void PushRenderMessage(this IPlatformMessagePump pump, RenderMessageIds messageId, INRender renderer)
         {
             pump.Push(new PlatformMessage(MessageIds.Rendering, new RenderMessageData(messageId, renderer)));
         }
@@ -28,7 +28,7 @@ namespace Patchwork.Framework.Extensions
             pump.PushRenderMessage(data);
         }
 
-        public static void PushFrameBuffer(this IPlatformMessagePump pump, INRenderer renderer, NFrameBuffer frameBuffer)
+        public static void PushFrameBuffer(this IPlatformMessagePump pump, INRender renderer, NFrameBuffer frameBuffer)
         {
             pump.PushRenderMessage(new RenderMessageData(renderer).SetFrameBuffer(frameBuffer.Copy()));
         }

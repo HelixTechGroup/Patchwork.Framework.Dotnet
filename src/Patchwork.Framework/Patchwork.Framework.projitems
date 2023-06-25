@@ -11,13 +11,18 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Creatable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\AttributeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\FloatExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\Int32Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)extensions\WeakReferenceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WindowMessageDataExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ICloneable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ICreate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDataCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INBind.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IPlatformMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IReset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IMessageData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyChangedData.cs" />
@@ -36,13 +41,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\IPlatformMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessageIds.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PlatformMessagePump.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AssemblyPlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Allocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NDisposableResource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Runtime\INMemoryBarrier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Runtime\NResourceAllocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runtime\AssemblyPlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.MainMessagePump.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\INFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INResourceFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PlatformAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAllocate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Runtime\PlatformAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\NMemoryChunk.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\NFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Runtime\NMemoryChunk.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NResource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\DispatcherSynchronizationContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Threading\JobRunner.cs" />
@@ -57,9 +69,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PropertyData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Manager\PlatformManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Priority.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Runtime\RunsOnMainThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Manager\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Threading\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Platform\Threading\Runtime\" />
   </ItemGroup>
 </Project>

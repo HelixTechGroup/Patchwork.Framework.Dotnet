@@ -9,20 +9,22 @@ namespace Patchwork.Framework.Platform.Rendering
         #region Properties
         INRenderAdapterConfiguration Configuration { get; }
 
+        //INRenderContext Context { get; }
+
         INRenderDevice Device { get; }
 
-        INResourceFactory ResourceFactory { get; }
+        //INRenderResourceFactory Factory { get; }
 
         INScreen Screen { get; }
         #endregion
 
         #region Methods
-        void SwapBuffers();
+        //void SwapBuffers();
 
-        void Flush();
+        //void Flush();
         #endregion
 
-        TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource;
+        //TResource CreateResource<TResource>(params object[] parameters) where TResource : class, INRenderResource;
 
         //IRenderCommandList GetCommandList();
 

@@ -13,7 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\WindowMessageData.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\INApplication.Desktop.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INWindowRenderer.Desktop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform\Rendering\INWindowRender.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INWindow.Desktop.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\INPopupWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\NApplication.Desktop.cs" />
@@ -27,8 +27,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\NWindowTransparency.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Platform\Windowing\WindowStateDataCache.Desktop.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Platform\Rendering\" />
   </ItemGroup>
 </Project>

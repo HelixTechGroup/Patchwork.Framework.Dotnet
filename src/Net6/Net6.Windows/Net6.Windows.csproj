@@ -1,8 +1,8 @@
-﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.2.0-preview">
+﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.2.2-beta-build03">
   <!--InitialTargets="PrintProjectReport">-->
   <PropertyGroup>
     <PackageId>$(ProductName).Net6.Windows</PackageId>
-    <TargetPlatform>net6.0-windows-skia</TargetPlatform>
+    <TargetPlatform>net6.0-windows-gdi-skia</TargetPlatform>
     <!--<TargetFramework>net6.0-windows</TargetFramework>-->
     <!--<IsLibraryProject>True</IsLibraryProject>-->
     <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
@@ -15,14 +15,11 @@
 
   <!--<Import Project="D:\Users\Bryan\Documents\Projects\HelixTechGroup\Design\Patchwork\dotnet\Shared.Build.props" />-->
 
-  <!--<ItemGroup>
-    <PackageReference Include="Shin.Framework" Version="0.0.1" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-    <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
-    <PackageReference Include="SkiaSharp" Version="2.80.3" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Vortice.Direct2D1" Version="1.9.87" />
-  </ItemGroup>-->
+  <ItemGroup>
+    <PackageReference Include="Vortice.Direct2D1" Version="2.4.2" />
+    <PackageReference Include="Vortice.Direct3D11" Version="2.4.2" />
+    <PackageReference Include="Vortice.Direct3D12" Version="2.4.2" />
+  </ItemGroup>
 
   <Import Project="$(SourceDirectory)\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
   <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems" Label="Shared" />
@@ -32,7 +29,7 @@
   <!--<Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Skia\Patchwork.Framework.Skia.projitems" Label="Shared" />-->
   <Import Project="$(SourceDirectory)\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems" Label="Shared" />
   <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Windows\Patchwork.Framework.Windows.projitems" Label="Shared" />
-  <!--<Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems" Label="Shared" />-->
+  <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.DirectX\Patchwork.Framework.DirectX.projitems" Label="Shared" />
 
   <!--<Import Project="D:\Users\Bryan\Documents\Projects\HelixTechGroup\Design\Patchwork\dotnet\src\Imports.Build.props" />-->
   <!--<PropertyGroup>
@@ -374,10 +371,16 @@
     </PropertyGroup>-->
   </Target>
   <ItemGroup>
-    <None Remove="FodyWeavers.xml" />
+    <None Remove="FodyWeavers.xml" /> 
+  </ItemGroup>
+  <!--<ItemGroup>
+    <PackageReference Update="Shin.Framework" Version="0.1.5-beta-build025" />
+  </ItemGroup>-->
+  <ItemGroup>
+    <PackageReference Update="SkiaSharp" Version="2.88.3" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Shin.Framework" Version="0.1.3-preview" />
+    <PackageReference Update="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
   <!--<Import Project="$(PrometheusProps)" />-->
 </Project>

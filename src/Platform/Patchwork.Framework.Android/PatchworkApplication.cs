@@ -46,12 +46,14 @@ namespace Patchwork.Framework
         private void OnMessage(IPlatformMessage message)
         {
             Core.Logger.LogDebug("Message type: " + message.Id);
+            Core.Logger.LogDebug("--Message sub type: " + message.RawData?.MessageId);
+
             switch (message.Id)
             {
                 case MessageIds.Window:
                     var data = message.RawData as IWindowMessageData;
                     //Throw.IfNull(wmsg).ArgumentNullException(nameof(message));
-                    Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
+                    //Core.Logger.LogDebug("--Message sub type: " + data?.MessageId);
                     break;
                 case MessageIds.Quit:
                     m_cts.Cancel();

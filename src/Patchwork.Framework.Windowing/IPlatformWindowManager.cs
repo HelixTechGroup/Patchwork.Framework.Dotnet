@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Patchwork.Framework.Messaging;
 using Patchwork.Framework.Platform;
 using Patchwork.Framework.Platform.Windowing;
+using Patchwork.Framework.Runtime;
 #endregion
 
 namespace Patchwork.Framework

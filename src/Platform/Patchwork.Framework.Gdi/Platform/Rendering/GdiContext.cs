@@ -10,30 +10,48 @@ namespace Patchwork.Framework.Platform.Rendering
     {
         private GdiHdcManager m_hdcManager;
 
-        public INHandle CurrentContext
+        /// <inheritdoc />
+        public void Begin()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void End()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void Flush()
+        {
+            throw new NotImplementedException();
+        }
+
+        public INRenderContext CurrentContext
         {
             get { return m_hdcManager.CurrentWindowHdc; }
         }
 
-        public INHandle this[INWindow window]
+        public INRenderContext this[INWindow window]
         {
             get { return m_hdcManager[window]; }
         }
 
         /// <inheritdoc />
-        public INHandle Create(INWindow window)
+        public INRenderContext Bind(INWindow window)
         {
             return m_hdcManager.CreateHdc(window);
         }
 
         /// <inheritdoc />
-        public void Destroy(INWindow window)
+        public void Unbind(INWindow window)
         {
             m_hdcManager.DestroyHdc(window);
         }
 
         /// <inheritdoc />
-        public INHandle Clone(INWindow window)
+        public INRenderContext Clone(INWindow window)
         {
             return m_hdcManager.CloneHdc(window);
         }

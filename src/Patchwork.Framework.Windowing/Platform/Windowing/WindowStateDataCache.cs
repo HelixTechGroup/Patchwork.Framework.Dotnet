@@ -195,13 +195,16 @@ namespace Patchwork.Framework.Platform.Windowing
 
         private void SetDefinitionData()
         {
-            Title = Definition.Title;
+            Title = m_definition.Title;
             Size = m_definition.DesiredSize;
             Position = m_definition.DesiredPosition;
             SetDefinitionDataShared();
+            SetDefinitionDataShared2();
         }
 
         partial void SetDefinitionDataShared();
+
+        partial void SetDefinitionDataShared2();
         #endregion
     }
 }

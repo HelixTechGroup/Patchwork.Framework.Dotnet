@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\GlobalSuppressions.cs = src\GlobalSuppressions.cs
 		ImportsNon.Build.props = ImportsNon.Build.props
 		LICENSE.md = LICENSE.md
+		snippets\patchwork.snippets.txt = snippets\patchwork.snippets.txt
 		README.md = README.md
 		SECURITY.md = SECURITY.md
 		src\SharedAssemblyInfo.cs = src\SharedAssemblyInfo.cs
@@ -94,6 +95,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net6.Windows", "src\Net6\Net6.Windows\Net6.Windows.csproj", "{2C888852-E914-4AB4-904D-4EE959200233}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsApp-Net6", "samples\WindowsApp-Net6\WindowsApp-Net6.csproj", "{B870805D-46D1-4690-8EDA-2B3624B1D1C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{BF2ABA49-4391-4F98-8793-D3300C4AD20B}"
+	ProjectSection(SolutionItems) = preProject
+		snippets\vortice-usings.snippet = snippets\vortice-usings.snippet
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -255,6 +261,7 @@ Global
 		{DCDB29B0-16A7-4FC1-B38D-777B046D5A73} = {1AA6EAB9-9D97-4FD8-BDF0-84E8D7F7BFBE}
 		{2C888852-E914-4AB4-904D-4EE959200233} = {1AA6EAB9-9D97-4FD8-BDF0-84E8D7F7BFBE}
 		{B870805D-46D1-4690-8EDA-2B3624B1D1C1} = {B013D504-A2C9-4216-A4A1-EB7BC9588F3A}
+		{BF2ABA49-4391-4F98-8793-D3300C4AD20B} = {2E0F2A5F-45F7-4023-BF7A-143D0031B90E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A53841F6-1E2B-46A5-82DE-2A2FF30168E4}
@@ -292,6 +299,12 @@ Global
 		src\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems*{8262adec-5c8c-4270-996f-b352ad34d163}*SharedItemsImports = 13
 		src\Platform\Patchwork.Framework.Linux\Patchwork.Framework.Linux.projitems*{c6806c4e-c4e9-4736-ac25-300cd08b244c}*SharedItemsImports = 13
 		src\System.Drawing\System.Drawing.projitems*{dc0efc52-d116-4c15-a296-2eca1a62479e}*SharedItemsImports = 13
+		src\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
+		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
+		src\Patchwork.Framework.Windowing\Patchwork.Framework.Windowing.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
+		src\Patchwork.Framework\Patchwork.Framework.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Android\Patchwork.Framework.Android.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
+		src\Platform\Patchwork.Framework.Desktop\Patchwork.Framework.Desktop.projitems*{dcdb29b0-16a7-4fc1-b38d-777b046d5a73}*SharedItemsImports = 5
 		src\Patchwork.Framework\Patchwork.Framework.projitems*{dff5f575-ace9-41ce-89a9-e82d0dc8ca6c}*SharedItemsImports = 13
 		src\Patchwork.Framework.Display\Patchwork.Framework.Display.projitems*{e369dda2-26d2-4558-943d-303306f80a53}*SharedItemsImports = 5
 		src\Patchwork.Framework.Rendering\Patchwork.Framework.Rendering.projitems*{e369dda2-26d2-4558-943d-303306f80a53}*SharedItemsImports = 5
