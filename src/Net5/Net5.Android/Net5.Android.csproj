@@ -1,4 +1,4 @@
-﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.1.0" InitialTargets="PrintProjectReport">
+<Project Sdk="Prometheus.MSBuild.Sdk/0.1.0" InitialTargets="PrintProjectReport">
   <PropertyGroup>
     <PackageId>$(ProductName).Net5.Android</PackageId>
     <TargetPlatform>net5.0-android-skia</TargetPlatform>
@@ -9,7 +9,7 @@
     <PackageReference Include="Shin.Framework" Version="0.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
   </ItemGroup>
   <Import Project="$(SourceDirectory)\Patchwork.Framework\Patchwork.Framework.projitems" Label="Shared" />
   <Import Project="$(SourceDirectory)\Platform\Patchwork.Framework.Mobile\Patchwork.Framework.Mobile.projitems" Label="Shared" />
@@ -90,7 +90,7 @@
         </When>
         <When Condition="'$(Skia)' == 'true'">
           <ItemGroup>
-            <PackageReference Include="SkiaSharp" Version="2.80.2" />
+            <PackageReference Include="SkiaSharp" Version="2.88.6" />
           </ItemGroup>
         </When>
       </Choose>
