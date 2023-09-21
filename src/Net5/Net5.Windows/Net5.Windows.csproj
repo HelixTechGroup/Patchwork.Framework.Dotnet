@@ -1,4 +1,4 @@
-﻿<Project Sdk="Prometheus.MSBuild.Sdk/0.1.0">
+<Project Sdk="Prometheus.MSBuild.Sdk/0.1.0">
   <!--InitialTargets="PrintProjectReport">-->
   <PropertyGroup>
     <PackageId>Patchwork.Framework.Net5.Windows</PackageId>
@@ -15,7 +15,7 @@
     <PackageReference Include="Shin.Framework" Version="0.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
-    <PackageReference Include="SkiaSharp" Version="2.80.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Vortice.Direct2D1" Version="1.9.87" />
   </ItemGroup>
